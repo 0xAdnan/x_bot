@@ -1,0 +1,62 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e7] [cursor=pointer]
+        - button "Skip to trending" [ref=e9] [cursor=pointer]
+        - banner [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - heading "X" [level=1] [ref=e16] [cursor=pointer]:
+                - link "X" [ref=e17]:
+                  - /url: /home
+              - navigation "Primary" [ref=e23]:
+                - link "Home" [ref=e24] [cursor=pointer]:
+                  - /url: /home
+                - link "Search and explore" [ref=e30] [cursor=pointer]:
+                  - /url: /explore
+                - link "Notifications" [ref=e36] [cursor=pointer]:
+                  - /url: /notifications
+                - link "Follow" [ref=e42] [cursor=pointer]:
+                  - /url: /i/connect_people
+                - link "Direct Messages" [ref=e48] [cursor=pointer]:
+                  - /url: /i/chat
+                - link "Grok" [ref=e54] [cursor=pointer]:
+                  - /url: /i/grok
+                - link "Bookmarks" [ref=e60] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                - link "Creator Studio" [ref=e66] [cursor=pointer]:
+                  - /url: /i/jf/creators/studio
+                - link "Premium" [ref=e73] [cursor=pointer]:
+                  - /url: /i/premium_sign_up
+                - link "Profile" [ref=e79] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                - button "More menu items" [ref=e85] [cursor=pointer]
+              - link "Post" [ref=e92] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e94]
+            - button "Account menu" [ref=e100] [cursor=pointer]:
+              - generic [ref=e108]:
+                - generic
+        - main [ref=e111]:
+          - generic "Home timeline" [ref=e116]:
+            - generic [ref=e117]:
+              - navigation [ref=e122]:
+                - generic [ref=e123]
+              - generic:
+                - generic
+            - generic [ref=e141]:
+              - link "adnan" [ref=e150] [cursor=pointer]:
+                - /url: /adnanxpitch
+                - generic
+              - generic [ref=e153]:
+                - generic [ref=e171]
+                - generic [ref=e182]
+            - region "Your Home Timeline" [ref=e263]:
+              - heading "Your Home Timeline" [level=1] [ref=e264]
+              - 'generic "Timeline: Your Home Timeline" [ref=e265]':
+                - generic [ref=e266]

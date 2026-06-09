@@ -1,0 +1,14 @@
+# Live X session — DO NOT COMMIT (contains login cookies)
+.browser-profile/
+
+# Playwright MCP run artifacts (page snapshots, console logs — may hold scraped data)
+.playwright-mcp/
+
+# Local CRM/state is operational data, keep it out of version control
+state/*.jsonl
+
+# Runner runtime files
+state/runner.log
+state/runner.pid
+state/STOP
+state/PAUSE

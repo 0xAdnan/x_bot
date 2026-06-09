@@ -1,0 +1,79 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e16] [cursor=pointer]
+        - button "Skip to trending" [ref=e18] [cursor=pointer]
+        - banner [ref=e7]:
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - heading "X" [level=1] [ref=e24] [cursor=pointer]:
+                - link "X" [ref=e25]:
+                  - /url: /home
+                  - img [ref=e27]
+              - navigation "Primary" [ref=e31]:
+                - link "Home" [ref=e32] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e35]
+                - link "Search and explore" [ref=e38] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e41]
+                - link "Notifications" [ref=e44] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e47]
+                - link "Follow" [ref=e50] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e53]
+                - link "Direct Messages" [ref=e56] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e59]
+                - link "Grok" [ref=e62] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e65]
+                - link "Bookmarks" [ref=e68] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e71]
+                - link "Creator Studio" [ref=e74] [cursor=pointer]:
+                  - /url: /i/jf/creators/studio
+                  - img [ref=e77]
+                - link "Premium" [ref=e81] [cursor=pointer]:
+                  - /url: /i/premium_sign_up
+                  - img [ref=e84]
+                - link "Profile" [ref=e87] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e90]
+                - button "More menu items" [ref=e93] [cursor=pointer]:
+                  - img [ref=e96]
+              - link "Post" [ref=e100] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e102]
+            - button "Account menu" [ref=e108] [cursor=pointer]:
+              - generic [ref=e116]:
+                - generic:
+                  - generic:
+                    - generic
+        - main [ref=e8]:
+          - generic "Home timeline" [ref=e122]:
+            - generic [ref=e123]:
+              - generic [ref=e129] [cursor=pointer]:
+                - button "Back" [ref=e131]:
+                  - img [ref=e133]
+                - heading "Post" [level=2] [ref=e138]
+              - generic:
+                - generic:
+                  - status:
+                    - button
+            - region "Conversation" [ref=e140]:
+              - heading "Conversation" [level=1] [ref=e141]
+              - 'generic "Timeline: Conversation" [ref=e142]':
+                - generic [ref=e146]:
+                  - 'article "Xiaochen GUO Verified account @JustinXiaochen For those actively job hunting: Would you rather A) Write your own AI prompts for interview prep, or B) Use a tool that removes the need for prompting and just gives you a full prep plan? Curious what feels more useful in practice. 1 like, 57 views" [ref=e147]':
+                    - generic [ref=e149]
+                  - generic [ref=e290]:
+                    - link "adnan" [ref=e299] [cursor=pointer]:
+                      - /url: /adnanxpitch
+                    - generic [ref=e307]

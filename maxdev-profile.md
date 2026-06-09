@@ -1,0 +1,412 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e7] [cursor=pointer]
+        - button "Skip to trending" [ref=e9] [cursor=pointer]
+        - banner [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - heading "X" [level=1] [ref=e16] [cursor=pointer]:
+                - link "X" [ref=e17]:
+                  - /url: /home
+                  - img [ref=e19]
+              - navigation "Primary" [ref=e23]:
+                - link "Home" [ref=e24] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e27]
+                - link "Search and explore" [ref=e30] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e33]
+                - link "Notifications (2 unread notifications)" [ref=e141] [cursor=pointer]:
+                  - /url: /notifications
+                  - generic [ref=e38]:
+                    - img [ref=e39]
+                    - generic "2 unread items" [ref=e142]:
+                      - generic [ref=e143]: "2"
+                - link "Follow" [ref=e42] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e45]
+                - link "Direct Messages" [ref=e48] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e51]
+                - link "Grok" [ref=e54] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e57]
+                - link "Premium" [ref=e60] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e63]
+                - link "Bookmarks" [ref=e66] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e69]
+                - link "Articles" [ref=e72] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e75]
+                - link "Profile" [ref=e80] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e83]
+                - button "More menu items" [ref=e86] [cursor=pointer]:
+                  - img [ref=e89]
+              - link "Post" [ref=e93] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e95]
+            - button "Account menu" [ref=e101] [cursor=pointer]:
+              - generic [ref=e109]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+        - main [ref=e112]:
+          - generic "Home timeline" [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e124] [cursor=pointer]:
+                - button "Back" [ref=e126]:
+                  - img [ref=e128]
+                - generic [ref=e132]:
+                  - heading "Max" [level=2] [ref=e144]:
+                    - generic [ref=e150]: Max
+                  - generic [ref=e151]: 156 posts
+                - button "Search" [ref=e154]:
+                  - img [ref=e156]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e160]:
+              - generic [ref=e161]:
+                - link [ref=e162] [cursor=pointer]:
+                  - /url: /maxdev/header_photo
+                - generic [ref=e168]:
+                  - generic [ref=e169]:
+                    - link "Opens profile photo" [ref=e177] [cursor=pointer]:
+                      - /url: /maxdev/photo
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic "Opens profile photo":
+                              - img "Opens profile photo"
+                    - generic [ref=e180]:
+                      - button "More" [ref=e181] [cursor=pointer]:
+                        - img [ref=e183]
+                      - link "Gift Premium" [ref=e187] [cursor=pointer]:
+                        - /url: /maxdev/gift-premium
+                        - img [ref=e189]
+                      - button "Follow @maxdev" [ref=e194] [cursor=pointer]:
+                        - generic [ref=e197]: Follow
+                  - generic [ref=e201]:
+                    - generic [ref=e205]: Max
+                    - generic [ref=e209]: "@maxdev"
+                  - generic [ref=e212]:
+                    - img "✨" [ref=e213]
+                    - text: EntRoute | Your AI agent finds and uses services, no login - no API. Using x402 Protocol.
+                  - generic [ref=e215]:
+                    - img [ref=e216]
+                    - generic [ref=e219]: UK
+                    - link "entroute.com" [ref=e220] [cursor=pointer]:
+                      - /url: https://t.co/ioahFwyIDd
+                      - img [ref=e221]
+                      - text: entroute.com
+                    - link "Joined March 2024" [ref=e225] [cursor=pointer]:
+                      - /url: /maxdev/about
+                      - img [ref=e226]
+                      - text: Joined March 2024
+                      - img [ref=e229]
+                  - generic [ref=e232]:
+                    - link "52 Following" [ref=e234] [cursor=pointer]:
+                      - /url: /maxdev/following
+                      - generic [ref=e235]: "52"
+                      - generic [ref=e236]: Following
+                    - link "13 Followers" [ref=e238] [cursor=pointer]:
+                      - /url: /maxdev/verified_followers
+                      - generic [ref=e239]: "13"
+                      - generic [ref=e240]: Followers
+                  - link "Followers you know" [ref=e245] [cursor=pointer]:
+                    - /url: /maxdev/followers_you_follow
+                    - generic [ref=e258]:
+                      - text: Followed by
+                      - generic [ref=e259]: Christian A
+              - navigation "Profile timelines" [ref=e261]:
+                - generic [ref=e262]:
+                  - generic:
+                    - button "Previous" [disabled]:
+                      - generic:
+                        - img
+                  - tablist [ref=e264]:
+                    - tab "Posts" [selected] [ref=e265] [cursor=pointer]:
+                      - generic [ref=e268]: Posts
+                    - tab "Replies" [ref=e270] [cursor=pointer]:
+                      - generic [ref=e273]: Replies
+                    - tab "Media" [ref=e274] [cursor=pointer]:
+                      - generic [ref=e277]: Media
+                  - generic:
+                    - button "Next" [disabled]:
+                      - generic:
+                        - img
+              - region "Max’s posts" [ref=e278]:
+                - heading "Max’s posts" [level=1] [ref=e279]
+                - 'generic "Timeline: Max’s posts" [ref=e280]':
+                  - generic [ref=e281]:
+                    - article "Max @maxdev Jun 8 I listed my saas on @trust_mrr by @marclou and today is official launch day for this tool which has been running in beta this whole time. any feedback will be appreciated! Image 3 replies, 4 likes, Liked, 73 views" [ref=e285] [cursor=pointer]:
+                      - generic [ref=e291]:
+                        - link [ref=e303]:
+                          - /url: /maxdev
+                        - generic [ref=e306]:
+                          - generic [ref=e308]:
+                            - generic [ref=e311]:
+                              - link "Max" [ref=e314]:
+                                - /url: /maxdev
+                                - generic [ref=e317]: Max
+                              - generic [ref=e319]:
+                                - link "@maxdev" [ref=e321]:
+                                  - /url: /maxdev
+                                  - generic [ref=e322]: "@maxdev"
+                                - generic [ref=e323]: ·
+                                - link "Jun 8" [ref=e325]:
+                                  - /url: /maxdev/status/2063735419892605035
+                                  - time [ref=e326]: Jun 8
+                            - generic [ref=e328]:
+                              - button "Grok actions" [ref=e330]:
+                                - img [ref=e335]
+                              - button "More" [ref=e341]:
+                                - img [ref=e345]
+                          - generic [ref=e349]:
+                            - text: I listed my saas on
+                            - link "@trust_mrr" [ref=e352]:
+                              - /url: /trust_mrr
+                            - text: by
+                            - link "@marclou" [ref=e355]:
+                              - /url: /marclou
+                            - text: and today is official launch day for this tool which has been running in beta this whole time. any feedback will be appreciated!
+                          - link "Image" [ref=e363]:
+                            - /url: /maxdev/status/2063735419892605035/photo/1
+                            - generic "Image" [ref=e367]:
+                              - img "Image" [ref=e369]
+                          - group "3 replies, 4 likes, Liked, 73 views" [ref=e372]:
+                            - button "3 Replies. Reply" [ref=e374]:
+                              - generic [ref=e375]:
+                                - img [ref=e378]
+                                - generic [ref=e383]: "3"
+                            - button "0 reposts. Repost" [ref=e385]:
+                              - img [ref=e389]
+                            - button "4 Likes. Liked" [ref=e396]:
+                              - generic [ref=e397]:
+                                - img [ref=e400]
+                                - generic [ref=e405]: "4"
+                            - link "73 views. View post analytics" [ref=e407]:
+                              - /url: /maxdev/status/2063735419892605035/analytics
+                              - generic [ref=e408]:
+                                - img [ref=e411]
+                                - generic [ref=e416]: "73"
+                            - button "Bookmark" [ref=e418]:
+                              - img [ref=e422]
+                            - button "Share post" [ref=e427]:
+                              - img [ref=e431]
+                    - 'article "Max @maxdev Jun 8 The top 1% of TikTok Live streamers earn ~70% of all gift money. I was tired of guessing how much streamers actually make, so I built StreamWrapped: TikTok Live earnings, diamonds, and leaderboards by country. We''re live on Product Hunt. A quick upvote would mean a lot 🙏 Image 2 likes, Liked, 31 views" [ref=e437] [cursor=pointer]':
+                      - generic [ref=e443]:
+                        - link [ref=e455]:
+                          - /url: /maxdev
+                        - generic [ref=e458]:
+                          - generic [ref=e460]:
+                            - generic [ref=e463]:
+                              - link "Max" [ref=e466]:
+                                - /url: /maxdev
+                                - generic [ref=e469]: Max
+                              - generic [ref=e471]:
+                                - link "@maxdev" [ref=e473]:
+                                  - /url: /maxdev
+                                  - generic [ref=e474]: "@maxdev"
+                                - generic [ref=e475]: ·
+                                - link "Jun 8" [ref=e477]:
+                                  - /url: /maxdev/status/2063691563587248622
+                                  - time [ref=e478]: Jun 8
+                            - generic [ref=e480]:
+                              - button "Grok actions" [ref=e482]:
+                                - img [ref=e487]
+                              - button "More" [ref=e493]:
+                                - img [ref=e497]
+                          - generic [ref=e501]:
+                            - text: "The top 1% of TikTok Live streamers earn ~70% of all gift money. I was tired of guessing how much streamers actually make, so I built StreamWrapped: TikTok Live earnings, diamonds, and leaderboards by country. We're live on Product Hunt. A quick upvote would mean a lot"
+                            - img "🙏" [ref=e502]
+                          - link "Image" [ref=e510]:
+                            - /url: /maxdev/status/2063691563587248622/photo/1
+                            - generic "Image" [ref=e514]:
+                              - img "Image" [ref=e516]
+                          - group "2 likes, Liked, 31 views" [ref=e519]:
+                            - button "0 Replies. Reply" [ref=e521]:
+                              - img [ref=e525]
+                            - button "0 reposts. Repost" [ref=e532]:
+                              - img [ref=e536]
+                            - button "2 Likes. Liked" [ref=e543]:
+                              - generic [ref=e544]:
+                                - img [ref=e547]
+                                - generic [ref=e552]: "2"
+                            - link "31 views. View post analytics" [ref=e554]:
+                              - /url: /maxdev/status/2063691563587248622/analytics
+                              - generic [ref=e555]:
+                                - img [ref=e558]
+                                - generic [ref=e563]: "31"
+                            - button "Bookmark" [ref=e565]:
+                              - img [ref=e569]
+                            - button "Share post" [ref=e574]:
+                              - img [ref=e578]
+                    - 'article "Max @maxdev Jun 7 New feature: Searches for people not in the database now show a dedicated message instead of a 404-style page. Also, I launched on PH today, any upvotes would mean a LOT producthunt.com/products/strea thoughts? #buildinpublic #tiktok Image Image 1 repost, 2 likes, 34 views" [ref=e584] [cursor=pointer]':
+                      - generic [ref=e590]:
+                        - link [ref=e602]:
+                          - /url: /maxdev
+                        - generic [ref=e605]:
+                          - generic [ref=e607]:
+                            - generic [ref=e610]:
+                              - link "Max" [ref=e613]:
+                                - /url: /maxdev
+                                - generic [ref=e616]: Max
+                              - generic [ref=e618]:
+                                - link "@maxdev" [ref=e620]:
+                                  - /url: /maxdev
+                                  - generic [ref=e621]: "@maxdev"
+                                - generic [ref=e622]: ·
+                                - link "Jun 7" [ref=e624]:
+                                  - /url: /maxdev/status/2063677246418698673
+                                  - time [ref=e625]: Jun 7
+                            - generic [ref=e627]:
+                              - button "Grok actions" [ref=e629]:
+                                - img [ref=e634]
+                              - button "More" [ref=e640]:
+                                - img [ref=e644]
+                          - generic [ref=e648]:
+                            - text: "New feature: Searches for people not in the database now show a dedicated message instead of a 404-style page. Also, I launched on PH today, any upvotes would mean a LOT"
+                            - link "producthunt.com/products/strea" [ref=e649]:
+                              - /url: https://t.co/DyYxK0FnFv
+                              - text: producthunt.com/products/strea …
+                            - text: thoughts?
+                            - link "#buildinpublic" [ref=e651]:
+                              - /url: /hashtag/buildinpublic?src=hashtag_click
+                            - link "#tiktok" [ref=e653]:
+                              - /url: /hashtag/tiktok?src=hashtag_click
+                          - generic [ref=e662]:
+                            - link "Image" [ref=e665]:
+                              - /url: /maxdev/status/2063677246418698673/photo/1
+                              - generic "Image" [ref=e667]:
+                                - img "Image" [ref=e669]
+                            - link "Image" [ref=e672]:
+                              - /url: /maxdev/status/2063677246418698673/photo/2
+                              - generic "Image" [ref=e674]:
+                                - img "Image" [ref=e676]
+                          - group "1 repost, 2 likes, 34 views" [ref=e679]:
+                            - button "0 Replies. Reply" [ref=e681]:
+                              - img [ref=e685]
+                            - button "1 repost. Repost" [ref=e692]:
+                              - generic [ref=e693]:
+                                - img [ref=e696]
+                                - generic [ref=e701]: "1"
+                            - button "2 Likes. Like" [ref=e703]:
+                              - generic [ref=e704]:
+                                - img [ref=e707]
+                                - generic [ref=e712]: "2"
+                            - link "34 views. View post analytics" [ref=e714]:
+                              - /url: /maxdev/status/2063677246418698673/analytics
+                              - generic [ref=e715]:
+                                - img [ref=e718]
+                                - generic [ref=e723]: "34"
+                            - button "Bookmark" [ref=e725]:
+                              - img [ref=e729]
+                            - button "Share post" [ref=e734]:
+                              - img [ref=e738]
+                    - article "Max @maxdev Jun 6 Made a post on Reddit and got 90k views, Though it hasn't resulted in any significant uplift in page views on my site. Just thought it's interesting. Image" [ref=e744] [cursor=pointer]:
+                      - generic [ref=e750]:
+                        - link [ref=e762]:
+                          - /url: /maxdev
+                        - generic [ref=e765]:
+                          - generic [ref=e767]:
+                            - generic [ref=e770]:
+                              - link "Max" [ref=e773]:
+                                - /url: /maxdev
+                                - generic [ref=e776]: Max
+                              - generic [ref=e778]:
+                                - link "@maxdev" [ref=e780]:
+                                  - /url: /maxdev
+                                  - generic [ref=e781]: "@maxdev"
+                                - generic [ref=e782]: ·
+                                - link "Jun 6" [ref=e784]:
+                                  - /url: /maxdev/status/2063297419463250303
+                                  - time [ref=e785]: Jun 6
+                            - generic [ref=e787]:
+                              - button "Grok actions" [ref=e789]:
+                                - img [ref=e794]
+                              - button "More" [ref=e800]:
+                                - img [ref=e804]
+                          - generic [ref=e808]: Made a post on Reddit and got 90k views, Though it hasn't resulted in any significant uplift in page views on my site. Just thought it's interesting.
+                          - link "Image" [ref=e816]:
+                            - /url: /maxdev/status/2063297419463250303/photo/1
+                            - generic "Image" [ref=e820]:
+                              - img "Image" [ref=e822]
+                          - group "9 views" [ref=e825]:
+                            - button "0 Replies. Reply" [ref=e827]:
+                              - img [ref=e831]
+                            - button "0 reposts. Repost" [ref=e838]:
+                              - img [ref=e842]
+                            - button "0 Likes. Like" [ref=e849]:
+                              - img [ref=e853]
+                            - link "9 views. View post analytics" [ref=e860]:
+                              - /url: /maxdev/status/2063297419463250303/analytics
+                              - generic [ref=e861]:
+                                - img [ref=e864]
+                                - generic [ref=e869]: "9"
+                            - button "Bookmark" [ref=e871]:
+                              - img [ref=e875]
+                            - button "Share post" [ref=e880]:
+                              - img [ref=e884]
+                    - 'article "Max @maxdev Jun 5 launching a new project & have 300+ user mail list from a previous project do you think it''s bad to email said users about my new venture with a \"hello\" and 55% off discount code for the new project? #buildinpublic 3 replies, 1 like, 42 views" [ref=e890] [cursor=pointer]':
+                      - generic [ref=e896]:
+                        - link [ref=e908]:
+                          - /url: /maxdev
+                        - generic [ref=e911]:
+                          - generic [ref=e913]:
+                            - generic [ref=e916]:
+                              - link "Max" [ref=e919]:
+                                - /url: /maxdev
+                                - generic [ref=e922]: Max
+                              - generic [ref=e924]:
+                                - link "@maxdev" [ref=e926]:
+                                  - /url: /maxdev
+                                  - generic [ref=e927]: "@maxdev"
+                                - generic [ref=e928]: ·
+                                - link "Jun 5" [ref=e930]:
+                                  - /url: /maxdev/status/2062656880342712471
+                                  - time [ref=e931]: Jun 5
+                            - generic [ref=e933]:
+                              - button "Grok actions" [ref=e935]:
+                                - img [ref=e940]
+                              - button "More" [ref=e946]:
+                                - img [ref=e950]
+                          - generic [ref=e954]:
+                            - text: launching a new project & have 300+ user mail list from a previous project do you think it's bad to email said users about my new venture with a "hello" and 55% off discount code for the new project?
+                            - link "#buildinpublic" [ref=e956]:
+                              - /url: /hashtag/buildinpublic?src=hashtag_click
+                          - group "3 replies, 1 like, 42 views" [ref=e959]:
+                            - button "3 Replies. Reply" [ref=e961]:
+                              - generic [ref=e962]:
+                                - img [ref=e965]
+                                - generic [ref=e970]: "3"
+                            - button "0 reposts. Repost" [ref=e972]:
+                              - img [ref=e976]
+                            - button "1 Like. Like" [ref=e983]:
+                              - generic [ref=e984]:
+                                - img [ref=e987]
+                                - generic [ref=e992]: "1"
+                            - link "42 views. View post analytics" [ref=e994]:
+                              - /url: /maxdev/status/2062656880342712471/analytics
+                              - generic [ref=e995]:
+                                - img [ref=e998]
+                                - generic [ref=e1003]: "42"
+                            - button "Bookmark" [ref=e1005]:
+                              - img [ref=e1009]
+                            - button "Share post" [ref=e1014]:
+                              - img [ref=e1018]

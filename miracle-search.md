@@ -1,0 +1,88 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e16] [cursor=pointer]
+        - button "Skip to trending" [ref=e18] [cursor=pointer]
+        - banner [ref=e7]:
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - heading "X" [level=1] [ref=e24] [cursor=pointer]:
+                - link "X" [ref=e25]:
+                  - /url: /home
+                  - img [ref=e27]
+              - navigation "Primary" [ref=e31]:
+                - link "Home" [ref=e32] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e35]
+                - link "Search and explore" [ref=e38] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e41]
+                - link "Notifications (1 unread notification)" [ref=e44] [cursor=pointer]:
+                  - /url: /notifications
+                  - generic [ref=e46]:
+                    - img [ref=e47]
+                    - generic "1 unread items" [ref=e50]
+                - link "Follow" [ref=e52] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e55]
+                - link "Direct Messages" [ref=e58] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e61]
+                - link "Grok" [ref=e64] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e67]
+                - link "Bookmarks" [ref=e70] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e73]
+                - link "Creator Studio" [ref=e76] [cursor=pointer]:
+                  - /url: /i/jf/creators/studio
+                  - img [ref=e79]
+                - link "Premium" [ref=e83] [cursor=pointer]:
+                  - /url: /i/premium_sign_up
+                  - img [ref=e86]
+                - link "Profile" [ref=e89] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e92]
+                - button "More menu items" [ref=e95] [cursor=pointer]:
+                  - img [ref=e98]
+              - link "Post" [ref=e102] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e104]
+            - button "Account menu" [ref=e110] [cursor=pointer]:
+              - generic [ref=e118]:
+                - generic:
+                  - generic:
+                    - generic
+        - main [ref=e8]:
+          - generic "Home timeline" [ref=e124]:
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - generic [ref=e131]:
+                  - button "Back" [ref=e133] [cursor=pointer]:
+                    - img [ref=e135]
+                  - search "Search" [ref=e143]:
+                    - generic [ref=e148]
+                  - button "More" [ref=e157] [cursor=pointer]:
+                    - img [ref=e159]
+                - navigation [ref=e163]:
+                  - generic [ref=e164]:
+                    - generic
+                    - tablist [ref=e166]
+                    - generic
+              - generic:
+                - generic:
+                  - status:
+                    - button
+            - region "Search timeline" [ref=e189]:
+              - heading "Search timeline" [level=1] [ref=e190]
+              - 'generic "Timeline: Search timeline" [ref=e191]':
+                - generic [ref=e192]:
+                  - 'article "Miracle Nnamdi Verified account @Miracle_NNnn 12 minutes ago Building Natiad has been a lot of late nights, testing, and learning. Today, we finally launched on Product Hunt. I’d be grateful for an upvote: producthunt.com Natiad: Dominate search and AI with our SEO/GEO agent and free tools | Product Hunt From producthunt.com 2 likes, 4 views" [ref=e196] [cursor=pointer]':
+                    - generic [ref=e202]
+                  - progressbar [ref=e346]:
+                    - img [ref=e348]

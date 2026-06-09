@@ -1,0 +1,550 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - dialog:
+                - group [ref=e6]:
+                  - dialog [ref=e23]:
+                    - generic [ref=e26]:
+                      - progressbar [ref=e27]
+                      - generic [ref=e33]:
+                        - button "Close" [ref=e35] [cursor=pointer]:
+                          - img [ref=e37]
+                        - button "Drafts" [ref=e43] [cursor=pointer]:
+                          - generic [ref=e46]: Drafts
+                      - generic [ref=e52]:
+                        - generic [ref=e53]:
+                          - generic [ref=e61]:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic "adnan":
+                                    - img "adnan"
+                          - generic [ref=e82]:
+                            - generic [ref=e84]: What’s happening?
+                            - textbox "Post text" [active] [ref=e86]
+                        - generic [ref=e90]:
+                          - button "Everyone can reply" [ref=e94] [cursor=pointer]:
+                            - generic [ref=e95]:
+                              - img [ref=e96]
+                              - generic [ref=e100]: Everyone can reply
+                          - generic [ref=e103]:
+                            - navigation [ref=e104]:
+                              - generic [ref=e105]:
+                                - generic:
+                                  - button "Previous" [disabled]:
+                                    - generic:
+                                      - img
+                                - tablist [ref=e107]:
+                                  - generic [ref=e110]:
+                                    - button "Add photos or video" [ref=e111] [cursor=pointer]:
+                                      - img [ref=e113]
+                                    - button "Choose File" [ref=e117]
+                                  - button "Add a GIF" [ref=e120] [cursor=pointer]:
+                                    - img [ref=e122]
+                                  - button "Generate image" [ref=e128] [cursor=pointer]:
+                                    - img [ref=e130]
+                                  - button "Add poll" [ref=e135] [cursor=pointer]:
+                                    - img [ref=e137]
+                                  - button "Add emoji" [ref=e143] [cursor=pointer]:
+                                    - img [ref=e145]
+                                  - button "Schedule post" [ref=e151] [cursor=pointer]:
+                                    - img [ref=e153]
+                                  - button "Tag location" [disabled] [ref=e158]:
+                                    - img [ref=e160]
+                                  - button "Content disclosure" [ref=e165] [cursor=pointer]:
+                                    - img [ref=e167]
+                                - generic:
+                                  - button "Next" [disabled]:
+                                    - generic:
+                                      - img
+                            - button "Post" [disabled] [ref=e172]:
+                              - generic [ref=e175]: Post
+      - generic [ref=e13]:
+        - button [ref=e176] [cursor=pointer]
+        - button [ref=e178] [cursor=pointer]
+        - banner [ref=e14]:
+          - generic [ref=e181]:
+            - generic [ref=e182]:
+              - heading [level=1] [ref=e184] [cursor=pointer]:
+                - link [ref=e185]:
+                  - /url: /home
+                  - img [ref=e187]
+              - navigation [ref=e191]:
+                - link [ref=e192] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e195]
+                - link [ref=e198] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e201]
+                - link [ref=e204] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e207]
+                - link [ref=e210] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e213]
+                - link [ref=e216] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e219]
+                - link [ref=e222] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e225]
+                - link [ref=e228] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e231]
+                - link [ref=e234] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e237]
+                - link [ref=e240] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e243]
+                - link [ref=e248] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e251]
+                - button [ref=e254] [cursor=pointer]:
+                  - img [ref=e257]
+              - link [ref=e261] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e263]
+            - button [ref=e269] [cursor=pointer]:
+              - generic [ref=e277]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+        - main [ref=e15]:
+          - generic [ref=e283]:
+            - generic [ref=e284]:
+              - generic [ref=e287]:
+                - navigation [ref=e289]:
+                  - generic [ref=e290]:
+                    - generic:
+                      - button [disabled]:
+                        - generic:
+                          - img
+                    - tablist [ref=e292]:
+                      - tab [selected] [ref=e293] [cursor=pointer]:
+                        - generic [ref=e295]:
+                          - text: For you
+                          - img [ref=e296]
+                      - tab [ref=e300] [cursor=pointer]:
+                        - generic [ref=e303]: Following
+                    - generic:
+                      - button [disabled]:
+                        - generic:
+                          - img
+                - button [ref=e305] [cursor=pointer]:
+                  - img [ref=e307]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e316]:
+              - link [ref=e325] [cursor=pointer]:
+                - /url: /adnanxpitch
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+              - generic [ref=e328]:
+                - generic [ref=e346]:
+                  - generic [ref=e348]: What’s happening?
+                  - textbox [ref=e350]
+                - generic [ref=e357]:
+                  - navigation [ref=e358]:
+                    - generic [ref=e359]:
+                      - generic:
+                        - button [disabled]:
+                          - generic:
+                            - img
+                      - tablist [ref=e361]:
+                        - generic [ref=e364]:
+                          - button [ref=e365] [cursor=pointer]:
+                            - img [ref=e367]
+                          - button [ref=e371]
+                        - button [ref=e374] [cursor=pointer]:
+                          - img [ref=e376]
+                        - button [ref=e382] [cursor=pointer]:
+                          - img [ref=e384]
+                        - button [ref=e389] [cursor=pointer]:
+                          - img [ref=e391]
+                        - button [ref=e397] [cursor=pointer]:
+                          - img [ref=e399]
+                        - button [ref=e405] [cursor=pointer]:
+                          - img [ref=e407]
+                        - button [disabled] [ref=e412]:
+                          - img [ref=e414]
+                        - button [ref=e419] [cursor=pointer]:
+                          - img [ref=e421]
+                      - generic:
+                        - button [disabled]:
+                          - generic:
+                            - img
+                  - button [disabled] [ref=e426]:
+                    - generic [ref=e429]: Post
+            - region [ref=e432]:
+              - heading [level=1] [ref=e433]: Your Home Timeline
+              - generic [ref=e435]:
+                - article [ref=e439] [cursor=pointer]:
+                  - generic [ref=e445]:
+                    - link [ref=e457]:
+                      - /url: /Sh_a_shi
+                    - generic [ref=e460]:
+                      - generic [ref=e462]:
+                        - generic [ref=e465]:
+                          - link [ref=e468]:
+                            - /url: /Sh_a_shi
+                            - generic [ref=e469]:
+                              - generic [ref=e471]: Shashi
+                              - img [ref=e474]
+                          - generic [ref=e478]:
+                            - link [ref=e480]:
+                              - /url: /Sh_a_shi
+                              - generic [ref=e481]: "@Sh_a_shi"
+                            - generic [ref=e482]: ·
+                            - link [ref=e484]:
+                              - /url: /Sh_a_shi/status/2064218504543477878
+                              - time [ref=e485]: 1h
+                        - generic [ref=e487]:
+                          - button [ref=e489]:
+                            - img [ref=e494]
+                          - button [ref=e500]:
+                            - img [ref=e504]
+                      - generic [ref=e508]: How many programming languages do you actually know?
+                      - link [ref=e516]:
+                        - /url: /Sh_a_shi/status/2064218504543477878/photo/1
+                        - img [ref=e522]
+                      - group [ref=e525]:
+                        - button [ref=e527]:
+                          - generic [ref=e528]:
+                            - img [ref=e531]
+                            - generic [ref=e536]: "12"
+                        - button [ref=e538]:
+                          - generic [ref=e539]:
+                            - img [ref=e542]
+                            - generic [ref=e547]: "1"
+                        - button [ref=e549]:
+                          - generic [ref=e550]:
+                            - img [ref=e553]
+                            - generic [ref=e558]: "9"
+                        - link [ref=e560]:
+                          - /url: /Sh_a_shi/status/2064218504543477878/analytics
+                          - generic [ref=e561]:
+                            - img [ref=e564]
+                            - generic [ref=e569]: "172"
+                        - button [ref=e571]:
+                          - img [ref=e575]
+                        - button [ref=e580]:
+                          - img [ref=e584]
+                - article [ref=e590] [cursor=pointer]:
+                  - generic [ref=e596]:
+                    - link [ref=e608]:
+                      - /url: /markjivko
+                    - generic [ref=e611]:
+                      - generic [ref=e613]:
+                        - generic [ref=e616]:
+                          - link [ref=e619]:
+                            - /url: /markjivko
+                            - generic [ref=e620]:
+                              - generic [ref=e622]: Mark Jivko
+                              - img [ref=e625]
+                          - generic [ref=e629]:
+                            - link [ref=e631]:
+                              - /url: /markjivko
+                              - generic [ref=e632]: "@markjivko"
+                            - generic [ref=e633]: ·
+                            - link [ref=e635]:
+                              - /url: /markjivko/status/2064238597318840515
+                              - time [ref=e636]: 8m
+                        - generic [ref=e638]:
+                          - button [ref=e640]:
+                            - img [ref=e645]
+                          - button [ref=e651]:
+                            - img [ref=e655]
+                      - generic [ref=e659]:
+                        - text: Just reached 500 chekmark followers on my 9th day of activity on X.
+                        - img [ref=e660]
+                        - text: "This truly is the best platform for builders, by far! Who I did it: 99% luck, 1% being a reply guy. So let's keep growing together. Share your product below"
+                        - img [ref=e661]
+                      - group [ref=e664]:
+                        - button [ref=e666]:
+                          - img [ref=e670]
+                        - button [ref=e677]:
+                          - img [ref=e681]
+                        - button [ref=e688]:
+                          - img [ref=e692]
+                        - link [ref=e699]:
+                          - /url: /markjivko/status/2064238597318840515/analytics
+                          - generic [ref=e700]:
+                            - img [ref=e703]
+                            - generic [ref=e708]: "6"
+                        - button [ref=e710]:
+                          - img [ref=e714]
+                        - button [ref=e719]:
+                          - img [ref=e723]
+                - article [ref=e729] [cursor=pointer]:
+                  - generic [ref=e735]:
+                    - link [ref=e747]:
+                      - /url: /nalinrajput23
+                    - generic [ref=e750]:
+                      - generic [ref=e752]:
+                        - generic [ref=e755]:
+                          - link [ref=e758]:
+                            - /url: /nalinrajput23
+                            - generic [ref=e759]:
+                              - generic [ref=e761]: Nalin
+                              - img [ref=e764]
+                          - generic [ref=e768]:
+                            - link [ref=e770]:
+                              - /url: /nalinrajput23
+                              - generic [ref=e771]: "@nalinrajput23"
+                            - generic [ref=e772]: ·
+                            - link [ref=e774]:
+                              - /url: /nalinrajput23/status/2064031177821094175
+                              - time [ref=e775]: 13h
+                        - generic [ref=e777]:
+                          - button [ref=e779]:
+                            - img [ref=e784]
+                          - button [ref=e790]:
+                            - img [ref=e794]
+                      - generic [ref=e798]: just got my MacBook Air, what should i install first ?
+                      - link [ref=e806]:
+                        - /url: /nalinrajput23/status/2064031177821094175/photo/1
+                        - img [ref=e812]
+                      - group [ref=e815]:
+                        - button [ref=e817]:
+                          - generic [ref=e818]:
+                            - img [ref=e821]
+                            - generic [ref=e826]: "40"
+                        - button [ref=e828]:
+                          - generic [ref=e829]:
+                            - img [ref=e832]
+                            - generic [ref=e837]: "1"
+                        - button [ref=e839]:
+                          - generic [ref=e840]:
+                            - img [ref=e843]
+                            - generic [ref=e848]: "34"
+                        - link [ref=e850]:
+                          - /url: /nalinrajput23/status/2064031177821094175/analytics
+                          - generic [ref=e851]:
+                            - img [ref=e854]
+                            - generic [ref=e859]: 2K
+                        - button [ref=e861]:
+                          - img [ref=e865]
+                        - button [ref=e870]:
+                          - img [ref=e874]
+                - article [ref=e880] [cursor=pointer]:
+                  - generic [ref=e886]:
+                    - link [ref=e898]:
+                      - /url: /web3devop
+                    - generic [ref=e901]:
+                      - generic [ref=e903]:
+                        - generic [ref=e906]:
+                          - link [ref=e909]:
+                            - /url: /web3devop
+                            - generic [ref=e910]:
+                              - generic [ref=e912]: Nikhil Pathak
+                              - img [ref=e915]
+                          - generic [ref=e919]:
+                            - link [ref=e921]:
+                              - /url: /web3devop
+                              - generic [ref=e922]: "@web3devop"
+                            - generic [ref=e923]: ·
+                            - link [ref=e925]:
+                              - /url: /web3devop/status/2064137007060910470
+                              - time [ref=e926]: 6h
+                        - generic [ref=e928]:
+                          - button [ref=e930]:
+                            - img [ref=e935]
+                          - button [ref=e941]:
+                            - img [ref=e945]
+                      - generic [ref=e949]: good morning Engineers !!! what are you building today ??
+                      - group [ref=e952]:
+                        - button [ref=e954]:
+                          - generic [ref=e955]:
+                            - img [ref=e958]
+                            - generic [ref=e963]: "23"
+                        - button [ref=e965]:
+                          - img [ref=e969]
+                        - button [ref=e976]:
+                          - generic [ref=e977]:
+                            - img [ref=e980]
+                            - generic [ref=e985]: "19"
+                        - link [ref=e987]:
+                          - /url: /web3devop/status/2064137007060910470/analytics
+                          - generic [ref=e988]:
+                            - img [ref=e991]
+                            - generic [ref=e996]: "343"
+                        - button [ref=e998]:
+                          - img [ref=e1002]
+                        - button [ref=e1007]:
+                          - img [ref=e1011]
+                - article [ref=e1017] [cursor=pointer]:
+                  - generic [ref=e1023]:
+                    - link [ref=e1035]:
+                      - /url: /Sathibuilds
+                    - generic [ref=e1038]:
+                      - generic [ref=e1040]:
+                        - generic [ref=e1043]:
+                          - link [ref=e1046]:
+                            - /url: /Sathibuilds
+                            - generic [ref=e1047]:
+                              - generic [ref=e1049]: Sathish
+                              - img [ref=e1052]
+                          - generic [ref=e1056]:
+                            - link [ref=e1058]:
+                              - /url: /Sathibuilds
+                              - generic [ref=e1059]: "@Sathibuilds"
+                            - generic [ref=e1060]: ·
+                            - link [ref=e1062]:
+                              - /url: /Sathibuilds/status/2064210394428940449
+                              - time [ref=e1063]: 2h
+                        - generic [ref=e1065]:
+                          - button [ref=e1067]:
+                            - img [ref=e1072]
+                          - button [ref=e1078]:
+                            - img [ref=e1082]
+                      - generic [ref=e1086]: Would you quit if your product made $0 in revenue for an entire year?
+                      - group [ref=e1089]:
+                        - button [ref=e1091]:
+                          - generic [ref=e1092]:
+                            - img [ref=e1095]
+                            - generic [ref=e1100]: "3"
+                        - button [ref=e1102]:
+                          - img [ref=e1106]
+                        - button [ref=e1113]:
+                          - generic [ref=e1114]:
+                            - img [ref=e1117]
+                            - generic [ref=e1122]: "2"
+                        - link [ref=e1124]:
+                          - /url: /Sathibuilds/status/2064210394428940449/analytics
+                          - generic [ref=e1125]:
+                            - img [ref=e1128]
+                            - generic [ref=e1133]: "91"
+                        - button [ref=e1135]:
+                          - img [ref=e1139]
+                        - button [ref=e1144]:
+                          - img [ref=e1148]
+                - article [ref=e1154] [cursor=pointer]:
+                  - generic [ref=e1160]:
+                    - link [ref=e1172]:
+                      - /url: /priya_Thakur786
+                    - generic [ref=e1175]:
+                      - generic [ref=e1177]:
+                        - generic [ref=e1180]:
+                          - link [ref=e1183]:
+                            - /url: /priya_Thakur786
+                            - generic [ref=e1184]:
+                              - generic [ref=e1186]: priya
+                              - img [ref=e1189]
+                          - generic [ref=e1193]:
+                            - link [ref=e1195]:
+                              - /url: /priya_Thakur786
+                              - generic [ref=e1196]: "@priya_Thakur786"
+                            - generic [ref=e1197]: ·
+                            - link [ref=e1199]:
+                              - /url: /priya_Thakur786/status/2064193808087351307
+                              - time [ref=e1200]: 3h
+                        - generic [ref=e1202]:
+                          - button [ref=e1204]:
+                            - img [ref=e1209]
+                          - button [ref=e1215]:
+                            - img [ref=e1219]
+                      - generic [ref=e1223]: If linux does so many things better Why do most users stills stick with windows?
+                      - generic [ref=e1232]:
+                        - link [ref=e1235]:
+                          - /url: /priya_Thakur786/status/2064193808087351307/photo/1
+                          - img [ref=e1239]
+                        - link [ref=e1242]:
+                          - /url: /priya_Thakur786/status/2064193808087351307/photo/2
+                          - img [ref=e1246]
+                      - group [ref=e1249]:
+                        - button [ref=e1251]:
+                          - generic [ref=e1252]:
+                            - img [ref=e1255]
+                            - generic [ref=e1260]: "20"
+                        - button [ref=e1262]:
+                          - generic [ref=e1263]:
+                            - img [ref=e1266]
+                            - generic [ref=e1271]: "1"
+                        - button [ref=e1273]:
+                          - generic [ref=e1274]:
+                            - img [ref=e1277]
+                            - generic [ref=e1282]: "24"
+                        - link [ref=e1284]:
+                          - /url: /priya_Thakur786/status/2064193808087351307/analytics
+                          - generic [ref=e1285]:
+                            - img [ref=e1288]
+                            - generic [ref=e1293]: "277"
+                        - button [ref=e1295]:
+                          - img [ref=e1299]
+                        - button [ref=e1304]:
+                          - img [ref=e1308]
+                - article [ref=e1314] [cursor=pointer]:
+                  - generic [ref=e1320]:
+                    - link [ref=e1332]:
+                      - /url: /tryindeep
+                    - generic [ref=e1335]:
+                      - generic [ref=e1337]:
+                        - generic [ref=e1340]:
+                          - link [ref=e1343]:
+                            - /url: /tryindeep
+                            - generic [ref=e1346]: tridip
+                          - generic [ref=e1348]:
+                            - link [ref=e1350]:
+                              - /url: /tryindeep
+                              - generic [ref=e1351]: "@tryindeep"
+                            - generic [ref=e1352]: ·
+                            - link [ref=e1354]:
+                              - /url: /tryindeep/status/2064006714895298732
+                              - time [ref=e1355]: 15h
+                        - generic [ref=e1357]:
+                          - button [ref=e1359]:
+                            - img [ref=e1364]
+                          - button [ref=e1370]:
+                            - img [ref=e1374]
+                      - generic [ref=e1378]:
+                        - img [ref=e1379]
+                        - text: Day 61
+                        - link [ref=e1381]:
+                          - /url: /hashtag/100DaysOfCode?src=hashtag_click
+                          - text: "#100DaysOfCode"
+                        - text: "| 08.06.26 3 sessions: > solved 3 questions SDEsheet challenge. > worked on project : Something cookin' > practice machine coding round question."
+                        - link [ref=e1383]:
+                          - /url: /hashtag/buildinpublic?src=hashtag_click
+                          - text: "#buildinpublic"
+                        - link [ref=e1385]:
+                          - /url: /hashtag/100DaysOfCode?src=hashtag_click
+                          - text: "#100DaysOfCode"
+                      - button [ref=e1412]:
+                        - img [ref=e1413]
+                      - group [ref=e1419]:
+                        - button [ref=e1421]:
+                          - img [ref=e1425]
+                        - button [ref=e1432]:
+                          - img [ref=e1436]
+                        - button [ref=e1443]:
+                          - generic [ref=e1444]:
+                            - img [ref=e1447]
+                            - generic [ref=e1452]: "11"
+                        - link [ref=e1454]:
+                          - /url: /tryindeep/status/2064006714895298732/analytics
+                          - generic [ref=e1455]:
+                            - img [ref=e1458]
+                            - generic [ref=e1463]: "166"
+                        - button [ref=e1465]:
+                          - img [ref=e1469]
+                        - button [ref=e1474]:
+                          - img [ref=e1478]

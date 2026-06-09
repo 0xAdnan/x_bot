@@ -1,0 +1,361 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e7] [cursor=pointer]
+        - button "Skip to trending" [ref=e9] [cursor=pointer]
+        - banner [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - heading "X" [level=1] [ref=e16] [cursor=pointer]:
+                - link "X" [ref=e17]:
+                  - /url: /home
+                  - img [ref=e19]
+              - navigation "Primary" [ref=e23]:
+                - link "Home" [ref=e24] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e27]
+                - link "Search and explore" [ref=e30] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e33]
+                - link "Notifications (2 unread notifications)" [ref=e272] [cursor=pointer]:
+                  - /url: /notifications
+                  - generic [ref=e38]:
+                    - img [ref=e39]
+                    - generic "2 unread items" [ref=e273]:
+                      - generic [ref=e274]: "2"
+                - link "Follow" [ref=e42] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e45]
+                - link "Direct Messages" [ref=e48] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e51]
+                - link "Grok" [ref=e54] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e57]
+                - link "Premium" [ref=e60] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e63]
+                - link "Bookmarks" [ref=e66] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e69]
+                - link "Articles" [ref=e72] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e75]
+                - link "Profile" [ref=e80] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e83]
+                - button "More menu items" [ref=e86] [cursor=pointer]:
+                  - img [ref=e89]
+              - link "Post" [ref=e93] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e95]
+            - button "Account menu" [ref=e101] [cursor=pointer]:
+              - generic [ref=e109]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+        - main [ref=e112]:
+          - generic "Home timeline" [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e121]:
+                - navigation [ref=e123]:
+                  - generic [ref=e124]:
+                    - generic:
+                      - button "Previous" [disabled]:
+                        - generic:
+                          - img
+                    - tablist [ref=e126]:
+                      - tab "For you" [selected] [ref=e127] [cursor=pointer]:
+                        - generic [ref=e129]:
+                          - text: For you
+                          - img [ref=e130]
+                      - tab "Following" [ref=e134] [cursor=pointer]:
+                        - generic [ref=e137]: Following
+                    - generic:
+                      - button "Next" [disabled]:
+                        - generic:
+                          - img
+                - button "Manage timelines" [ref=e139] [cursor=pointer]:
+                  - img [ref=e141]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e150]:
+              - link "adnan" [ref=e159] [cursor=pointer]:
+                - /url: /adnanxpitch
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+              - generic [ref=e162]:
+                - generic [ref=e180]:
+                  - generic [ref=e182]: What’s happening?
+                  - textbox "Post text" [ref=e184]
+                - generic [ref=e191]:
+                  - navigation [ref=e192]:
+                    - generic [ref=e193]:
+                      - generic:
+                        - button "Previous" [disabled]:
+                          - generic:
+                            - img
+                      - tablist [ref=e195]:
+                        - generic [ref=e198]:
+                          - button "Add photos or video" [ref=e199] [cursor=pointer]:
+                            - img [ref=e201]
+                          - button "Choose File" [ref=e205]
+                        - button "Add a GIF" [ref=e208] [cursor=pointer]:
+                          - img [ref=e210]
+                        - button "Generate image" [ref=e216] [cursor=pointer]:
+                          - img [ref=e218]
+                        - button "Add poll" [ref=e223] [cursor=pointer]:
+                          - img [ref=e225]
+                        - button "Add emoji" [ref=e231] [cursor=pointer]:
+                          - img [ref=e233]
+                        - button "Schedule post" [ref=e239] [cursor=pointer]:
+                          - img [ref=e241]
+                        - button "Tag location" [disabled] [ref=e246]:
+                          - img [ref=e248]
+                        - button "Content disclosure" [ref=e253] [cursor=pointer]:
+                          - img [ref=e255]
+                      - generic:
+                        - button "Next" [disabled]:
+                          - generic:
+                            - img
+                  - button "Post" [disabled] [ref=e260]:
+                    - generic [ref=e263]: Post
+            - region "Your Home Timeline" [ref=e275]:
+              - heading "Your Home Timeline" [level=1] [ref=e276]
+              - 'generic "Timeline: Your Home Timeline" [ref=e277]':
+                - generic [ref=e278]:
+                  - article "M Awais Ashraf @AwaisAshraf0x 1 hour ago every vide coder 😆 Image 3 likes, 14 views" [ref=e282] [cursor=pointer]:
+                    - generic [ref=e288]:
+                      - link [ref=e300]:
+                        - /url: /AwaisAshraf0x
+                      - generic [ref=e303]:
+                        - generic [ref=e305]:
+                          - generic [ref=e308]:
+                            - link "M Awais Ashraf" [ref=e311]:
+                              - /url: /AwaisAshraf0x
+                              - generic [ref=e314]: M Awais Ashraf
+                            - generic [ref=e316]:
+                              - link "@AwaisAshraf0x" [ref=e318]:
+                                - /url: /AwaisAshraf0x
+                                - generic [ref=e319]: "@AwaisAshraf0x"
+                              - generic [ref=e320]: ·
+                              - link "1 hour ago" [ref=e322]:
+                                - /url: /AwaisAshraf0x/status/2064217795521544577
+                                - time [ref=e323]: 1h
+                          - generic [ref=e325]:
+                            - button "Grok actions" [ref=e327]:
+                              - img [ref=e332]
+                            - button "More" [ref=e338]:
+                              - img [ref=e342]
+                        - generic [ref=e346]:
+                          - text: every vide coder
+                          - img "😆" [ref=e347]
+                        - link "Image" [ref=e355]:
+                          - /url: /AwaisAshraf0x/status/2064217795521544577/photo/1
+                          - generic "Image" [ref=e359]:
+                            - img "Image" [ref=e361]
+                        - group "3 likes, 14 views" [ref=e364]:
+                          - button "0 Replies. Reply" [ref=e366]:
+                            - img [ref=e370]
+                          - button "0 reposts. Repost" [ref=e377]:
+                            - img [ref=e381]
+                          - button "3 Likes. Like" [ref=e388]:
+                            - generic [ref=e389]:
+                              - img [ref=e392]
+                              - generic [ref=e397]: "3"
+                          - link "14 views. View post analytics" [ref=e399]:
+                            - /url: /AwaisAshraf0x/status/2064217795521544577/analytics
+                            - generic [ref=e400]:
+                              - img [ref=e403]
+                              - generic [ref=e408]: "14"
+                          - button "Bookmark" [ref=e410]:
+                            - img [ref=e414]
+                          - button "Share post" [ref=e419]:
+                            - img [ref=e423]
+                  - 'article "Mark Jivko Verified account @markjivko 1 hour ago Hey builders ✨ I''m excited to connect with fellow makers and creators. Whether you''re working on: 🧪 SaaS 🧠 AI Tools ⚡ Automation 🔧 Developer Tools 🚀 Anything innovative in tech Share what you''re building below and let''s connect. 👇 Image 1 reply, 1 like, 53 views" [ref=e429] [cursor=pointer]':
+                    - generic [ref=e435]:
+                      - link [ref=e447]:
+                        - /url: /markjivko
+                      - generic [ref=e450]:
+                        - generic [ref=e452]:
+                          - generic [ref=e455]:
+                            - link "Mark Jivko Verified account" [ref=e458]:
+                              - /url: /markjivko
+                              - generic [ref=e459]:
+                                - generic [ref=e461]: Mark Jivko
+                                - img "Verified account" [ref=e464]
+                            - generic [ref=e468]:
+                              - link "@markjivko" [ref=e470]:
+                                - /url: /markjivko
+                                - generic [ref=e471]: "@markjivko"
+                              - generic [ref=e472]: ·
+                              - link "1 hour ago" [ref=e474]:
+                                - /url: /markjivko/status/2064208114501488689
+                                - time [ref=e475]: 1h
+                          - generic [ref=e477]:
+                            - button "Grok actions" [ref=e479]:
+                              - img [ref=e484]
+                            - button "More" [ref=e490]:
+                              - img [ref=e494]
+                        - generic [ref=e498]:
+                          - text: Hey builders
+                          - img "✨" [ref=e499]
+                          - text: "I'm excited to connect with fellow makers and creators. Whether you're working on:"
+                          - img "🧪" [ref=e500]
+                          - text: SaaS
+                          - img "🧠" [ref=e501]
+                          - text: AI Tools
+                          - img "⚡" [ref=e502]
+                          - text: Automation
+                          - img "🔧" [ref=e503]
+                          - text: Developer Tools
+                          - img "🚀" [ref=e504]
+                          - text: Anything innovative in tech Share what you're building below and let's connect.
+                          - img "👇" [ref=e505]
+                        - link "Image" [ref=e513]:
+                          - /url: /markjivko/status/2064208114501488689/photo/1
+                          - generic "Image" [ref=e517]:
+                            - img "Image" [ref=e519]
+                        - group "1 reply, 1 like, 53 views" [ref=e522]:
+                          - button "1 Reply. Reply" [ref=e524]:
+                            - generic [ref=e525]:
+                              - img [ref=e528]
+                              - generic [ref=e533]: "1"
+                          - button "0 reposts. Repost" [ref=e535]:
+                            - img [ref=e539]
+                          - button "1 Like. Like" [ref=e546]:
+                            - generic [ref=e547]:
+                              - img [ref=e550]
+                              - generic [ref=e555]: "1"
+                          - link "53 views. View post analytics" [ref=e557]:
+                            - /url: /markjivko/status/2064208114501488689/analytics
+                            - generic [ref=e558]:
+                              - img [ref=e561]
+                              - generic [ref=e566]: "53"
+                          - button "Bookmark" [ref=e568]:
+                            - img [ref=e572]
+                          - button "Share post" [ref=e577]:
+                            - img [ref=e581]
+                  - article "Sneha Verified account @sneha___03 1 hour ago Be honest, What age did you start coding? I started at 19 😄 Image 10 replies, 10 likes, 143 views" [ref=e587] [cursor=pointer]:
+                    - generic [ref=e593]:
+                      - link [ref=e605]:
+                        - /url: /sneha___03
+                      - generic [ref=e608]:
+                        - generic [ref=e610]:
+                          - generic [ref=e613]:
+                            - link "Sneha Verified account" [ref=e616]:
+                              - /url: /sneha___03
+                              - generic [ref=e617]:
+                                - generic [ref=e619]: Sneha
+                                - img "Verified account" [ref=e622]
+                            - generic [ref=e626]:
+                              - link "@sneha___03" [ref=e628]:
+                                - /url: /sneha___03
+                                - generic [ref=e629]: "@sneha___03"
+                              - generic [ref=e630]: ·
+                              - link "1 hour ago" [ref=e632]:
+                                - /url: /sneha___03/status/2064204480116318457
+                                - time [ref=e633]: 1h
+                          - generic [ref=e635]:
+                            - button "Grok actions" [ref=e637]:
+                              - img [ref=e642]
+                            - button "More" [ref=e648]:
+                              - img [ref=e652]
+                        - generic [ref=e656]:
+                          - text: Be honest, What age did you start coding? I started at 19
+                          - img "😄" [ref=e657]
+                        - link "Image" [ref=e665]:
+                          - /url: /sneha___03/status/2064204480116318457/photo/1
+                          - generic "Image" [ref=e669]:
+                            - img "Image" [ref=e671]
+                        - group "10 replies, 10 likes, 143 views" [ref=e674]:
+                          - button "10 Replies. Reply" [ref=e676]:
+                            - generic [ref=e677]:
+                              - img [ref=e680]
+                              - generic [ref=e685]: "10"
+                          - button "0 reposts. Repost" [ref=e687]:
+                            - img [ref=e691]
+                          - button "10 Likes. Like" [ref=e698]:
+                            - generic [ref=e699]:
+                              - img [ref=e702]
+                              - generic [ref=e707]: "10"
+                          - link "143 views. View post analytics" [ref=e709]:
+                            - /url: /sneha___03/status/2064204480116318457/analytics
+                            - generic [ref=e710]:
+                              - img [ref=e713]
+                              - generic [ref=e718]: "143"
+                          - button "Bookmark" [ref=e720]:
+                            - img [ref=e724]
+                          - button "Share post" [ref=e729]:
+                            - img [ref=e733]
+                  - article "Raj28 Verified account @CricTalk29 2 hours ago Good Morning SaaS Founders! 🧑‍💻 • Drop your SaaS, let’s get some users to try it out. 👇 Image 20 replies, 2 reposts, 9 likes, 365 views" [ref=e739] [cursor=pointer]:
+                    - generic [ref=e745]:
+                      - link [ref=e757]:
+                        - /url: /CricTalk29
+                      - generic [ref=e760]:
+                        - generic [ref=e762]:
+                          - generic [ref=e765]:
+                            - link "Raj28 Verified account" [ref=e768]:
+                              - /url: /CricTalk29
+                              - generic [ref=e769]:
+                                - generic [ref=e771]: Raj28
+                                - img "Verified account" [ref=e774]
+                            - generic [ref=e778]:
+                              - link "@CricTalk29" [ref=e780]:
+                                - /url: /CricTalk29
+                                - generic [ref=e781]: "@CricTalk29"
+                              - generic [ref=e782]: ·
+                              - link "2 hours ago" [ref=e784]:
+                                - /url: /CricTalk29/status/2064200928157450383
+                                - time [ref=e785]: 2h
+                          - generic [ref=e787]:
+                            - button "Grok actions" [ref=e789]:
+                              - img [ref=e794]
+                            - button "More" [ref=e800]:
+                              - img [ref=e804]
+                        - generic [ref=e808]:
+                          - text: Good Morning SaaS Founders!
+                          - img "🧑‍💻" [ref=e809]
+                          - text: • Drop your SaaS, let’s get some users to try it out.
+                          - img "👇" [ref=e810]
+                        - link "Image" [ref=e818]:
+                          - /url: /CricTalk29/status/2064200928157450383/photo/1
+                          - generic "Image" [ref=e822]:
+                            - img "Image" [ref=e824]
+                        - group "20 replies, 2 reposts, 9 likes, 365 views" [ref=e827]:
+                          - button "20 Replies. Reply" [ref=e829]:
+                            - generic [ref=e830]:
+                              - img [ref=e833]
+                              - generic [ref=e838]: "20"
+                          - button "2 reposts. Repost" [ref=e840]:
+                            - generic [ref=e841]:
+                              - img [ref=e844]
+                              - generic [ref=e849]: "2"
+                          - button "9 Likes. Like" [ref=e851]:
+                            - generic [ref=e852]:
+                              - img [ref=e855]
+                              - generic [ref=e860]: "9"
+                          - link "365 views. View post analytics" [ref=e862]:
+                            - /url: /CricTalk29/status/2064200928157450383/analytics
+                            - generic [ref=e863]:
+                              - img [ref=e866]
+                              - generic [ref=e871]: "365"
+                          - button "Bookmark" [ref=e873]:
+                            - img [ref=e877]
+                          - button "Share post" [ref=e882]:
+                            - img [ref=e886]

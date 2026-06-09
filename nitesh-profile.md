@@ -1,0 +1,337 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e16] [cursor=pointer]
+        - button "Skip to trending" [ref=e18] [cursor=pointer]
+        - banner [ref=e7]:
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - heading "X" [level=1] [ref=e24] [cursor=pointer]:
+                - link "X" [ref=e25]:
+                  - /url: /home
+                  - img [ref=e27]
+              - navigation "Primary" [ref=e31]:
+                - link "Home" [ref=e32] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e35]
+                - link "Search and explore" [ref=e38] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e41]
+                - link "Notifications" [ref=e44] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e47]
+                - link "Follow" [ref=e50] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e53]
+                - link "Direct Messages" [ref=e56] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e59]
+                - link "Grok" [ref=e62] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e65]
+                - link "Premium" [ref=e68] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e71]
+                - link "Bookmarks" [ref=e74] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e77]
+                - link "Articles" [ref=e80] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e83]
+                - link "Profile" [ref=e88] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e91]
+                - button "More menu items" [ref=e94] [cursor=pointer]:
+                  - img [ref=e97]
+              - link "Post" [ref=e101] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e103]
+            - button "Account menu" [ref=e109] [cursor=pointer]:
+              - generic [ref=e117]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+        - main [ref=e8]:
+          - generic "Home timeline" [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e130] [cursor=pointer]:
+                - button "Back" [ref=e132]:
+                  - img [ref=e134]
+                - generic [ref=e138]:
+                  - heading "Nitesh Singh Verified account" [level=2] [ref=e139]:
+                    - generic [ref=e143]:
+                      - generic [ref=e145]: Nitesh Singh
+                      - img "Verified account" [ref=e148]
+                  - generic [ref=e151]: 147 posts
+                - generic [ref=e153]:
+                  - button "Profile Summary" [ref=e154]:
+                    - img [ref=e156]
+                  - button "Search" [ref=e159]:
+                    - img [ref=e161]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e166]:
+              - generic [ref=e172]:
+                - generic [ref=e173]:
+                  - link "Opens profile photo" [ref=e181] [cursor=pointer]:
+                    - /url: /niteshsingh2907/photo
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic "Opens profile photo":
+                            - img "Opens profile photo"
+                  - generic [ref=e184]:
+                    - button "More" [ref=e185] [cursor=pointer]:
+                      - img [ref=e187]
+                    - button "Follow @niteshsingh2907" [ref=e192] [cursor=pointer]:
+                      - generic [ref=e195]: Follow
+                - generic [ref=e199]:
+                  - generic [ref=e203]:
+                    - text: Nitesh Singh
+                    - button "Provides details about verified accounts." [ref=e208] [cursor=pointer]:
+                      - img "Verified account" [ref=e209]
+                  - generic [ref=e215]: "@niteshsingh2907"
+                - generic [ref=e218]:
+                  - img "💸" [ref=e219]
+                  - text: On a mission to save people money.
+                  - img "🚀" [ref=e220]
+                  - text: Building Billify
+                - generic [ref=e222]:
+                  - img [ref=e223] [cursor=pointer]
+                  - button "Entrepreneur" [ref=e226]
+                  - img [ref=e227]
+                  - generic [ref=e230]: Bihar, India
+                  - link "findyoursubscription.netlify.app" [ref=e231] [cursor=pointer]:
+                    - /url: https://t.co/MWc0o70NDU
+                    - img [ref=e232]
+                    - text: findyoursubscription.netlify.app
+                  - link "Joined January 2025" [ref=e236] [cursor=pointer]:
+                    - /url: /niteshsingh2907/about
+                    - img [ref=e237]
+                    - text: Joined January 2025
+                    - img [ref=e240]
+                - generic [ref=e243]:
+                  - link "334 Following" [ref=e245] [cursor=pointer]:
+                    - /url: /niteshsingh2907/following
+                    - generic [ref=e246]: "334"
+                    - generic [ref=e247]: Following
+                  - link "199 Followers" [ref=e249] [cursor=pointer]:
+                    - /url: /niteshsingh2907/verified_followers
+                    - generic [ref=e250]: "199"
+                    - generic [ref=e251]: Followers
+                - generic [ref=e257]: Not followed by anyone you’re following
+              - navigation "Profile timelines" [ref=e259]:
+                - generic [ref=e260]:
+                  - generic:
+                    - button "Previous" [disabled]:
+                      - generic:
+                        - img
+                  - tablist [ref=e262]:
+                    - tab "Posts" [selected] [ref=e263] [cursor=pointer]:
+                      - generic [ref=e266]: Posts
+                    - tab "Replies" [ref=e268] [cursor=pointer]:
+                      - generic [ref=e271]: Replies
+                    - tab "Highlights" [ref=e272] [cursor=pointer]:
+                      - generic [ref=e275]: Highlights
+                    - tab "Media" [ref=e276] [cursor=pointer]:
+                      - generic [ref=e279]: Media
+                  - generic:
+                    - button "Next" [disabled]:
+                      - generic:
+                        - img
+              - region "Nitesh Singh’s posts" [ref=e280]:
+                - heading "Nitesh Singh’s posts" [level=1] [ref=e281]
+                - 'generic "Timeline: Nitesh Singh’s posts" [ref=e282]':
+                  - generic [ref=e283]:
+                    - 'article "Pinned Nitesh Singh Verified account @niteshsingh2907 Jun 7 🚀 We’re LIVE on Product Hunt! Most people know their bank balance. But do you know: 💳 How many subscriptions you’re paying for? 📅 What’s renewing next? 💸 What you’re wasting money on? That’s why we built Billify. 🔗 producthunt.com/products/billi #ProductHunt #BuildInPublic Image 8 replies, 10 likes, Liked, 308 views" [ref=e287] [cursor=pointer]':
+                      - generic [ref=e289]:
+                        - generic [ref=e294]:
+                          - img [ref=e296]
+                          - generic [ref=e302]: Pinned
+                        - generic [ref=e303]:
+                          - link [ref=e315]:
+                            - /url: /niteshsingh2907
+                          - generic [ref=e318]:
+                            - generic [ref=e320]:
+                              - generic [ref=e323]:
+                                - link "Nitesh Singh Verified account" [ref=e326]:
+                                  - /url: /niteshsingh2907
+                                  - generic [ref=e327]:
+                                    - generic [ref=e329]: Nitesh Singh
+                                    - img "Verified account" [ref=e332]
+                                - generic [ref=e336]:
+                                  - link "@niteshsingh2907" [ref=e338]:
+                                    - /url: /niteshsingh2907
+                                    - generic [ref=e339]: "@niteshsingh2907"
+                                  - generic [ref=e340]: ·
+                                  - link "Jun 7" [ref=e342]:
+                                    - /url: /niteshsingh2907/status/2063538519965061158
+                                    - time [ref=e343]: Jun 7
+                              - generic [ref=e345]:
+                                - button "Grok actions" [ref=e347]:
+                                  - img [ref=e352]
+                                - button "More" [ref=e358]:
+                                  - img [ref=e362]
+                            - generic [ref=e366]:
+                              - img "🚀" [ref=e367]
+                              - text: "We’re LIVE on Product Hunt! Most people know their bank balance. But do you know:"
+                              - img "💳" [ref=e368]
+                              - text: How many subscriptions you’re paying for?
+                              - img "📅" [ref=e369]
+                              - text: What’s renewing next?
+                              - img "💸" [ref=e370]
+                              - text: What you’re wasting money on? That’s why we built Billify.
+                              - img "🔗" [ref=e371]
+                              - link "producthunt.com/products/billi" [ref=e372]:
+                                - /url: https://t.co/wZPNeIZ4s3
+                                - text: producthunt.com/products/billi …
+                              - link "#ProductHunt" [ref=e374]:
+                                - /url: /hashtag/ProductHunt?src=hashtag_click
+                              - link "#BuildInPublic" [ref=e376]:
+                                - /url: /hashtag/BuildInPublic?src=hashtag_click
+                            - link "Image" [ref=e384]:
+                              - /url: /niteshsingh2907/status/2063538519965061158/photo/1
+                              - generic "Image" [ref=e388]:
+                                - img "Image" [ref=e390]
+                            - generic [ref=e392]:
+                              - img [ref=e393]
+                              - text: Made with AI
+                            - group "8 replies, 10 likes, Liked, 308 views" [ref=e399]:
+                              - button "8 Replies. Reply" [ref=e401]:
+                                - generic [ref=e402]:
+                                  - img [ref=e405]
+                                  - generic [ref=e410]: "8"
+                              - button "0 reposts. Repost" [ref=e412]:
+                                - img [ref=e416]
+                              - button "10 Likes. Liked" [ref=e423]:
+                                - generic [ref=e424]:
+                                  - img [ref=e427]
+                                  - generic [ref=e432]: "10"
+                              - link "308 views. View post analytics" [ref=e434]:
+                                - /url: /niteshsingh2907/status/2063538519965061158/analytics
+                                - generic [ref=e435]:
+                                  - img [ref=e438]
+                                  - generic [ref=e443]: "308"
+                              - button "Bookmark" [ref=e445]:
+                                - img [ref=e449]
+                              - button "Share post" [ref=e454]:
+                                - img [ref=e458]
+                    - 'article "Nitesh Singh Verified account @niteshsingh2907 1 hour ago Question: How many subscriptions are charging your card right now? Without checking. Most people can’t answer. Not because they don’t spend money. Because subscriptions are designed to become invisible. ₹99 here. ₹199 there. ₹499 somewhere else. A few months later Image 1 like, 7 views" [ref=e464] [cursor=pointer]':
+                      - generic [ref=e470]:
+                        - link [ref=e482]:
+                          - /url: /niteshsingh2907
+                        - generic [ref=e485]:
+                          - generic [ref=e487]:
+                            - generic [ref=e490]:
+                              - link "Nitesh Singh Verified account" [ref=e493]:
+                                - /url: /niteshsingh2907
+                                - generic [ref=e494]:
+                                  - generic [ref=e496]: Nitesh Singh
+                                  - img "Verified account" [ref=e499]
+                              - generic [ref=e503]:
+                                - link "@niteshsingh2907" [ref=e505]:
+                                  - /url: /niteshsingh2907
+                                  - generic [ref=e506]: "@niteshsingh2907"
+                                - generic [ref=e507]: ·
+                                - link "1 hour ago" [ref=e509]:
+                                  - /url: /niteshsingh2907/status/2064210409436127557
+                                  - time [ref=e510]: 1h
+                            - generic [ref=e512]:
+                              - button "Grok actions" [ref=e514]:
+                                - img [ref=e519]
+                              - button "More" [ref=e525]:
+                                - img [ref=e529]
+                          - generic [ref=e532]:
+                            - generic [ref=e533]: "Question: How many subscriptions are charging your card right now? Without checking. Most people can’t answer. Not because they don’t spend money. Because subscriptions are designed to become invisible. ₹99 here. ₹199 there. ₹499 somewhere else. A few months later"
+                            - button "Show more" [ref=e534]
+                          - link "Image" [ref=e542]:
+                            - /url: /niteshsingh2907/status/2064210409436127557/photo/1
+                            - generic "Image" [ref=e546]:
+                              - img "Image" [ref=e548]
+                          - generic [ref=e550]:
+                            - img [ref=e551]
+                            - text: Made with AI
+                          - group "1 like, 7 views" [ref=e557]:
+                            - button "0 Replies. Reply" [ref=e559]:
+                              - img [ref=e563]
+                            - button "0 reposts. Repost" [ref=e570]:
+                              - img [ref=e574]
+                            - button "1 Like. Like" [ref=e581]:
+                              - generic [ref=e582]:
+                                - img [ref=e585]
+                                - generic [ref=e590]: "1"
+                            - link "7 views. View post analytics" [ref=e592]:
+                              - /url: /niteshsingh2907/status/2064210409436127557/analytics
+                              - generic [ref=e593]:
+                                - img [ref=e596]
+                                - generic [ref=e601]: "7"
+                            - button "Bookmark" [ref=e603]:
+                              - img [ref=e607]
+                            - button "Share post" [ref=e612]:
+                              - img [ref=e616]
+                    - article "Nitesh Singh Verified account @niteshsingh2907 8 hours ago 3 AM in India 🇮🇳 Still building!! What’s keeping you awake right now? • Startup • Side project • Job • Studies 👇 👇 👇 Image 1 like, 21 views" [ref=e622] [cursor=pointer]:
+                      - generic [ref=e628]:
+                        - link [ref=e640]:
+                          - /url: /niteshsingh2907
+                        - generic [ref=e643]:
+                          - generic [ref=e645]:
+                            - generic [ref=e648]:
+                              - link "Nitesh Singh Verified account" [ref=e651]:
+                                - /url: /niteshsingh2907
+                                - generic [ref=e652]:
+                                  - generic [ref=e654]: Nitesh Singh
+                                  - img "Verified account" [ref=e657]
+                              - generic [ref=e661]:
+                                - link "@niteshsingh2907" [ref=e663]:
+                                  - /url: /niteshsingh2907
+                                  - generic [ref=e664]: "@niteshsingh2907"
+                                - generic [ref=e665]: ·
+                                - link "8 hours ago" [ref=e667]:
+                                  - /url: /niteshsingh2907/status/2064100041841942550
+                                  - time [ref=e668]: 8h
+                            - generic [ref=e670]:
+                              - button "Grok actions" [ref=e672]:
+                                - img [ref=e677]
+                              - button "More" [ref=e683]:
+                                - img [ref=e687]
+                          - generic [ref=e691]:
+                            - text: 3 AM in India
+                            - img "🇮🇳" [ref=e692]
+                            - text: Still building!! What’s keeping you awake right now? • Startup • Side project • Job • Studies
+                            - img "👇" [ref=e693]
+                            - img "👇" [ref=e694]
+                            - img "👇" [ref=e695]
+                          - link "Image" [ref=e703]:
+                            - /url: /niteshsingh2907/status/2064100041841942550/photo/1
+                            - generic "Image" [ref=e707]:
+                              - img "Image" [ref=e709]
+                          - group "1 like, 21 views" [ref=e712]:
+                            - button "0 Replies. Reply" [ref=e714]:
+                              - img [ref=e718]
+                            - button "0 reposts. Repost" [ref=e725]:
+                              - img [ref=e729]
+                            - button "1 Like. Like" [ref=e736]:
+                              - generic [ref=e737]:
+                                - img [ref=e740]
+                                - generic [ref=e745]: "1"
+                            - link "21 views. View post analytics" [ref=e747]:
+                              - /url: /niteshsingh2907/status/2064100041841942550/analytics
+                              - generic [ref=e748]:
+                                - img [ref=e751]
+                                - generic [ref=e756]: "21"
+                            - button "Bookmark" [ref=e758]:
+                              - img [ref=e762]
+                            - button "Share post" [ref=e767]:
+                              - img [ref=e771]

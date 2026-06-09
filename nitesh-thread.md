@@ -1,0 +1,446 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e7] [cursor=pointer]
+        - button "Skip to trending" [ref=e9] [cursor=pointer]
+        - banner [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - heading "X" [level=1] [ref=e16] [cursor=pointer]:
+                - link "X" [ref=e17]:
+                  - /url: /home
+                  - img [ref=e19]
+              - navigation "Primary" [ref=e23]:
+                - link "Home" [ref=e24] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e27]
+                - link "Search and explore" [ref=e30] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e33]
+                - link "Notifications" [ref=e36] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e39]
+                - link "Follow" [ref=e42] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e45]
+                - link "Direct Messages" [ref=e48] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e51]
+                - link "Grok" [ref=e54] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e57]
+                - link "Premium" [ref=e60] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e63]
+                - link "Bookmarks" [ref=e66] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e69]
+                - link "Articles" [ref=e72] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e75]
+                - link "Profile" [ref=e80] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e83]
+                - button "More menu items" [ref=e86] [cursor=pointer]:
+                  - img [ref=e89]
+              - link "Post" [ref=e93] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e95]
+            - button "Account menu" [ref=e101] [cursor=pointer]:
+              - generic [ref=e109]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+        - main [ref=e112]:
+          - generic "Home timeline" [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e124] [cursor=pointer]:
+                - button "Back" [ref=e126]:
+                  - img [ref=e128]
+                - heading "Post" [level=2] [ref=e140]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - region "Conversation" [ref=e141]:
+              - heading "Conversation" [level=1] [ref=e142]
+              - 'generic "Timeline: Conversation" [ref=e143]':
+                - generic [ref=e144]:
+                  - generic [ref=e147]:
+                    - 'article "Nitesh Singh Verified account @niteshsingh2907 🚀 We’re LIVE on Product Hunt! Most people know their bank balance. But do you know: 💳 How many subscriptions you’re paying for? 📅 What’s renewing next? 💸 What you’re wasting money on? That’s why we built Billify. 🔗 producthunt.com/products/billi #ProductHunt #BuildInPublic Image 8 replies, 10 likes, Liked, 308 views" [ref=e148]':
+                      - generic [ref=e150]:
+                        - generic [ref=e154]:
+                          - link [active] [ref=e166] [cursor=pointer]:
+                            - /url: /niteshsingh2907
+                          - generic [ref=e171]:
+                            - generic [ref=e174]:
+                              - link "Nitesh Singh Verified account" [ref=e177] [cursor=pointer]:
+                                - /url: /niteshsingh2907
+                                - generic [ref=e178]:
+                                  - generic [ref=e180]: Nitesh Singh
+                                  - img "Verified account" [ref=e183]
+                              - link "@niteshsingh2907" [ref=e189] [cursor=pointer]:
+                                - /url: /niteshsingh2907
+                                - generic [ref=e190]: "@niteshsingh2907"
+                            - generic [ref=e192]:
+                              - button "Follow @niteshsingh2907" [ref=e194] [cursor=pointer]:
+                                - generic [ref=e197]: Follow
+                              - button "Grok actions" [ref=e199] [cursor=pointer]:
+                                - img [ref=e204]
+                              - button "More" [ref=e210] [cursor=pointer]:
+                                - img [ref=e214]
+                        - generic [ref=e217]:
+                          - generic [ref=e219]:
+                            - img "🚀" [ref=e220]
+                            - text: "We’re LIVE on Product Hunt! Most people know their bank balance. But do you know:"
+                            - img "💳" [ref=e221]
+                            - text: How many subscriptions you’re paying for?
+                            - img "📅" [ref=e222]
+                            - text: What’s renewing next?
+                            - img "💸" [ref=e223]
+                            - text: What you’re wasting money on? That’s why we built Billify.
+                            - img "🔗" [ref=e224]
+                            - link "producthunt.com/products/billi" [ref=e225] [cursor=pointer]:
+                              - /url: https://t.co/wZPNeIZ4s3
+                              - text: producthunt.com/products/billi …
+                            - link "#ProductHunt" [ref=e227] [cursor=pointer]:
+                              - /url: /hashtag/ProductHunt?src=hashtag_click
+                            - link "#BuildInPublic" [ref=e229] [cursor=pointer]:
+                              - /url: /hashtag/BuildInPublic?src=hashtag_click
+                          - link "Image" [ref=e237] [cursor=pointer]:
+                            - /url: /niteshsingh2907/status/2063538519965061158/photo/1
+                            - generic "Image" [ref=e241]:
+                              - img "Image" [ref=e243]
+                          - generic [ref=e245]:
+                            - img [ref=e246]
+                            - text: Made with AI
+                          - generic [ref=e253]:
+                            - link "1:58 PM · Jun 7, 2026" [ref=e255] [cursor=pointer]:
+                              - /url: /niteshsingh2907/status/2063538519965061158
+                              - time [ref=e256]: 1:58 PM · Jun 7, 2026
+                            - generic [ref=e257]: ·
+                            - link "308 Views" [ref=e258] [cursor=pointer]:
+                              - /url: /niteshsingh2907/status/2063538519965061158/analytics
+                              - generic [ref=e261]: "308"
+                              - generic [ref=e262]: Views
+                          - generic [ref=e263]:
+                            - group "8 replies, 10 likes, Liked, 308 views" [ref=e265]:
+                              - button "8 Replies. Reply" [ref=e267] [cursor=pointer]:
+                                - generic [ref=e268]:
+                                  - img [ref=e271]
+                                  - generic [ref=e276]: "8"
+                              - button "0 reposts. Repost" [ref=e278] [cursor=pointer]:
+                                - img [ref=e282]
+                              - button "10 Likes. Liked" [ref=e289] [cursor=pointer]:
+                                - generic [ref=e290]:
+                                  - img [ref=e293]
+                                  - generic [ref=e298]: "10"
+                              - button "0 Bookmarks. Bookmark" [ref=e300] [cursor=pointer]:
+                                - img [ref=e304]
+                              - button "Share post" [ref=e312] [cursor=pointer]:
+                                - img [ref=e316]
+                            - button "Relevant" [ref=e322]:
+                              - text: Relevant
+                              - img [ref=e323]
+                    - generic [ref=e333]:
+                      - link "adnan" [ref=e342] [cursor=pointer]:
+                        - /url: /adnanxpitch
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic "adnan":
+                                - img "adnan"
+                      - generic [ref=e350]:
+                        - generic [ref=e363]:
+                          - generic [ref=e365]: Post your reply
+                          - textbox "Post text" [ref=e367]
+                        - button "Reply" [disabled] [ref=e372]:
+                          - generic [ref=e375]: Reply
+                  - article "Aryan SMM Verified account @aryaan_smm Jun 7 looking like great tool,upvoted 1 reply, 1 like, 31 views" [ref=e380] [cursor=pointer]:
+                    - generic [ref=e386]:
+                      - link [ref=e398]:
+                        - /url: /aryaan_smm
+                      - generic [ref=e401]:
+                        - generic [ref=e403]:
+                          - generic [ref=e406]:
+                            - link "Aryan SMM Verified account" [ref=e409]:
+                              - /url: /aryaan_smm
+                              - generic [ref=e410]:
+                                - generic [ref=e412]: Aryan SMM
+                                - img "Verified account" [ref=e415]
+                            - generic [ref=e419]:
+                              - link "@aryaan_smm" [ref=e421]:
+                                - /url: /aryaan_smm
+                                - generic [ref=e422]: "@aryaan_smm"
+                              - generic [ref=e423]: ·
+                              - link "Jun 7" [ref=e425]:
+                                - /url: /aryaan_smm/status/2063560125668098457
+                                - time [ref=e426]: Jun 7
+                          - generic [ref=e428]:
+                            - button "Grok actions" [ref=e430]:
+                              - img [ref=e435]
+                            - button "More" [ref=e441]:
+                              - img [ref=e445]
+                        - generic [ref=e449]: looking like great tool,upvoted
+                        - group "1 reply, 1 like, 31 views" [ref=e452]:
+                          - button "1 Reply. Reply" [ref=e454]:
+                            - generic [ref=e455]:
+                              - img [ref=e458]
+                              - generic [ref=e463]: "1"
+                          - button "0 reposts. Repost" [ref=e465]:
+                            - img [ref=e469]
+                          - button "1 Like. Like" [ref=e476]:
+                            - generic [ref=e477]:
+                              - img [ref=e480]
+                              - generic [ref=e485]: "1"
+                          - link "31 views. View post analytics" [ref=e487]:
+                            - /url: /aryaan_smm/status/2063560125668098457/analytics
+                            - generic [ref=e488]:
+                              - img [ref=e491]
+                              - generic [ref=e496]: "31"
+                          - button "Bookmark" [ref=e498]:
+                            - img [ref=e502]
+                          - button "Share post" [ref=e507]:
+                            - img [ref=e511]
+                  - article "Saïd Aitmbarek Verified account @SaidAitmbarek Jun 7 smart product actually, upvoted mate feel free to launch on @microlaunchhq too we get 30k+ makers/mo on the app 1 reply, 1 like, 47 views" [ref=e517] [cursor=pointer]:
+                    - generic [ref=e523]:
+                      - link [ref=e535]:
+                        - /url: /SaidAitmbarek
+                      - generic [ref=e538]:
+                        - generic [ref=e540]:
+                          - generic [ref=e543]:
+                            - link "Saïd Aitmbarek Verified account" [ref=e546]:
+                              - /url: /SaidAitmbarek
+                              - generic [ref=e547]:
+                                - generic [ref=e549]: Saïd Aitmbarek
+                                - img "Verified account" [ref=e552]
+                            - generic [ref=e556]:
+                              - link "@SaidAitmbarek" [ref=e558]:
+                                - /url: /SaidAitmbarek
+                                - generic [ref=e559]: "@SaidAitmbarek"
+                              - generic [ref=e560]: ·
+                              - link "Jun 7" [ref=e562]:
+                                - /url: /SaidAitmbarek/status/2063659084696506375
+                                - time [ref=e563]: Jun 7
+                          - generic [ref=e565]:
+                            - button "Grok actions" [ref=e567]:
+                              - img [ref=e572]
+                            - button "More" [ref=e578]:
+                              - img [ref=e582]
+                        - generic [ref=e586]:
+                          - text: smart product actually, upvoted mate feel free to launch on
+                          - link "@microlaunchhq" [ref=e589]:
+                            - /url: /MicroLaunchHQ
+                          - text: too we get 30k+ makers/mo on the app
+                        - group "1 reply, 1 like, 47 views" [ref=e592]:
+                          - button "1 Reply. Reply" [ref=e594]:
+                            - generic [ref=e595]:
+                              - img [ref=e598]
+                              - generic [ref=e603]: "1"
+                          - button "0 reposts. Repost" [ref=e605]:
+                            - img [ref=e609]
+                          - button "1 Like. Like" [ref=e616]:
+                            - generic [ref=e617]:
+                              - img [ref=e620]
+                              - generic [ref=e625]: "1"
+                          - link "47 views. View post analytics" [ref=e627]:
+                            - /url: /SaidAitmbarek/status/2063659084696506375/analytics
+                            - generic [ref=e628]:
+                              - img [ref=e631]
+                              - generic [ref=e636]: "47"
+                          - button "Bookmark" [ref=e638]:
+                            - img [ref=e642]
+                          - button "Share post" [ref=e647]:
+                            - img [ref=e651]
+                  - article "Aaliya Verified account @aaliya_va Jun 7 Upvoted on Product Hunt 1 reply, 1 like, 93 views" [ref=e657] [cursor=pointer]:
+                    - generic [ref=e663]:
+                      - link [ref=e675]:
+                        - /url: /aaliya_va
+                      - generic [ref=e678]:
+                        - generic [ref=e680]:
+                          - generic [ref=e683]:
+                            - link "Aaliya Verified account" [ref=e686]:
+                              - /url: /aaliya_va
+                              - generic [ref=e687]:
+                                - generic [ref=e689]: Aaliya
+                                - img "Verified account" [ref=e692]
+                            - generic [ref=e696]:
+                              - link "@aaliya_va" [ref=e698]:
+                                - /url: /aaliya_va
+                                - generic [ref=e699]: "@aaliya_va"
+                              - generic [ref=e700]: ·
+                              - link "Jun 7" [ref=e702]:
+                                - /url: /aaliya_va/status/2063572707254448344
+                                - time [ref=e703]: Jun 7
+                          - generic [ref=e705]:
+                            - button "Grok actions" [ref=e707]:
+                              - img [ref=e712]
+                            - button "More" [ref=e718]:
+                              - img [ref=e722]
+                        - generic [ref=e726]: Upvoted on Product Hunt
+                        - group "1 reply, 1 like, 93 views" [ref=e729]:
+                          - button "1 Reply. Reply" [ref=e731]:
+                            - generic [ref=e732]:
+                              - img [ref=e735]
+                              - generic [ref=e740]: "1"
+                          - button "0 reposts. Repost" [ref=e742]:
+                            - img [ref=e746]
+                          - button "1 Like. Like" [ref=e753]:
+                            - generic [ref=e754]:
+                              - img [ref=e757]
+                              - generic [ref=e762]: "1"
+                          - link "93 views. View post analytics" [ref=e764]:
+                            - /url: /aaliya_va/status/2063572707254448344/analytics
+                            - generic [ref=e765]:
+                              - img [ref=e768]
+                              - generic [ref=e773]: "93"
+                          - button "Bookmark" [ref=e775]:
+                            - img [ref=e779]
+                          - button "Share post" [ref=e784]:
+                            - img [ref=e788]
+                  - article "Artists Voyage 🔶 Verified account @artists_voyage Jun 7 congrats 1 reply, 1 like, 30 views" [ref=e794] [cursor=pointer]:
+                    - generic [ref=e800]:
+                      - link [ref=e812]:
+                        - /url: /artists_voyage
+                      - generic [ref=e815]:
+                        - generic [ref=e817]:
+                          - generic [ref=e820]:
+                            - link "Artists Voyage 🔶 Verified account" [ref=e823]:
+                              - /url: /artists_voyage
+                              - generic [ref=e824]:
+                                - generic [ref=e826]:
+                                  - text: Artists Voyage
+                                  - img "🔶" [ref=e827]
+                                - img "Verified account" [ref=e830]
+                            - generic [ref=e834]:
+                              - link "@artists_voyage" [ref=e836]:
+                                - /url: /artists_voyage
+                                - generic [ref=e837]: "@artists_voyage"
+                              - generic [ref=e838]: ·
+                              - link "Jun 7" [ref=e840]:
+                                - /url: /artists_voyage/status/2063559930393866593
+                                - time [ref=e841]: Jun 7
+                          - generic [ref=e843]:
+                            - button "Grok actions" [ref=e845]:
+                              - img [ref=e850]
+                            - button "More" [ref=e856]:
+                              - img [ref=e860]
+                        - generic [ref=e864]: congrats
+                        - group "1 reply, 1 like, 30 views" [ref=e867]:
+                          - button "1 Reply. Reply" [ref=e869]:
+                            - generic [ref=e870]:
+                              - img [ref=e873]
+                              - generic [ref=e878]: "1"
+                          - button "0 reposts. Repost" [ref=e880]:
+                            - img [ref=e884]
+                          - button "1 Like. Like" [ref=e891]:
+                            - generic [ref=e892]:
+                              - img [ref=e895]
+                              - generic [ref=e900]: "1"
+                          - link "30 views. View post analytics" [ref=e902]:
+                            - /url: /artists_voyage/status/2063559930393866593/analytics
+                            - generic [ref=e903]:
+                              - img [ref=e906]
+                              - generic [ref=e911]: "30"
+                          - button "Bookmark" [ref=e913]:
+                            - img [ref=e917]
+                          - button "Share post" [ref=e922]:
+                            - img [ref=e926]
+                  - article "Launch54 | Product Directory Verified account @Launch54com Jun 8 Awesome! Congratulations on the Product Hunt launch! 1 like, 29 views" [ref=e932] [cursor=pointer]:
+                    - generic [ref=e938]:
+                      - link [ref=e950]:
+                        - /url: /Launch54com
+                      - generic [ref=e953]:
+                        - generic [ref=e955]:
+                          - generic [ref=e958]:
+                            - link "Launch54 | Product Directory Verified account" [ref=e961]:
+                              - /url: /Launch54com
+                              - generic [ref=e962]:
+                                - generic [ref=e964]: Launch54 | Product Directory
+                                - img "Verified account" [ref=e967]
+                            - generic [ref=e971]:
+                              - link "@Launch54com" [ref=e973]:
+                                - /url: /Launch54com
+                                - generic [ref=e974]: "@Launch54com"
+                              - generic [ref=e975]: ·
+                              - link "Jun 8" [ref=e977]:
+                                - /url: /Launch54com/status/2063764502110212599
+                                - time [ref=e978]: Jun 8
+                          - generic [ref=e980]:
+                            - button "Grok actions" [ref=e982]:
+                              - img [ref=e987]
+                            - button "More" [ref=e993]:
+                              - img [ref=e997]
+                        - generic [ref=e1001]: Awesome! Congratulations on the Product Hunt launch!
+                        - group "1 like, 29 views" [ref=e1004]:
+                          - button "0 Replies. Reply" [ref=e1006]:
+                            - img [ref=e1010]
+                          - button "0 reposts. Repost" [ref=e1017]:
+                            - img [ref=e1021]
+                          - button "1 Like. Like" [ref=e1028]:
+                            - generic [ref=e1029]:
+                              - img [ref=e1032]
+                              - generic [ref=e1037]: "1"
+                          - link "29 views. View post analytics" [ref=e1039]:
+                            - /url: /Launch54com/status/2063764502110212599/analytics
+                            - generic [ref=e1040]:
+                              - img [ref=e1043]
+                              - generic [ref=e1048]: "29"
+                          - button "Bookmark" [ref=e1050]:
+                            - img [ref=e1054]
+                          - button "Share post" [ref=e1059]:
+                            - img [ref=e1063]
+                  - article "Mohit Nagaraj ☄️ @mohit_nagaraj 19 hours ago subscription creep is a real problem nobody tracks until they check their bank statement, auto-discovery is the killer feature here" [ref=e1069] [cursor=pointer]:
+                    - generic [ref=e1075]:
+                      - link [ref=e1087]:
+                        - /url: /mohit_nagaraj
+                      - generic [ref=e1090]:
+                        - generic [ref=e1092]:
+                          - generic [ref=e1095]:
+                            - link "Mohit Nagaraj ☄️" [ref=e1098]:
+                              - /url: /mohit_nagaraj
+                              - generic [ref=e1101]:
+                                - text: Mohit Nagaraj
+                                - img "☄️" [ref=e1102]
+                            - generic [ref=e1104]:
+                              - link "@mohit_nagaraj" [ref=e1106]:
+                                - /url: /mohit_nagaraj
+                                - generic [ref=e1107]: "@mohit_nagaraj"
+                              - generic [ref=e1108]: ·
+                              - link "19 hours ago" [ref=e1110]:
+                                - /url: /mohit_nagaraj/status/2063940782676148454
+                                - time [ref=e1111]: 19h
+                          - generic [ref=e1113]:
+                            - button "Grok actions" [ref=e1115]:
+                              - img [ref=e1120]
+                            - button "More" [ref=e1126]:
+                              - img [ref=e1130]
+                        - generic [ref=e1134]: subscription creep is a real problem nobody tracks until they check their bank statement, auto-discovery is the killer feature here
+                        - group "2 views" [ref=e1137]:
+                          - button "0 Replies. Reply" [ref=e1139]:
+                            - img [ref=e1143]
+                          - button "0 reposts. Repost" [ref=e1150]:
+                            - img [ref=e1154]
+                          - button "0 Likes. Like" [ref=e1161]:
+                            - img [ref=e1165]
+                          - link "2 views. View post analytics" [ref=e1172]:
+                            - /url: /mohit_nagaraj/status/2063940782676148454/analytics
+                            - generic [ref=e1173]:
+                              - img [ref=e1176]
+                              - generic [ref=e1181]: "2"
+                          - button "Bookmark" [ref=e1183]:
+                            - img [ref=e1187]
+                          - button "Share post" [ref=e1192]:
+                            - img [ref=e1196]
+                  - button "Show probable spam" [ref=e1202] [cursor=pointer]:
+                    - generic [ref=e1204]: Show probable spam

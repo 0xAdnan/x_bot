@@ -1,0 +1,567 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - dialog:
+                - group [ref=e6]:
+                  - dialog [ref=e23]:
+                    - generic [ref=e26]:
+                      - progressbar [ref=e27]
+                      - generic [ref=e33]:
+                        - button "Close" [ref=e35] [cursor=pointer]:
+                          - img [ref=e37]
+                        - button "Drafts" [ref=e43] [cursor=pointer]:
+                          - generic [ref=e46]: Drafts
+                      - generic [ref=e52]:
+                        - generic [ref=e53]:
+                          - generic [ref=e61]:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic "adnan":
+                                    - img "adnan"
+                          - generic [ref=e82]:
+                            - generic [ref=e84]: What’s happening?
+                            - textbox "Post text" [active] [ref=e86]
+                        - generic [ref=e90]:
+                          - button "Everyone can reply" [ref=e94] [cursor=pointer]:
+                            - generic [ref=e95]:
+                              - img [ref=e96]
+                              - generic [ref=e100]: Everyone can reply
+                          - generic [ref=e103]:
+                            - navigation [ref=e104]:
+                              - generic [ref=e105]:
+                                - generic:
+                                  - button "Previous" [disabled]:
+                                    - generic:
+                                      - img
+                                - tablist [ref=e107]:
+                                  - generic [ref=e110]:
+                                    - button "Add photos or video" [ref=e111] [cursor=pointer]:
+                                      - img [ref=e113]
+                                    - button "Choose File" [ref=e117]
+                                  - button "Add a GIF" [ref=e120] [cursor=pointer]:
+                                    - img [ref=e122]
+                                  - button "Generate image" [ref=e128] [cursor=pointer]:
+                                    - img [ref=e130]
+                                  - button "Add poll" [ref=e135] [cursor=pointer]:
+                                    - img [ref=e137]
+                                  - button "Add emoji" [ref=e143] [cursor=pointer]:
+                                    - img [ref=e145]
+                                  - button "Schedule post" [ref=e151] [cursor=pointer]:
+                                    - img [ref=e153]
+                                  - button "Tag location" [disabled] [ref=e158]:
+                                    - img [ref=e160]
+                                  - button "Content disclosure" [ref=e165] [cursor=pointer]:
+                                    - img [ref=e167]
+                                - generic:
+                                  - button "Next" [disabled]:
+                                    - generic:
+                                      - img
+                            - button "Post" [disabled] [ref=e172]:
+                              - generic [ref=e175]: Post
+      - generic [ref=e13]:
+        - button [ref=e176] [cursor=pointer]
+        - button [ref=e178] [cursor=pointer]
+        - banner [ref=e14]:
+          - generic [ref=e181]:
+            - generic [ref=e182]:
+              - heading [level=1] [ref=e184] [cursor=pointer]:
+                - link [ref=e185]:
+                  - /url: /home
+                  - img [ref=e187]
+              - navigation [ref=e191]:
+                - link [ref=e192] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e195]
+                - link [ref=e198] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e201]
+                - link [ref=e204] [cursor=pointer]:
+                  - /url: /notifications
+                  - generic [ref=e206]:
+                    - img [ref=e207]
+                    - generic [ref=e211]: "2"
+                - link [ref=e212] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e215]
+                - link [ref=e218] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e221]
+                - link [ref=e224] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e227]
+                - link [ref=e230] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e233]
+                - link [ref=e236] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e239]
+                - link [ref=e242] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e245]
+                - link [ref=e250] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e253]
+                - button [ref=e256] [cursor=pointer]:
+                  - img [ref=e259]
+              - link [ref=e263] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e265]
+            - button [ref=e271] [cursor=pointer]:
+              - generic [ref=e279]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+        - main [ref=e15]:
+          - generic [ref=e285]:
+            - generic [ref=e286]:
+              - generic [ref=e289]:
+                - navigation [ref=e291]:
+                  - generic [ref=e292]:
+                    - generic:
+                      - button [disabled]:
+                        - generic:
+                          - img
+                    - tablist [ref=e294]:
+                      - tab [selected] [ref=e295] [cursor=pointer]:
+                        - generic [ref=e297]:
+                          - text: For you
+                          - img [ref=e298]
+                      - tab [ref=e302] [cursor=pointer]:
+                        - generic [ref=e305]: Following
+                    - generic:
+                      - button [disabled]:
+                        - generic:
+                          - img
+                - button [ref=e307] [cursor=pointer]:
+                  - img [ref=e309]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e318]:
+              - link [ref=e327] [cursor=pointer]:
+                - /url: /adnanxpitch
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+              - generic [ref=e330]:
+                - generic [ref=e348]:
+                  - generic [ref=e350]: What’s happening?
+                  - textbox [ref=e352]
+                - generic [ref=e359]:
+                  - navigation [ref=e360]:
+                    - generic [ref=e361]:
+                      - generic:
+                        - button [disabled]:
+                          - generic:
+                            - img
+                      - tablist [ref=e363]:
+                        - generic [ref=e366]:
+                          - button [ref=e367] [cursor=pointer]:
+                            - img [ref=e369]
+                          - button [ref=e373]
+                        - button [ref=e376] [cursor=pointer]:
+                          - img [ref=e378]
+                        - button [ref=e384] [cursor=pointer]:
+                          - img [ref=e386]
+                        - button [ref=e391] [cursor=pointer]:
+                          - img [ref=e393]
+                        - button [ref=e399] [cursor=pointer]:
+                          - img [ref=e401]
+                        - button [ref=e407] [cursor=pointer]:
+                          - img [ref=e409]
+                        - button [disabled] [ref=e414]:
+                          - img [ref=e416]
+                        - button [ref=e421] [cursor=pointer]:
+                          - img [ref=e423]
+                      - generic:
+                        - button [disabled]:
+                          - generic:
+                            - img
+                  - button [disabled] [ref=e428]:
+                    - generic [ref=e431]: Post
+            - region [ref=e434]:
+              - heading [level=1] [ref=e435]: Your Home Timeline
+              - generic [ref=e437]:
+                - article [ref=e441] [cursor=pointer]:
+                  - generic [ref=e447]:
+                    - link [ref=e459]:
+                      - /url: /AwaisAshraf0x
+                    - generic [ref=e462]:
+                      - generic [ref=e464]:
+                        - generic [ref=e467]:
+                          - link [ref=e470]:
+                            - /url: /AwaisAshraf0x
+                            - generic [ref=e473]: M Awais Ashraf
+                          - generic [ref=e475]:
+                            - link [ref=e477]:
+                              - /url: /AwaisAshraf0x
+                              - generic [ref=e478]: "@AwaisAshraf0x"
+                            - generic [ref=e479]: ·
+                            - link [ref=e481]:
+                              - /url: /AwaisAshraf0x/status/2064210930343534950
+                              - time [ref=e482]: 1h
+                        - generic [ref=e484]:
+                          - button [ref=e486]:
+                            - img [ref=e491]
+                          - button [ref=e497]:
+                            - img [ref=e501]
+                      - generic [ref=e505]: gm guys
+                      - link [ref=e513]:
+                        - /url: /AwaisAshraf0x/status/2064210930343534950/photo/1
+                        - img [ref=e519]
+                      - group [ref=e522]:
+                        - button [ref=e524]:
+                          - generic [ref=e525]:
+                            - img [ref=e528]
+                            - generic [ref=e533]: "1"
+                        - button [ref=e535]:
+                          - img [ref=e539]
+                        - button [ref=e546]:
+                          - generic [ref=e547]:
+                            - img [ref=e550]
+                            - generic [ref=e555]: "1"
+                        - link [ref=e557]:
+                          - /url: /AwaisAshraf0x/status/2064210930343534950/analytics
+                          - generic [ref=e558]:
+                            - img [ref=e561]
+                            - generic [ref=e566]: "20"
+                        - button [ref=e568]:
+                          - img [ref=e572]
+                        - button [ref=e577]:
+                          - img [ref=e581]
+                - article [ref=e587] [cursor=pointer]:
+                  - generic [ref=e593]:
+                    - link [ref=e605]:
+                      - /url: /anupamrjp
+                    - generic [ref=e608]:
+                      - generic [ref=e610]:
+                        - generic [ref=e613]:
+                          - link [ref=e616]:
+                            - /url: /anupamrjp
+                            - generic [ref=e617]:
+                              - img [ref=e620]
+                              - img [ref=e623]
+                          - generic [ref=e627]:
+                            - link [ref=e629]:
+                              - /url: /anupamrjp
+                              - generic [ref=e630]: "@anupamrjp"
+                            - generic [ref=e631]: ·
+                            - link [ref=e633]:
+                              - /url: /anupamrjp/status/2064194155975479372
+                              - time [ref=e634]: 2h
+                        - generic [ref=e636]:
+                          - button [ref=e638]:
+                            - img [ref=e643]
+                          - button [ref=e649]:
+                            - img [ref=e653]
+                      - generic [ref=e657]:
+                        - text: No pitches. No buzzwords. Just builders sharing what they’re building. Drop your SaaS
+                        - img [ref=e658]
+                      - group [ref=e661]:
+                        - button [ref=e663]:
+                          - generic [ref=e664]:
+                            - img [ref=e667]
+                            - generic [ref=e672]: "10"
+                        - button [ref=e674]:
+                          - generic [ref=e675]:
+                            - img [ref=e678]
+                            - generic [ref=e683]: "1"
+                        - button [ref=e685]:
+                          - generic [ref=e686]:
+                            - img [ref=e689]
+                            - generic [ref=e694]: "7"
+                        - link [ref=e696]:
+                          - /url: /anupamrjp/status/2064194155975479372/analytics
+                          - generic [ref=e697]:
+                            - img [ref=e700]
+                            - generic [ref=e705]: "165"
+                        - button [ref=e707]:
+                          - img [ref=e711]
+                        - button [ref=e716]:
+                          - img [ref=e720]
+                - article [ref=e726] [cursor=pointer]:
+                  - generic [ref=e732]:
+                    - link [ref=e744]:
+                      - /url: /Taniyatweets_
+                    - generic [ref=e747]:
+                      - generic [ref=e749]:
+                        - generic [ref=e752]:
+                          - link [ref=e755]:
+                            - /url: /Taniyatweets_
+                            - generic [ref=e756]:
+                              - generic [ref=e758]: Taniya
+                              - img [ref=e761]
+                          - generic [ref=e765]:
+                            - link [ref=e767]:
+                              - /url: /Taniyatweets_
+                              - generic [ref=e768]: "@Taniyatweets_"
+                            - generic [ref=e769]: ·
+                            - link [ref=e771]:
+                              - /url: /Taniyatweets_/status/2064227233800323481
+                              - time [ref=e772]: 29m
+                        - generic [ref=e774]:
+                          - button [ref=e776]:
+                            - img [ref=e781]
+                          - button [ref=e787]:
+                            - img [ref=e791]
+                      - generic [ref=e795]: What was the first programming language you learned?
+                      - link [ref=e803]:
+                        - /url: /Taniyatweets_/status/2064227233800323481/photo/1
+                        - img [ref=e809]
+                      - group [ref=e812]:
+                        - button [ref=e814]:
+                          - generic [ref=e815]:
+                            - img [ref=e818]
+                            - generic [ref=e823]: "24"
+                        - button [ref=e825]:
+                          - img [ref=e829]
+                        - button [ref=e836]:
+                          - generic [ref=e837]:
+                            - img [ref=e840]
+                            - generic [ref=e845]: "23"
+                        - link [ref=e847]:
+                          - /url: /Taniyatweets_/status/2064227233800323481/analytics
+                          - generic [ref=e848]:
+                            - img [ref=e851]
+                            - generic [ref=e856]: "225"
+                        - button [ref=e858]:
+                          - img [ref=e862]
+                        - button [ref=e867]:
+                          - img [ref=e871]
+                - article [ref=e877] [cursor=pointer]:
+                  - generic [ref=e883]:
+                    - link [ref=e895]:
+                      - /url: /codewithava
+                    - generic [ref=e898]:
+                      - generic [ref=e900]:
+                        - generic [ref=e903]:
+                          - link [ref=e906]:
+                            - /url: /codewithava
+                            - generic [ref=e907]:
+                              - generic [ref=e909]: Ava Monroe
+                              - img [ref=e912]
+                          - generic [ref=e916]:
+                            - link [ref=e918]:
+                              - /url: /codewithava
+                              - generic [ref=e919]: "@codewithava"
+                            - generic [ref=e920]: ·
+                            - link [ref=e922]:
+                              - /url: /codewithava/status/2064183838885175749
+                              - time [ref=e923]: 3h
+                        - generic [ref=e925]:
+                          - button [ref=e927]:
+                            - img [ref=e932]
+                          - button [ref=e938]:
+                            - img [ref=e942]
+                      - generic [ref=e946]:
+                        - text: Happy new week everyone
+                        - img [ref=e947]
+                        - text: Let people see what you’re working on. Drop your app, SaaS, website, tool, side project anything you’re building. I’ll check them out, and maybe others here will too. Small builders need more small builders around them. What are you building?
+                      - link [ref=e955]:
+                        - /url: /codewithava/status/2064183838885175749/photo/1
+                        - img [ref=e961]
+                      - group [ref=e964]:
+                        - button [ref=e966]:
+                          - generic [ref=e967]:
+                            - img [ref=e970]
+                            - generic [ref=e975]: "33"
+                        - button [ref=e977]:
+                          - generic [ref=e978]:
+                            - img [ref=e981]
+                            - generic [ref=e986]: "1"
+                        - button [ref=e988]:
+                          - generic [ref=e989]:
+                            - img [ref=e992]
+                            - generic [ref=e997]: "29"
+                        - link [ref=e999]:
+                          - /url: /codewithava/status/2064183838885175749/analytics
+                          - generic [ref=e1000]:
+                            - img [ref=e1003]
+                            - generic [ref=e1008]: 1K
+                        - button [ref=e1010]:
+                          - img [ref=e1014]
+                        - button [ref=e1019]:
+                          - img [ref=e1023]
+                - article [ref=e1029] [cursor=pointer]:
+                  - generic [ref=e1035]:
+                    - link [ref=e1047]:
+                      - /url: /elonmusk
+                    - generic [ref=e1050]:
+                      - generic [ref=e1052]:
+                        - generic [ref=e1055]:
+                          - link [ref=e1058]:
+                            - /url: /elonmusk
+                            - generic [ref=e1059]:
+                              - generic [ref=e1061]: Elon Musk
+                              - generic [ref=e1063]:
+                                - img [ref=e1064]
+                                - link [ref=e1067]
+                          - generic [ref=e1075]:
+                            - link [ref=e1077]:
+                              - /url: /elonmusk
+                              - generic [ref=e1078]: "@elonmusk"
+                            - generic [ref=e1079]: ·
+                            - link [ref=e1081]:
+                              - /url: /elonmusk/status/2064196509780893957
+                              - time [ref=e1082]: 2h
+                        - generic [ref=e1084]:
+                          - button [ref=e1086]:
+                            - img [ref=e1091]
+                          - button [ref=e1097]:
+                            - img [ref=e1101]
+                      - button [ref=e1130]:
+                        - img [ref=e1131]
+                      - group [ref=e1137]:
+                        - button [ref=e1139]:
+                          - generic [ref=e1140]:
+                            - img [ref=e1143]
+                            - generic [ref=e1148]: 1.2K
+                        - button [ref=e1150]:
+                          - generic [ref=e1151]:
+                            - img [ref=e1154]
+                            - generic [ref=e1159]: 1.3K
+                        - button [ref=e1161]:
+                          - generic [ref=e1162]:
+                            - img [ref=e1165]
+                            - generic [ref=e1170]: 7.1K
+                        - link [ref=e1172]:
+                          - /url: /elonmusk/status/2064196509780893957/analytics
+                          - generic [ref=e1173]:
+                            - img [ref=e1176]
+                            - generic [ref=e1181]: 2.1M
+                        - button [ref=e1183]:
+                          - img [ref=e1187]
+                        - button [ref=e1192]:
+                          - img [ref=e1196]
+                - article [ref=e1202] [cursor=pointer]:
+                  - generic [ref=e1208]:
+                    - link [ref=e1220]:
+                      - /url: /web3devop
+                    - generic [ref=e1223]:
+                      - generic [ref=e1225]:
+                        - generic [ref=e1228]:
+                          - link [ref=e1231]:
+                            - /url: /web3devop
+                            - generic [ref=e1232]:
+                              - generic [ref=e1234]: Nikhil Pathak
+                              - img [ref=e1237]
+                          - generic [ref=e1241]:
+                            - link [ref=e1243]:
+                              - /url: /web3devop
+                              - generic [ref=e1244]: "@web3devop"
+                            - generic [ref=e1245]: ·
+                            - link [ref=e1247]:
+                              - /url: /web3devop/status/2064137007060910470
+                              - time [ref=e1248]: 6h
+                        - generic [ref=e1250]:
+                          - button [ref=e1252]:
+                            - img [ref=e1257]
+                          - button [ref=e1263]:
+                            - img [ref=e1267]
+                      - generic [ref=e1271]: good morning Engineers !!! what are you building today ??
+                      - group [ref=e1274]:
+                        - button [ref=e1276]:
+                          - generic [ref=e1277]:
+                            - img [ref=e1280]
+                            - generic [ref=e1285]: "23"
+                        - button [ref=e1287]:
+                          - generic [ref=e1288]:
+                            - img [ref=e1291]
+                            - generic [ref=e1296]: "1"
+                        - button [ref=e1298]:
+                          - generic [ref=e1299]:
+                            - img [ref=e1302]
+                            - generic [ref=e1307]: "19"
+                        - link [ref=e1309]:
+                          - /url: /web3devop/status/2064137007060910470/analytics
+                          - generic [ref=e1310]:
+                            - img [ref=e1313]
+                            - generic [ref=e1318]: "332"
+                        - button [ref=e1320]:
+                          - img [ref=e1324]
+                        - button [ref=e1329]:
+                          - img [ref=e1333]
+                - article [ref=e1339] [cursor=pointer]:
+                  - generic [ref=e1345]:
+                    - link [ref=e1357]:
+                      - /url: /markjivko
+                    - generic [ref=e1360]:
+                      - generic [ref=e1362]:
+                        - generic [ref=e1365]:
+                          - link [ref=e1368]:
+                            - /url: /markjivko
+                            - generic [ref=e1369]:
+                              - generic [ref=e1371]: Mark Jivko
+                              - img [ref=e1374]
+                          - generic [ref=e1378]:
+                            - link [ref=e1380]:
+                              - /url: /markjivko
+                              - generic [ref=e1381]: "@markjivko"
+                            - generic [ref=e1382]: ·
+                            - link [ref=e1384]:
+                              - /url: /markjivko/status/2063576742581702984
+                              - time [ref=e1385]: Jun 7
+                        - generic [ref=e1387]:
+                          - button [ref=e1389]:
+                            - img [ref=e1394]
+                          - button [ref=e1400]:
+                            - img [ref=e1404]
+                      - generic [ref=e1408]:
+                        - text: "I'm looking to connect with people interested in:"
+                        - img [ref=e1409]
+                        - text: Building in public
+                        - img [ref=e1410]
+                        - text: Full-stack
+                        - img [ref=e1411]
+                        - text: SaaS
+                        - img [ref=e1412]
+                        - text: AI / ML
+                        - img [ref=e1413]
+                        - text: Data Science
+                        - img [ref=e1414]
+                        - text: Freelancing
+                        - img [ref=e1415]
+                        - text: Startups If that’s you, let’s connect!
+                        - img [ref=e1416]
+                        - text: P.S. Feel free to drop your current project below. I visit every single one!
+                        - img [ref=e1417]
+                      - link [ref=e1425]:
+                        - /url: /markjivko/status/2063576742581702984/photo/1
+                        - img [ref=e1431]
+                      - group [ref=e1434]:
+                        - button [ref=e1436]:
+                          - generic [ref=e1437]:
+                            - img [ref=e1440]
+                            - generic [ref=e1445]: "10"
+                        - button [ref=e1447]:
+                          - img [ref=e1451]
+                        - button [ref=e1458]:
+                          - generic [ref=e1459]:
+                            - img [ref=e1462]
+                            - generic [ref=e1467]: "13"
+                        - link [ref=e1469]:
+                          - /url: /markjivko/status/2063576742581702984/analytics
+                          - generic [ref=e1470]:
+                            - img [ref=e1473]
+                            - generic [ref=e1478]: "242"
+                        - button [ref=e1480]:
+                          - img [ref=e1484]
+                        - button [ref=e1489]:
+                          - img [ref=e1493]

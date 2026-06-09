@@ -1,0 +1,190 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e7] [cursor=pointer]
+        - button "Skip to trending" [ref=e9] [cursor=pointer]
+        - banner [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - heading "X" [level=1] [ref=e16] [cursor=pointer]:
+                - link "X" [ref=e17]:
+                  - /url: /home
+                  - img [ref=e19]
+              - navigation "Primary" [ref=e23]:
+                - link "Home" [ref=e24] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e27]
+                - link "Search and explore" [ref=e30] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e33]
+                - link "Notifications" [ref=e36] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e39]
+                - link "Follow" [ref=e42] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e45]
+                - link "Direct Messages" [ref=e48] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e51]
+                - link "Grok" [ref=e54] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e57]
+                - link "Bookmarks" [ref=e60] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e63]
+                - link "Creator Studio" [ref=e140] [cursor=pointer]:
+                  - /url: /i/jf/creators/studio
+                  - img [ref=e143]
+                - link "Premium" [ref=e73] [cursor=pointer]:
+                  - /url: /i/premium_sign_up
+                  - img [ref=e76]
+                - link "Profile" [ref=e79] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e82]
+                - button "More menu items" [ref=e85] [cursor=pointer]:
+                  - img [ref=e88]
+              - link "Post" [ref=e92] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e94]
+            - button "Account menu" [ref=e100] [cursor=pointer]:
+              - generic [ref=e108]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+        - main [ref=e111]:
+          - generic "Home timeline" [ref=e116]:
+            - generic [ref=e117]:
+              - generic [ref=e123] [cursor=pointer]:
+                - button "Back" [ref=e125]:
+                  - img [ref=e127]
+                - generic [ref=e131]:
+                  - heading "Miracle Nnamdi Verified account" [level=2] [ref=e147]:
+                    - generic [ref=e151]:
+                      - generic [ref=e153]: Miracle Nnamdi
+                      - img "Verified account" [ref=e156]
+                  - generic [ref=e159]: 3,230 posts
+                - generic [ref=e161]:
+                  - button "Profile Summary" [ref=e162]:
+                    - img [ref=e164]
+                  - button "Search" [ref=e167]:
+                    - img [ref=e169]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e173]:
+              - generic [ref=e174]:
+                - link [ref=e175] [cursor=pointer]:
+                  - /url: /Miracle_NNnn/header_photo
+                - generic [ref=e181]:
+                  - generic [ref=e182]:
+                    - link "Opens profile photo" [ref=e190] [cursor=pointer]:
+                      - /url: /Miracle_NNnn/photo
+                      - generic:
+                        - generic
+                    - generic [ref=e193]:
+                      - button "More" [ref=e194] [cursor=pointer]:
+                        - img [ref=e196]
+                      - button "Message" [ref=e199] [cursor=pointer]:
+                        - img [ref=e201]
+                      - button "Follow @Miracle_NNnn" [ref=e206] [cursor=pointer]:
+                        - generic [ref=e209]: Follow
+                  - generic [ref=e213]:
+                    - generic [ref=e217]:
+                      - text: Miracle Nnamdi
+                      - button "Provides details about verified accounts." [ref=e222] [cursor=pointer]:
+                        - img "Verified account" [ref=e223]
+                    - generic [ref=e229]: "@Miracle_NNnn"
+                  - generic [ref=e232]:
+                    - text: "Turning ideas into products and solutions • Building:"
+                    - link "@whatlaunched_" [ref=e235] [cursor=pointer]:
+                      - /url: /whatlaunched_
+                    - text: "($851) • SEO/GEOagent:"
+                    - link "natiad.com" [ref=e236] [cursor=pointer]:
+                      - /url: https://t.co/Bfa9IOGVQL
+                  - generic [ref=e238]:
+                    - link "whatlaunched.today" [ref=e239] [cursor=pointer]:
+                      - /url: https://t.co/r5z6xHiPkZ
+                      - img [ref=e240]
+                      - text: whatlaunched.today
+                    - link "Joined August 2024" [ref=e244] [cursor=pointer]:
+                      - /url: /Miracle_NNnn/about
+                      - img [ref=e245]
+                      - text: Joined August 2024
+                      - img [ref=e248]
+                  - generic [ref=e251]:
+                    - link "1,084 Following" [ref=e253] [cursor=pointer]:
+                      - /url: /Miracle_NNnn/following
+                      - generic [ref=e254]: 1,084
+                      - generic [ref=e255]: Following
+                    - link "657 Followers" [ref=e257] [cursor=pointer]:
+                      - /url: /Miracle_NNnn/verified_followers
+                      - generic [ref=e258]: "657"
+                      - generic [ref=e259]: Followers
+                  - generic [ref=e265]: Not followed by anyone you’re following
+                - generic [ref=e266]:
+                  - button [ref=e267] [cursor=pointer]:
+                    - img [ref=e269]
+                  - generic [ref=e272]:
+                    - generic [ref=e274]:
+                      - text: "@adnanxpitch, you aren’t verified"
+                      - generic [ref=e275]:
+                        - generic [ref=e276]: yet
+                        - img [ref=e278]
+                    - generic [ref=e281]:
+                      - text: Get Verified like
+                      - generic [ref=e282]: "@Miracle_NNnn"
+                      - text: to stand out and get boosted reach.
+                    - link "Get Verified" [ref=e283] [cursor=pointer]:
+                      - /url: /i/premium_sign_up
+                      - generic [ref=e286]: Get Verified
+              - navigation "Profile timelines" [ref=e288]:
+                - generic [ref=e289]:
+                  - generic:
+                    - button "Previous" [disabled]:
+                      - generic:
+                        - img
+                  - tablist [ref=e291]:
+                    - tab "Posts" [selected] [ref=e292] [cursor=pointer]:
+                      - generic [ref=e295]: Posts
+                    - tab "Replies" [ref=e297] [cursor=pointer]:
+                      - generic [ref=e300]: Replies
+                    - tab "Highlights" [ref=e301] [cursor=pointer]:
+                      - generic [ref=e304]: Highlights
+                    - tab "Media" [ref=e305] [cursor=pointer]:
+                      - generic [ref=e308]: Media
+                  - generic:
+                    - button "Next" [disabled]:
+                      - generic:
+                        - img
+              - region "Miracle Nnamdi’s posts" [ref=e309]:
+                - heading "Miracle Nnamdi’s posts" [level=1] [ref=e310]
+                - 'generic "Timeline: Miracle Nnamdi’s posts" [ref=e311]':
+                  - generic [ref=e312]:
+                    - article "Pinned Miracle Nnamdi Verified account @Miracle_NNnn May 17 SEO is kicking in 😇 Listing your startup on whatlaunched. today = free marketing Embedded video Play Video 24 replies, 16 reposts, 227 likes, 71 bookmarks, 153707 views" [ref=e316] [cursor=pointer]:
+                      - generic [ref=e318]:
+                        - generic [ref=e323]
+                        - generic [ref=e332]
+                    - 'article "Miracle Nnamdi Verified account @Miracle_NNnn 12 minutes ago Building Natiad has been a lot of late nights, testing, and learning. Today, we finally launched on Product Hunt. I’d be grateful for an upvote: producthunt.com Natiad: Dominate search and AI with our SEO/GEO agent and free tools | Product Hunt From producthunt.com 2 likes, 4 views" [ref=e495] [cursor=pointer]':
+                      - generic [ref=e501]:
+                        - link [ref=e513]:
+                          - /url: /Miracle_NNnn
+                        - generic [ref=e516]
+                    - 'article "Miracle Nnamdi reposted Miracle Nnamdi Verified account @Miracle_NNnn Jun 7 💬 Pitch your startup Drop your link below 👇 Let''s see what you are building today #BuildInPublic 54 replies, 2 reposts, 28 likes, 2142 views" [ref=e645] [cursor=pointer]':
+                      - generic [ref=e647]:
+                        - generic [ref=e652]
+                        - generic [ref=e664]
+                    - 'article "Miracle Nnamdi reposted Miracle Nnamdi Verified account @Miracle_NNnn Jun 6 Free tools are still one of the fastest ways to grow organic traffic. The problem? Most founders build tools nobody searches for. Natiad now scans your website and shows: • topics already driving traffic • tool ideas you can realistically rank for • real AI questions to Embedded video Play Video 5 replies, 2 reposts, 6 likes, 313 views" [ref=e799] [cursor=pointer]':
+                      - generic [ref=e801]:
+                        - generic [ref=e806]
+                        - generic [ref=e818]

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Browser MCP the x-growth agent drives X through.
+  // Playwright MCP exposes navigate/click/type/screenshot/read-DOM tools.
+  // Run `opencode` from this directory so this project config + the
+  // .opencode/agent/x-growth.md agent is picked up.
+  //
+  // Setup: HEADED (visible window, default) + a PERSISTENT profile so the
+  // logged-in X session is reused. Do this once:
+  //   1. Run `opencode` here and have the agent open x.com (or open it yourself).
+  //   2. Log into your DEDICATED X account MANUALLY in that window.
+  //   3. Cookies persist in ./.browser-profile — future runs are already logged
+  //      in. The agent never sees or stores your password.
+  // Don't add --headless: X flags headless browsers more aggressively.
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx", "@playwright/mcp@latest",
+        "--user-data-dir=./.browser-profile"
+      ],
+      "enabled": true
+    }
+  }
+}

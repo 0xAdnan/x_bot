@@ -1,0 +1,584 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - dialog:
+                - group [ref=e1307]:
+                  - dialog [ref=e1484]:
+                    - generic [ref=e1487]:
+                      - progressbar [ref=e1488]
+                      - generic [ref=e1494]:
+                        - button "Close" [ref=e1496] [cursor=pointer]:
+                          - img [ref=e1498]
+                        - button "Drafts" [ref=e1504] [cursor=pointer]:
+                          - generic [ref=e1507]: Drafts
+                      - generic [ref=e1513]:
+                        - generic [ref=e1514]:
+                          - generic [ref=e1522]:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic "adnan":
+                                    - img "adnan"
+                          - textbox "Post text" [active] [ref=e1547]:
+                            - generic [ref=e1637]: "the fastest way to figure out if your product makes sense: watch someones face during the first 10 seconds of your demo. if they lean in, you have something. if they check their phone, the rest of the video wont save you."
+                        - generic [ref=e1551]:
+                          - button "Everyone can reply" [ref=e1555] [cursor=pointer]:
+                            - generic [ref=e1556]:
+                              - img [ref=e1557]
+                              - generic [ref=e1561]: Everyone can reply
+                          - generic [ref=e1564]:
+                            - navigation [ref=e1565]:
+                              - generic [ref=e1566]:
+                                - generic:
+                                  - button "Previous" [disabled]:
+                                    - generic:
+                                      - img
+                                - tablist [ref=e1568]:
+                                  - generic [ref=e1571]:
+                                    - button "Add photos or video" [ref=e1572] [cursor=pointer]:
+                                      - img [ref=e1574]
+                                    - button "Choose File" [ref=e1578]
+                                  - button "Add a GIF" [ref=e1581] [cursor=pointer]:
+                                    - img [ref=e1583]
+                                  - button "Generate image" [ref=e1589] [cursor=pointer]:
+                                    - img [ref=e1591]
+                                  - button "Add poll" [ref=e1596] [cursor=pointer]:
+                                    - img [ref=e1598]
+                                  - button "Add emoji" [ref=e1604] [cursor=pointer]:
+                                    - img [ref=e1606]
+                                  - button "Schedule post" [ref=e1612] [cursor=pointer]:
+                                    - img [ref=e1614]
+                                  - button "Tag location" [disabled] [ref=e1619]:
+                                    - img [ref=e1621]
+                                  - button "Content disclosure" [ref=e1626] [cursor=pointer]:
+                                    - img [ref=e1628]
+                                - generic:
+                                  - button "Next" [disabled]:
+                                    - generic:
+                                      - img
+                            - generic [ref=e1631]:
+                              - progressbar [ref=e1641]:
+                                - img [ref=e1643]
+                              - button "Add post" [ref=e1651] [cursor=pointer]:
+                                - img [ref=e1653]
+                              - button "Post" [ref=e1633] [cursor=pointer]:
+                                - generic [ref=e1636]: Post
+      - generic [ref=e6]:
+        - button [ref=e1314] [cursor=pointer]
+        - button [ref=e1315] [cursor=pointer]
+        - banner [ref=e7]:
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - heading [level=1] [ref=e1316] [cursor=pointer]:
+                - link [ref=e1317]:
+                  - /url: /home
+                  - img [ref=e27]
+              - navigation [ref=e1318]:
+                - link [ref=e1319] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e1320]
+                - link [ref=e1323] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e41]
+                - link [ref=e1324] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e47]
+                - link [ref=e1325] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e53]
+                - link [ref=e1326] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e59]
+                - link [ref=e1327] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e65]
+                - link [ref=e1328] [cursor=pointer]:
+                  - /url: /i/premium
+                  - img [ref=e71]
+                - link [ref=e1329] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e77]
+                - link [ref=e1330] [cursor=pointer]:
+                  - /url: /compose/articles
+                  - img [ref=e83]
+                - link [ref=e1331] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e91]
+                - button [ref=e1332] [cursor=pointer]:
+                  - img [ref=e97]
+              - link [ref=e1333] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e103]
+            - button [ref=e1334] [cursor=pointer]:
+              - generic [ref=e117]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+        - main [ref=e8]:
+          - generic [ref=e1335]:
+            - generic [ref=e124]:
+              - generic [ref=e127]:
+                - navigation [ref=e129]:
+                  - generic [ref=e130]:
+                    - generic:
+                      - button [disabled]:
+                        - generic:
+                          - img
+                    - tablist [ref=e132]:
+                      - tab [selected] [ref=e1336] [cursor=pointer]:
+                        - generic [ref=e135]:
+                          - text: For you
+                          - img [ref=e136]
+                      - tab [ref=e1337] [cursor=pointer]:
+                        - generic [ref=e143]: Following
+                    - generic:
+                      - button [disabled]:
+                        - generic:
+                          - img
+                - button [ref=e1338] [cursor=pointer]:
+                  - img [ref=e147]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - generic [ref=e156]:
+              - link [ref=e1339] [cursor=pointer]:
+                - /url: /adnanxpitch
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+              - generic [ref=e168]:
+                - generic [ref=e186]:
+                  - generic [ref=e188]: What’s happening?
+                  - textbox [ref=e1340]
+                - generic [ref=e197]:
+                  - navigation [ref=e198]:
+                    - generic [ref=e199]:
+                      - generic:
+                        - button [disabled]:
+                          - generic:
+                            - img
+                      - tablist [ref=e201]:
+                        - generic [ref=e204]:
+                          - button [ref=e1341] [cursor=pointer]:
+                            - img [ref=e207]
+                          - button [ref=e1342]
+                        - button [ref=e1343] [cursor=pointer]:
+                          - img [ref=e216]
+                        - button [ref=e1344] [cursor=pointer]:
+                          - img [ref=e224]
+                        - button [ref=e1345] [cursor=pointer]:
+                          - img [ref=e231]
+                        - button [ref=e1346] [cursor=pointer]:
+                          - img [ref=e239]
+                        - button [ref=e1347] [cursor=pointer]:
+                          - img [ref=e247]
+                        - button [disabled] [ref=e1348]:
+                          - img [ref=e254]
+                        - button [ref=e1349] [cursor=pointer]:
+                          - img [ref=e261]
+                      - generic:
+                        - button [disabled]:
+                          - generic:
+                            - img
+                  - button [disabled] [ref=e1350]:
+                    - generic [ref=e269]: Post
+            - region [ref=e1351]:
+              - heading [level=1] [ref=e1352]: Your Home Timeline
+              - generic [ref=e275]:
+                - article [ref=e1354] [cursor=pointer]:
+                  - generic [ref=e285]:
+                    - link [ref=e297]:
+                      - /url: /JonBuildsHQ
+                    - generic [ref=e300]:
+                      - generic [ref=e302]:
+                        - generic [ref=e305]:
+                          - link [ref=e1355]:
+                            - /url: /JonBuildsHQ
+                            - generic [ref=e309]:
+                              - generic [ref=e311]: Solopreneur Dad
+                              - img [ref=e1356]
+                          - generic [ref=e318]:
+                            - link [ref=e1357]:
+                              - /url: /JonBuildsHQ
+                              - generic [ref=e321]: "@JonBuildsHQ"
+                            - generic [ref=e322]: ·
+                            - link [ref=e1358]:
+                              - /url: /JonBuildsHQ/status/2063989870045855911
+                              - time [ref=e325]: 16h
+                        - generic [ref=e327]:
+                          - button [ref=e1359]:
+                            - img [ref=e334]
+                          - button [ref=e1360]:
+                            - img [ref=e344]
+                      - generic [ref=e348]:
+                        - text: "Hey founders ! Looking to connect with people building in: SaaS Automation AI Agent Web APPS Drop what you're working on"
+                        - img [ref=e1361]
+                      - group [ref=e1362]:
+                        - button [ref=e1363]:
+                          - generic [ref=e355]:
+                            - img [ref=e358]
+                            - generic [ref=e363]: "94"
+                        - button [ref=e1364]:
+                          - img [ref=e369]
+                        - button [ref=e1365]:
+                          - generic [ref=e377]:
+                            - img [ref=e380]
+                            - generic [ref=e385]: "61"
+                        - link [ref=e1366]:
+                          - /url: /JonBuildsHQ/status/2063989870045855911/analytics
+                          - generic [ref=e388]:
+                            - img [ref=e391]
+                            - generic [ref=e396]: 3.4K
+                        - button [ref=e1367]:
+                          - img [ref=e402]
+                        - button [ref=e1368]:
+                          - img [ref=e411]
+                - article [ref=e1369] [cursor=pointer]:
+                  - generic [ref=e423]:
+                    - link [ref=e435]:
+                      - /url: /markjivko
+                    - generic [ref=e438]:
+                      - generic [ref=e440]:
+                        - generic [ref=e443]:
+                          - link [ref=e1370]:
+                            - /url: /markjivko
+                            - generic [ref=e447]:
+                              - generic [ref=e449]: Mark Jivko
+                              - img [ref=e1371]
+                          - generic [ref=e456]:
+                            - link [ref=e1372]:
+                              - /url: /markjivko
+                              - generic [ref=e459]: "@markjivko"
+                            - generic [ref=e460]: ·
+                            - link [ref=e1373]:
+                              - /url: /markjivko/status/2063983633145151908
+                              - time [ref=e463]: 17h
+                        - generic [ref=e465]:
+                          - button [ref=e1374]:
+                            - img [ref=e472]
+                          - button [ref=e1375]:
+                            - img [ref=e482]
+                      - generic [ref=e485]:
+                        - generic [ref=e486]:
+                          - text: Day 9 on X, almost reached
+                          - img [ref=e1376]
+                          - text: 500 checkmark followers.
+                          - img [ref=e1377]
+                          - text: I was consistent, checking out cool products and doing my best to reply to everyone
+                          - img [ref=e1378]
+                          - text: I was lucky. I firmly believe life is 99% luck and 1% just showing up and doing your best
+                          - img [ref=e1379]
+                          - text: X truly is the best place for builders
+                          - img [ref=e1380]
+                        - button [ref=e1381]: Show more
+                      - link [ref=e1382]:
+                        - /url: /markjivko/status/2063983633145151908/photo/1
+                        - img [ref=e1384]
+                      - group [ref=e1385]:
+                        - button [ref=e1386]:
+                          - generic [ref=e512]:
+                            - img [ref=e515]
+                            - generic [ref=e520]: "8"
+                        - button [ref=e1387]:
+                          - img [ref=e526]
+                        - button [ref=e1388]:
+                          - generic [ref=e534]:
+                            - img [ref=e537]
+                            - generic [ref=e542]: "7"
+                        - link [ref=e1389]:
+                          - /url: /markjivko/status/2063983633145151908/analytics
+                          - generic [ref=e545]:
+                            - img [ref=e548]
+                            - generic [ref=e553]: "332"
+                        - button [ref=e1390]:
+                          - img [ref=e559]
+                        - button [ref=e1391]:
+                          - img [ref=e568]
+                - article [ref=e1392] [cursor=pointer]:
+                  - generic [ref=e580]:
+                    - link [ref=e592]:
+                      - /url: /Its_lakshya_ai
+                    - generic [ref=e595]:
+                      - generic [ref=e597]:
+                        - generic [ref=e600]:
+                          - link [ref=e1393]:
+                            - /url: /Its_lakshya_ai
+                            - generic [ref=e606]: Lakshya
+                          - generic [ref=e608]:
+                            - link [ref=e1394]:
+                              - /url: /Its_lakshya_ai
+                              - generic [ref=e611]: "@Its_lakshya_ai"
+                            - generic [ref=e612]: ·
+                            - link [ref=e1395]:
+                              - /url: /Its_lakshya_ai/status/2064158035275034970
+                              - time [ref=e615]: 5h
+                        - generic [ref=e617]:
+                          - button [ref=e1396]:
+                            - img [ref=e624]
+                          - button [ref=e1397]:
+                            - img [ref=e634]
+                      - generic [ref=e638]:
+                        - text: Hey
+                        - link [ref=e1398]:
+                          - /url: /X
+                          - text: "@X"
+                        - text: Looking to connect with more tech people worldwide
+                        - img [ref=e1399]
+                        - text: • Developers
+                        - img [ref=e1400]
+                        - text: • Founders
+                        - img [ref=e1401]
+                        - text: • AI Builders
+                        - img [ref=e1402]
+                        - text: • SaaS Builders
+                        - img [ref=e1403]
+                        - text: • Entrepreneurs
+                        - img [ref=e1404]
+                        - text: USA, UK, Japan, Nigeria, Europe, India — wherever you are
+                        - img [ref=e1405]
+                        - text: Say hi
+                        - img [ref=e1406]
+                        - text: Let's connect
+                        - img [ref=e1407]
+                        - img [ref=e1408]
+                        - link [ref=e1409]:
+                          - /url: /hashtag/BuildInPublic?src=hashtag_click
+                          - text: "#BuildInPublic"
+                        - link [ref=e1410]:
+                          - /url: /hashtag/AI?src=hashtag_click
+                          - text: "#AI"
+                        - link [ref=e1411]:
+                          - /url: /hashtag/DataScience?src=hashtag_click
+                          - text: "#DataScience"
+                      - group [ref=e1412]:
+                        - button [ref=e1413]:
+                          - generic [ref=e663]:
+                            - img [ref=e666]
+                            - generic [ref=e671]: "21"
+                        - button [ref=e1414]:
+                          - generic [ref=e674]:
+                            - img [ref=e677]
+                            - generic [ref=e682]: "2"
+                        - button [ref=e1415]:
+                          - generic [ref=e685]:
+                            - img [ref=e688]
+                            - generic [ref=e693]: "12"
+                        - link [ref=e1416]:
+                          - /url: /Its_lakshya_ai/status/2064158035275034970/analytics
+                          - generic [ref=e696]:
+                            - img [ref=e699]
+                            - generic [ref=e704]: "383"
+                        - button [ref=e1417]:
+                          - img [ref=e710]
+                        - button [ref=e1418]:
+                          - img [ref=e719]
+                - article [ref=e1419] [cursor=pointer]:
+                  - generic [ref=e731]:
+                    - link [ref=e743]:
+                      - /url: /web3devop
+                    - generic [ref=e746]:
+                      - generic [ref=e748]:
+                        - generic [ref=e751]:
+                          - link [ref=e1420]:
+                            - /url: /web3devop
+                            - generic [ref=e755]:
+                              - generic [ref=e757]: Nikhil Pathak
+                              - img [ref=e1421]
+                          - generic [ref=e764]:
+                            - link [ref=e1422]:
+                              - /url: /web3devop
+                              - generic [ref=e767]: "@web3devop"
+                            - generic [ref=e768]: ·
+                            - link [ref=e1423]:
+                              - /url: /web3devop/status/2064197391067275709
+                              - time [ref=e771]: 2h
+                        - generic [ref=e773]:
+                          - button [ref=e1424]:
+                            - img [ref=e780]
+                          - button [ref=e1425]:
+                            - img [ref=e790]
+                      - generic [ref=e794]: when building a new project , what do you choose to build first ? - Backend - Frontend
+                      - group [ref=e1426]:
+                        - button [ref=e1427]:
+                          - generic [ref=e800]:
+                            - img [ref=e803]
+                            - generic [ref=e808]: "17"
+                        - button [ref=e1428]:
+                          - img [ref=e814]
+                        - button [ref=e1429]:
+                          - generic [ref=e822]:
+                            - img [ref=e825]
+                            - generic [ref=e830]: "22"
+                        - link [ref=e1430]:
+                          - /url: /web3devop/status/2064197391067275709/analytics
+                          - generic [ref=e833]:
+                            - img [ref=e836]
+                            - generic [ref=e841]: "344"
+                        - button [ref=e1431]:
+                          - img [ref=e847]
+                        - button [ref=e1432]:
+                          - img [ref=e856]
+                - article [ref=e1433] [cursor=pointer]:
+                  - generic [ref=e868]:
+                    - link [ref=e880]:
+                      - /url: /Sathibuilds
+                    - generic [ref=e883]:
+                      - generic [ref=e885]:
+                        - generic [ref=e888]:
+                          - link [ref=e1434]:
+                            - /url: /Sathibuilds
+                            - generic [ref=e892]:
+                              - generic [ref=e894]: Sathish
+                              - img [ref=e1435]
+                          - generic [ref=e901]:
+                            - link [ref=e1436]:
+                              - /url: /Sathibuilds
+                              - generic [ref=e904]: "@Sathibuilds"
+                            - generic [ref=e905]: ·
+                            - link [ref=e1437]:
+                              - /url: /Sathibuilds/status/2063990344023478444
+                              - time [ref=e908]: 16h
+                        - generic [ref=e910]:
+                          - button [ref=e1438]:
+                            - img [ref=e917]
+                          - button [ref=e1439]:
+                            - img [ref=e927]
+                      - generic [ref=e931]: Talk to 1000 people to get your first 10 users
+                      - group [ref=e1440]:
+                        - button [ref=e1441]:
+                          - generic [ref=e937]:
+                            - img [ref=e940]
+                            - generic [ref=e945]: "14"
+                        - button [ref=e1442]:
+                          - img [ref=e951]
+                        - button [ref=e1443]:
+                          - generic [ref=e959]:
+                            - img [ref=e962]
+                            - generic [ref=e967]: "17"
+                        - link [ref=e1444]:
+                          - /url: /Sathibuilds/status/2063990344023478444/analytics
+                          - generic [ref=e970]:
+                            - img [ref=e973]
+                            - generic [ref=e978]: "586"
+                        - button [ref=e1445]:
+                          - img [ref=e984]
+                        - button [ref=e1446]:
+                          - img [ref=e993]
+                - article [ref=e1447] [cursor=pointer]:
+                  - generic [ref=e1005]:
+                    - link [ref=e1017]:
+                      - /url: /jiya_3063
+                    - generic [ref=e1020]:
+                      - generic [ref=e1022]:
+                        - generic [ref=e1025]:
+                          - link [ref=e1448]:
+                            - /url: /jiya_3063
+                            - generic [ref=e1029]:
+                              - generic [ref=e1031]: Jiya
+                              - img [ref=e1449]
+                          - generic [ref=e1038]:
+                            - link [ref=e1450]:
+                              - /url: /jiya_3063
+                              - generic [ref=e1041]: "@jiya_3063"
+                            - generic [ref=e1042]: ·
+                            - link [ref=e1451]:
+                              - /url: /jiya_3063/status/2064029589090017511
+                              - time [ref=e1045]: 14h
+                        - generic [ref=e1047]:
+                          - button [ref=e1452]:
+                            - img [ref=e1054]
+                          - button [ref=e1453]:
+                            - img [ref=e1064]
+                      - generic [ref=e1068]: Which HTTP status code means "Not Found"? A) 200 B) 301 C) 404 D) 500
+                      - link [ref=e1454]:
+                        - /url: /jiya_3063/status/2064029589090017511/photo/1
+                        - img [ref=e1456]
+                      - group [ref=e1457]:
+                        - button [ref=e1458]:
+                          - generic [ref=e1088]:
+                            - img [ref=e1091]
+                            - generic [ref=e1096]: "24"
+                        - button [ref=e1459]:
+                          - img [ref=e1102]
+                        - button [ref=e1460]:
+                          - generic [ref=e1110]:
+                            - img [ref=e1113]
+                            - generic [ref=e1118]: "18"
+                        - link [ref=e1461]:
+                          - /url: /jiya_3063/status/2064029589090017511/analytics
+                          - generic [ref=e1121]:
+                            - img [ref=e1124]
+                            - generic [ref=e1129]: "575"
+                        - button [ref=e1462]:
+                          - img [ref=e1135]
+                        - button [ref=e1463]:
+                          - img [ref=e1144]
+                - article [ref=e1464] [cursor=pointer]:
+                  - generic [ref=e1156]:
+                    - link [ref=e1168]:
+                      - /url: /i_nehasingh_
+                    - generic [ref=e1171]:
+                      - generic [ref=e1173]:
+                        - generic [ref=e1176]:
+                          - link [ref=e1465]:
+                            - /url: /i_nehasingh_
+                            - generic [ref=e1180]:
+                              - generic [ref=e1182]: Neha Singh
+                              - img [ref=e1466]
+                          - generic [ref=e1189]:
+                            - link [ref=e1467]:
+                              - /url: /i_nehasingh_
+                              - generic [ref=e1192]: "@i_nehasingh_"
+                            - generic [ref=e1193]: ·
+                            - link [ref=e1468]:
+                              - /url: /i_nehasingh_/status/2064212035131654326
+                              - time [ref=e1196]: 1h
+                        - generic [ref=e1198]:
+                          - button [ref=e1469]:
+                            - img [ref=e1205]
+                          - button [ref=e1470]:
+                            - img [ref=e1215]
+                      - generic [ref=e1219]: Developers, you have $20. What are you buying ? -Claude -Codex
+                      - generic [ref=e1228]:
+                        - link [ref=e1471]:
+                          - /url: /i_nehasingh_/status/2064212035131654326/photo/1
+                          - img [ref=e1473]
+                        - link [ref=e1474]:
+                          - /url: /i_nehasingh_/status/2064212035131654326/photo/2
+                          - img [ref=e1476]
+                      - group [ref=e1477]:
+                        - button [ref=e1478]:
+                          - generic [ref=e1248]:
+                            - img [ref=e1251]
+                            - generic [ref=e1256]: "13"
+                        - button [ref=e1479]:
+                          - img [ref=e1262]
+                        - button [ref=e1480]:
+                          - generic [ref=e1270]:
+                            - img [ref=e1273]
+                            - generic [ref=e1278]: "15"
+                        - link [ref=e1481]:
+                          - /url: /i_nehasingh_/status/2064212035131654326/analytics
+                          - generic [ref=e1281]:
+                            - img [ref=e1284]
+                            - generic [ref=e1289]: "138"
+                        - button [ref=e1482]:
+                          - img [ref=e1295]
+                        - button [ref=e1483]:
+                          - img [ref=e1304]

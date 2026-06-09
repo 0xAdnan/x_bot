@@ -1,0 +1,150 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - heading "To view keyboard shortcuts, press question mark View keyboard shortcuts" [level=2] [ref=e3]:
+        - generic [ref=e4]: To view keyboard shortcuts, press question mark
+        - link "View keyboard shortcuts" [ref=e5] [cursor=pointer]:
+          - /url: /i/keyboard_shortcuts
+      - generic [ref=e6]:
+        - button "Skip to home timeline" [ref=e7] [cursor=pointer]
+        - button "Skip to trending" [ref=e9] [cursor=pointer]
+        - banner [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - heading "X" [level=1] [ref=e16] [cursor=pointer]:
+                - link "X" [ref=e17]:
+                  - /url: /home
+                  - img [ref=e19]
+              - navigation "Primary" [ref=e23]:
+                - link "Home" [ref=e24] [cursor=pointer]:
+                  - /url: /home
+                  - img [ref=e27]
+                - link "Search and explore" [ref=e30] [cursor=pointer]:
+                  - /url: /explore
+                  - img [ref=e33]
+                - link "Notifications" [ref=e36] [cursor=pointer]:
+                  - /url: /notifications
+                  - img [ref=e39]
+                - link "Follow" [ref=e42] [cursor=pointer]:
+                  - /url: /i/connect_people
+                  - img [ref=e45]
+                - link "Direct Messages" [ref=e48] [cursor=pointer]:
+                  - /url: /i/chat
+                  - img [ref=e51]
+                - link "Grok" [ref=e54] [cursor=pointer]:
+                  - /url: /i/grok
+                  - img [ref=e57]
+                - link "Bookmarks" [ref=e60] [cursor=pointer]:
+                  - /url: /i/bookmarks
+                  - img [ref=e63]
+                - link "Creator Studio" [ref=e138] [cursor=pointer]:
+                  - /url: /i/jf/creators/studio
+                  - img [ref=e141]
+                - link "Premium" [ref=e73] [cursor=pointer]:
+                  - /url: /i/premium_sign_up
+                  - img [ref=e76]
+                - link "Profile" [ref=e79] [cursor=pointer]:
+                  - /url: /adnanxpitch
+                  - img [ref=e82]
+                - button "More menu items" [ref=e85] [cursor=pointer]:
+                  - img [ref=e88]
+              - link "Post" [ref=e92] [cursor=pointer]:
+                - /url: /compose/post
+                - img [ref=e94]
+            - button "Account menu" [ref=e100] [cursor=pointer]:
+              - generic [ref=e108]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic "adnan":
+                        - img "adnan"
+        - main [ref=e111]:
+          - generic "Home timeline" [ref=e116]:
+            - generic [ref=e117]:
+              - generic [ref=e123] [cursor=pointer]:
+                - button "Back" [ref=e125]:
+                  - img [ref=e127]
+                - heading "Post" [level=2] [ref=e146]
+              - generic:
+                - generic:
+                  - status:
+                    - button:
+                      - generic:
+                        - img
+                        - generic: See new posts
+            - region "Conversation" [ref=e147]:
+              - heading "Conversation" [level=1] [ref=e148]
+              - 'generic "Timeline: Conversation" [ref=e149]':
+                - generic [ref=e150]:
+                  - generic [ref=e153]:
+                    - 'article "Miracle Nnamdi Verified account @Miracle_NNnn 💬 Pitch your startup Drop your link below 👇 Let''s see what you are building today #BuildInPublic 54 replies, 2 reposts, 28 likes, 2142 views" [ref=e154]':
+                      - generic [ref=e156]:
+                        - generic [ref=e160]
+                        - generic [ref=e223]
+                    - generic [ref=e314]:
+                      - link "adnan" [ref=e323] [cursor=pointer]:
+                        - /url: /adnanxpitch
+                        - generic
+                      - generic [ref=e331]:
+                        - generic [ref=e344]
+                        - button "Reply" [disabled] [ref=e353]
+                  - article "Miracle Nnamdi Verified account @Miracle_NNnn Jun 7 Building whatlaunched.today. A platform to discover newly launched startups in one place. whatlaunched.today What Launched Today - Discover Latest Startups From whatlaunched.today 1 repost, 4 likes, 420 views" [ref=e361] [cursor=pointer]:
+                    - generic [ref=e367]:
+                      - link [ref=e379]:
+                        - /url: /Miracle_NNnn
+                      - generic [ref=e382]:
+                        - generic [ref=e384]
+                        - generic [ref=e430]
+                        - generic "whatlaunched.today What Launched Today - Discover Latest Startups" [ref=e432]
+                        - group "1 repost, 4 likes, 420 views" [ref=e447]
+                  - article "Christian Lutz Verified account @chrislutzxy Jun 7 Quote Christian Lutz Verified account @chrislutzxy Jun 5 Most web scraping tools feel like they were built for developers. SenseCollect is for people who just need the CSV. Pick a tool. Enter a search. Use credits. Download clean rows. Starting with Google Maps leads for agencies, sales teams, founders, and researchers. Image 1 like, 30 views" [ref=e512] [cursor=pointer]:
+                    - generic [ref=e518]:
+                      - link [ref=e530]:
+                        - /url: /chrislutzxy
+                      - generic [ref=e533]:
+                        - generic [ref=e535]
+                        - generic "Quote Christian Lutz Verified account @chrislutzxy Jun 5 Most web scraping tools feel like they were built for developers. SenseCollect is for people who just need the CSV. Pick a tool. Enter a search. Use credits. Download clean rows. Starting with Google Maps leads for agencies, sales teams, founders, and researchers. Image" [ref=e580]
+                        - group "1 like, 30 views" [ref=e640]
+                  - article "Vladimir Panev Verified account @vpanev2 Jun 7 WHAT A START OF THE DAY 🤩 @Apple approved the second version of my very first iOS app LiquidTasks. - A lot of UI/UX improvements - Recurring reminders daily/weekly/monthly Go check it out if you didn't 👇 apps.apple.com/app/liquidtask 1 reply, 1 like, 62 views" [ref=e705] [cursor=pointer]:
+                    - generic [ref=e711]:
+                      - link [ref=e723]:
+                        - /url: /vpanev2
+                      - generic [ref=e727]:
+                        - generic [ref=e729]
+                        - generic [ref=e775]
+                        - group "1 reply, 1 like, 62 views" [ref=e784]
+                  - article "Miracle Nnamdi Verified account @Miracle_NNnn Jun 7 Nice one! I will check it out 1 like, 42 views" [ref=e849] [cursor=pointer]:
+                    - generic [ref=e857]:
+                      - link [ref=e869]:
+                        - /url: /Miracle_NNnn
+                      - generic [ref=e872]:
+                        - generic [ref=e874]
+                        - generic [ref=e920]: Nice one! I will check it out
+                        - group "1 like, 42 views" [ref=e923]
+                  - article "Fabian Verified account @fabian_builds 13 hours ago I’m building taskmachine.io right now. Run your AI-native company with recurring and verifiable workflows and turn agent work into something you can assign, approve, retry, verify, and audit. Still early but launching in private beta soon. taskmachine.io Task Machine - Controlled Workflows for AI-native Companies From taskmachine.io 1 like, 17 views" [ref=e988] [cursor=pointer]:
+                    - generic [ref=e994]:
+                      - link [ref=e1006]:
+                        - /url: /fabian_builds
+                      - generic [ref=e1009]:
+                        - generic [ref=e1011]
+                        - generic [ref=e1057]
+                        - generic "taskmachine.io Task Machine - Controlled Workflows for AI-native Companies" [ref=e1059]
+                        - group "1 like, 17 views" [ref=e1075]
+                  - article "Piyush Kumar Verified account @Piyushkr_prog Jun 7 lenklyst.com is an all-in-one platform that combines branded links, link-in-bio pages, digital product sales, forms, QR codes, analytics, and more into a single dashboard. It's the perfect all-in-one platform for creators, small businesses, founders, and startups. lenklyst.com Lenklyst - Branding & Marketing Ecosystem A marketing and branding ecosystem for marketers, creators, startups and businesses to own their online presence. 1 like, 27 views" [ref=e1140] [cursor=pointer]:
+                    - generic [ref=e1146]:
+                      - link [ref=e1158]:
+                        - /url: /Piyushkr_prog
+                      - generic [ref=e1161]:
+                        - generic [ref=e1163]
+                        - generic [ref=e1209]
+                        - generic "lenklyst.com Lenklyst - Branding & Marketing Ecosystem A marketing and branding ecosystem for marketers, creators, startups and businesses to own their online presence." [ref=e1211]
+                        - group "1 like, 27 views" [ref=e1236]
+                  - 'article "Voyant Networks Verified account @voyant_networks 5 hours ago tools.launchllama.co/products/voyan tools.launchllama.co/products/flutt tools.launchllama.co/products/voyan can you check and rate #indiehackers #buildinpublic #developers #startup tools.launchllama.co Voyant Networks Breakdown 2026: Features, Pricing & Verdict From tools.launchllama.co 1 like, 9 views" [ref=e1301] [cursor=pointer]':
+                    - generic [ref=e1307]:
+                      - link [ref=e1319]:
+                        - /url: /voyant_networks
+                      - generic [ref=e1322]:
+                        - generic [ref=e1324]
+                        - generic [ref=e1370]
+                        - 'generic "tools.launchllama.co Voyant Networks Breakdown 2026: Features, Pricing & Verdict" [ref=e1382]'
+                        - group "1 like, 9 views" [ref=e1397]
