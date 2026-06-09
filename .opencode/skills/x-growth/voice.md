@@ -54,6 +54,9 @@ DM, rewrite it so it reads human.
 - **Confident, not hype-y.** No "game-changer", no "revolutionary", no 🚀🚀🚀.
 - **Useful first.** If someone asks for help, answer the ask before mentioning
   @trypitchdotco. Sometimes the best reply has no product mention.
+- **Two valid next steps.** It is fine to offer to make the first demo for free,
+  and it is also fine to tell hands-on users they can sign up and try it
+  themselves at https://trypitch.co. Present both naturally, not as pressure.
 - **Founder taste.** Prefer grounded takes from building: what ships, what
   converts, what confuses users, what wastes time.
 

@@ -1,0 +1,47 @@
+{"ts":"2026-06-08T00:00:00Z","action":"discover","handle":"@niteshsingh2907","detail":"Found via search 'product demo OR demo video (hard OR expensive OR took forever)'. Building Billify, subscription management SaaS. Just launched on PH. Score:10.","result":"ok"}
+{"ts":"2026-06-08T00:00:42Z","action":"like","handle":"@niteshsingh2907","detail":"Liked PH launch post - Billify subscription management","result":"ok"}
+{"ts":"2026-06-08T00:12:00Z","action":"like","handle":"@niteshsingh2907","detail":"Liked 'Built this because' post (status about demo + PH launch). Second like.","result":"ok"}
+{"ts":"2026-06-08T00:12:30Z","action":"reply","handle":"@niteshsingh2907","detail":"Replied to 'Built this because' post: asked if demo was screen recording or something else. Warm reply.","result":"ok"}
+{"ts":"2026-06-08T00:13:20Z","action":"like","handle":"@maxdev","detail":"Liked trust_mrr listing post. Second like.","result":"ok"}
+{"ts":"2026-06-08T00:13:40Z","action":"reply","handle":"@maxdev","detail":"Replied to trust_mrr listing post: asked what his SaaS does. Warm reply.","result":"ok"}
+{"ts":"2026-06-08T00:10:00Z","action":"discover","handle":"@monawwarx","detail":"Found via search 'launching on product hunt'. Building Wave (macOS dictation), Webbin, etc. Launched on PH today. Score:10.","result":"ok"}
+{"ts":"2026-06-08T09:51:27Z","action":"like","handle":"@AwaisAshraf0x","segment":"founder","variant":"","detail":"Liked launch post about Trywriteora (Jun 7)","result":"ok"}
+{"ts":"2026-06-08T09:52:46Z","action":"like","handle":"@AwaisAshraf0x","segment":"founder","variant":"","detail":"Liked trywriteora.xyz link post (Jun 8)","result":"ok"}
+{"ts":"2026-06-08T09:57:39Z","action":"reply","handle":"@AwaisAshraf0x","segment":"founder","variant":"","detail":"Left genuine reply: congrats on the launch! a short demo on the landing page works great for converting visitors.","result":"ok"}
+{"ts":"2026-06-08T09:57:52Z","action":"like","handle":"@balicien","segment":"founder","variant":"","detail":"Liked Solarch launch pinned post (Jun 5)","result":"ok"}
+{"ts":"2026-06-08T09:58:42Z","action":"like","handle":"@balicien","segment":"founder","variant":"","detail":"Liked Get your first users post (Jun 7)","result":"ok"}
+{"ts":"2026-06-08T09:58:58Z","action":"follow","handle":"@AwaisAshraf0x","segment":"founder","variant":"","detail":"Followed high-fit prospect","result":"ok"}
+{"ts":"2026-06-08T09:59:15Z","action":"follow","handle":"@balicien","segment":"founder","variant":"","detail":"Followed high-fit prospect","result":"ok"}
+{"ts":"2026-06-08T09:49:37Z","action":"discover","handle":"@AwaisAshraf0x","segment":"founder","variant":"","detail":"Discovered via #buildinpublic search. Score: 11. Product: trywriteora.xyz","result":"ok"}
+{"ts":"2026-06-08T09:50:09Z","action":"discover","handle":"@balicien","segment":"founder","variant":"","detail":"Discovered via #buildinpublic search. Score: 10. Product: solarch.dev","result":"ok"}
+{"ts":"2026-06-08T09:50:34Z","action":"discover","handle":"@debojyoti452","segment":"founder","variant":"","detail":"Discovered as reply in Awais thread. Score: 8. Product: keplars.com","result":"ok"}
+{"ts":"2026-06-08T10:28:20Z","action":"boot","handle":"","segment":"","variant":"","detail":"Second session. Checked login ok on x.com/home. Budget healthy.","result":"ok"}
+{"ts":"2026-06-08T10:29:05Z","action":"discover","handle":"@AnthonyCasauria","segment":"founder","variant":"","detail":"Discovered via #buildinpublic search. Score: 10. Products: mylinks.page, FieldOps. Building 2 SaaS in public.","result":"ok"}
+{"ts":"2026-06-08T10:31:10Z","action":"like","handle":"@AnthonyCasauria","segment":"founder","variant":"","detail":"Liked 46-animations post: spent days building 46 animated effects for MyLinks","result":"ok"}
+{"ts":"2026-06-08T10:31:55Z","action":"like","handle":"@AnthonyCasauria","segment":"founder","variant":"","detail":"Liked font-crash post: whole setup kept crashing, loading a single font was killing it","result":"ok"}
+{"ts":"2026-06-08T10:32:20Z","action":"reply","handle":"@AnthonyCasauria","segment":"founder","variant":"","detail":"46 variations to find 5 is a grind. most people would have shipped all 46 and called it a day. the edit is harder than the build.","result":"ok"}
+{"ts":"2026-06-08T10:33:00Z","action":"follow","handle":"@AnthonyCasauria","segment":"founder","variant":"","detail":"Followed high-fit prospect (2 SaaS, active builder)","result":"ok"}
+{"ts":"2026-06-08T10:33:30Z","action":"reply","handle":"@balicien","segment":"founder","variant":"","detail":"product hunt listings with a demo video convert way better than text + screenshots. worth adding one to the PH prep.","result":"ok"}
+{"ts":"2026-06-08T10:35:30Z","action":"like","handle":"@monawwarx","segment":"founder","variant":"","detail":"Liked PH #3 post: first ever listing on ProductHunt reaching #3","result":"ok"}
+{"ts":"2026-06-08T10:36:30Z","action":"post","handle":"@trypitchdotco","segment":"","variant":"","detail":"spent a day on a landing page animation for my saas. got 46 effects built, shipped 5. the other 41 are in a folder called maybe later. shipping is knowing what to cut.","result":"ok"}
+{"ts":"2026-06-08T11:01:00Z","action":"post","handle":"@adnanxpitch","segment":"","variant":"","detail":"your demo should open on the problem people actually have, not on your login screen. they decide in a few seconds whether to stay. dont waste those seconds on a signup form.","result":"ok"}
+{"ts":"2026-06-08T11:01:50Z","action":"discover","handle":"@chrislutzxy","segment":"founder","variant":"","detail":"Discovered via @foxtomb232 promo thread. Score: 11. Product: sensecollect.com","result":"ok"}
+{"ts":"2026-06-08T11:02:00Z","action":"discover","handle":"@TStaniulis_NFT","segment":"founder","variant":"","detail":"Discovered via @foxtomb232 promo thread. Score: 7. Product: promptanatomy.ceo","result":"ok"}
+{"ts":"2026-06-08T11:03:00Z","action":"discover","handle":"@iamphilmartin1","segment":"creator","variant":"","detail":"Discovered via #buildinpublic search. Score: 13. Made YT video about 'nobody knows my app exists'.","result":"ok"}
+{"ts":"2026-06-08T11:04:00Z","action":"discover","handle":"@Altawesomeee","segment":"creator","variant":"","detail":"Discovered via #buildinpublic search. Score: 13. Product: Coffee Friday iOS app, launched Jun 7.","result":"ok"}
+{"ts":"2026-06-08T11:05:00Z","action":"discover","handle":"@Lumver_ai","segment":"founder","variant":"","detail":"Discovered via @sreenandhanpp connect thread. Score: 10. Product: Lumver OS.","result":"ok"}
+{"ts":"2026-06-08T11:06:00Z","action":"like","handle":"@chrislutzxy","segment":"founder","variant":"","detail":"Liked 'Almost looks like I use Codex for work' post (12h ago)","result":"ok"}
+{"ts":"2026-06-08T11:06:45Z","action":"like","handle":"@chrislutzxy","segment":"founder","variant":"","detail":"Liked 'What is the hardest part of shipping fast?' post (3h ago)","result":"ok"}
+{"ts":"2026-06-08T11:07:00Z","action":"like","handle":"@chrislutzxy","segment":"founder","variant":"","detail":"Liked 'Short posts get more replies' post (14h ago)","result":"ok"}
+{"ts":"2026-06-08T11:07:30Z","action":"follow","handle":"@chrislutzxy","segment":"founder","variant":"","detail":"Followed high-fit prospect (founder, sensecollect.com)","result":"ok"}
+{"ts":"2026-06-08T11:08:00Z","action":"like","handle":"@iamphilmartin1","segment":"creator","variant":"","detail":"Liked 'Nobody Knows My App Exists' marketing video post (15h ago)","result":"ok"}
+{"ts":"2026-06-08T11:08:10Z","action":"like","handle":"@iamphilmartin1","segment":"creator","variant":"","detail":"Liked Fyndo 'Perfection is just procrastination' post","result":"ok"}
+{"ts":"2026-06-08T11:08:45Z","action":"reply","handle":"@iamphilmartin1","segment":"creator","variant":"","detail":"Left genuine reply: 'watched the video, the part about getting those first users is so real...'","result":"ok"}
+{"ts":"2026-06-08T11:09:00Z","action":"follow","handle":"@iamphilmartin1","segment":"creator","variant":"","detail":"Followed high-fit prospect (indie maker, explicit marketing pain)","result":"ok"}
+{"ts":"2026-06-08T11:09:20Z","action":"like","handle":"@Altawesomeee","segment":"creator","variant":"","detail":"Liked pinned Coffee Friday launch post (Jun 7)","result":"ok"}
+{"ts":"2026-06-08T11:09:25Z","action":"like","handle":"@Altawesomeee","segment":"creator","variant":"","detail":"Liked 'I need to improve my onboarding' post (14h ago)","result":"ok"}
+{"ts":"2026-06-08T11:09:45Z","action":"reply","handle":"@Altawesomeee","segment":"creator","variant":"","detail":"Left genuine reply about onboarding tip for Coffee Friday","result":"ok"}
+{"ts":"2026-06-08T11:10:00Z","action":"follow","handle":"@Altawesomeee","segment":"creator","variant":"","detail":"Followed high-fit prospect (Coffee Friday creator, just launched)","result":"ok"}
+{"ts":"2026-06-08T11:10:10Z","action":"like","handle":"@Lumver_ai","segment":"founder","variant":"","detail":"Liked 'biggest automation opportunities hide inside FAQs' post (1h ago)","result":"ok"}
+{"ts":"2026-06-08T11:10:15Z","action":"like","handle":"@Lumver_ai","segment":"founder","variant":"","detail":"Liked 'Every repetitive task is a process waiting to become a system' post","result":"ok"}
+{"ts":"2026-06-08T11:10:20Z","action":"follow","handle":"@Lumver_ai","segment":"founder","variant":"","detail":"Followed founder (Lumver OS, building in public)","result":"ok"}

@@ -4,10 +4,11 @@
 # Playwright MCP run artifacts (page snapshots, console logs — may hold scraped data)
 .playwright-mcp/
 
-# Local CRM/state is operational data, keep it out of version control
-state/*.jsonl
+# Bot CRM/state should be committed so another server can `git pull` and
+# continue the same community-building history.
+# Keep state/prospects.jsonl, state/activity-log.jsonl, and state/insights.md.
 
-# Runner runtime files
+# Runner runtime files are machine-local.
 state/runner.log
 state/runner.pid
 state/STOP

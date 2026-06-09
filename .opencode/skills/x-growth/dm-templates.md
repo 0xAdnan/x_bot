@@ -20,7 +20,10 @@ official handle), not just "PITCH". Helps them find and follow it.
 
 Use the lightest opener that fits. For high-fit prospects (`score >= 8`), default
 to the free-demo opener, it's the strongest. Keep DMs short. Always be upfront
-that you're with @trypitchdotco.
+that you're with @trypitchdotco. The free done-for-them demo is a warm opener,
+not a limitation: users can also sign up and try @trypitchdotco themselves at
+https://trypitch.co. Mention that when they ask for a link, seem hands-on, or
+would rather explore without waiting on you.
 
 Placeholders: `[name]` `[product]` `[specific_post]` `[specific_detail]`
 `[their_pain]` `[link]`.
@@ -38,13 +41,14 @@ Placeholders: `[name]` `[product]` `[specific_post]` `[specific_detail]`
 **Launch-timing opener**
 > congrats on the [product] launch. quick one, got a demo video for the launch
 > post yet? i work on @trypitchdotco, we turn a plain description into a narrated
-> demo in minutes. happy to spin one up for you free if it's useful.
+> demo in minutes. happy to spin one up for you free if it's useful, or you can
+> try it yourself at https://trypitch.co.
 
 **Light-insight opener**
 > [name] the [specific_detail] in [product] is really well done. random thought,
 > for a #buildinpublic launch a short narrated demo tends to convert way better
 > than a screenshot. that's basically what we built @trypitchdotco for. want me
-> to make you one to try?
+> to make you one to try? you can also test it yourself at https://trypitch.co.
 
 ---
 

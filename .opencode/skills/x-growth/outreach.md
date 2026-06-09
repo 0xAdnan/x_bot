@@ -34,6 +34,11 @@ Why it works: it's a gift, it's personalized, it proves the product instantly,
 and it invites a reply instead of demanding a sale. If you can't generate the
 demo asset in-session, offer it ("want me to make you one?") rather than fake it.
 
+The free done-for-them demo is a warm opener, not the only way to use the
+product. If they seem hands-on, ask for the link, or want to test it themselves,
+send them to https://trypitch.co and say there is a free way to try it. Keep the
+tone low-pressure: "i can make one for you, or you can try it yourself here."
+
 ## DM sequence (max 3 messages, then stop)
 
 Personalize every message to their actual product/posts. Never send two
@@ -47,8 +52,8 @@ demo, or a sharp insight), end with a light question. Goal: a reply, not a sale.
 
 **DM 2, only if they replied positively (qualify + connect pain)**
 First respond to what they actually said. Then ask one good question about how
-they currently make demos/videos. Tie PITCH to the pain they reveal. Still
-consultative.
+they currently make demos/videos. Tie @trypitchdotco to the pain they reveal.
+Still consultative.
 
 **DM 3, the soft CTA**
 Offer the obvious next step from the CTA ladder. Make it easy and low-risk.
@@ -60,8 +65,9 @@ later via likes only, not DMs).
 ## CTA ladder (offer the lightest step that fits)
 
 1. "want me to make you a free demo of [product]?" (value, no commitment)
-2. "happy to send a 2-min loom of how it'd work for you."
-3. "there's a free trial, want the link?" (https://trypitch.co)
+2. "or if you want to play with it yourself, there's a free way to try it at
+   https://trypitch.co."
+3. "happy to send a 2-min loom of how it'd work for you."
 4. "want me to set you up?" or point to pricing, only when intent is clear.
 
 Always escalate to the next step, never skip straight to "buy now".
@@ -94,6 +100,9 @@ dashes, no AI words), and mention the product as @trypitchdotco.
   one for them.
 - **"is it expensive?"** don't quote numbers you don't have ([voice.md](voice.md)).
   point to the free trial, and the cost of not shipping demos or paying an editor.
+- **"can i try it myself?"** yes. send them to https://trypitch.co and mention
+  there is a free way to try it. You can still offer to make the first demo for
+  them if they want a quick reference output.
 - **"ai video looks cheap."** send the demo you made of their product and let it
   speak. this is why the signature play wins.
 - **"not right now."** gracious exit, leave the door open, keep engaging via

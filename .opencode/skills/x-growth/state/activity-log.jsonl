@@ -151,3 +151,30 @@
 {"ts":"2026-06-09T08:29:30Z","action":"like","handle":"@faizan10114","segment":"founder","variant":"","detail":"Liked recent post during warming pass","result":"ok"}
 {"ts":"2026-06-09T08:29:50Z","action":"like","handle":"@Lumver_ai","segment":"founder","variant":"","detail":"Liked 2 recent posts during warming pass","result":"ok"}
 {"ts":"2026-06-09T08:30:10Z","action":"like","handle":"@Sathibuilds","segment":"founder","variant":"","detail":"Liked 2 recent posts during warming pass","result":"ok"}
+{"ts":"2026-06-09T09:07:00Z","action":"dm","handle":"@niteshsingh2907","segment":"founder","variant":"free-demo-opener","detail":"DM1: offered free Billify demo via @trypitchdotco. Referenced PH launch and repost.","result":"ok"}
+{"ts":"2026-06-09T09:07:30Z","action":"follow","handle":"@niteshsingh2907","segment":"founder","variant":"","detail":"Followed back (he follows us).","result":"ok"}
+{"ts":"2026-06-09T09:08:00Z","action":"dm","handle":"@Miracle_NNnn","segment":"founder","variant":"free-demo-opener","detail":"DM1: offered free Natiad demo via @trypitchdotco. Referenced PH launch and SEO/GEO angle.","result":"ok"}
+{"ts":"2026-06-09T09:08:30Z","action":"dm","handle":"@jaznanofficial","segment":"founder","variant":"free-demo-opener","detail":"DM1: offered free Ohuriya demo via @trypitchdotco. Referenced plain-English VPS management flow.","result":"ok"}
+{"ts":"2026-06-09T09:09:00Z","action":"dm","handle":"@JustinXiaochen","segment":"founder","variant":"free-demo-opener","detail":"DM1: offered free Calibrd demo via @trypitchdotco. Referenced before/after demo tip from earlier reply.","result":"ok"}
+{"ts":"2026-06-09T09:11:00Z","action":"dm","handle":"@chrislutzxy","segment":"founder","variant":"free-demo-opener","detail":"DM1: offered free sensecollect demo via @trypitchdotco. Referenced web scraping for non-devs angle.","result":"ok"}
+{"ts":"2026-06-09T09:12:00Z","action":"post","handle":"","segment":"","variant":"","detail":"Original post: 'most demo videos fail because they explain the tool before they prove the outcome. start on the result, then rewind. people decide in seconds, not features.'","result":"ok"}
+{"ts":"2026-06-09T09:13:00Z","action":"like","handle":"@MaberFate","segment":"founder","variant":"","detail":"Liked 2 recent posts (Jun 9). Now touches=4, advances to warming.","result":"ok"}
+{"ts":"2026-06-09T09:14:00Z","action":"like","handle":"@debojyoti452","segment":"founder","variant":"","detail":"Liked 2 recent posts (Jun 9). First engagement, touches=2.","result":"ok"}
+{"ts":"2026-06-09T09:04:00Z","action":"discover","handle":"@writerabu","segment":"founder","variant":"","detail":"Found via #buildinpublic search. Building Pocket Interpreter (offline AI translator). Launched 20h ago. Score:7.","result":"ok"}
+{"ts":"2026-06-09T09:04:00Z","action":"discover","handle":"@404notacoder","segment":"founder","variant":"","detail":"Found via #buildinpublic search. Building proheadshotphotos.com (AI headshot generator, built in 48h). Score:7.","result":"ok"}
+{"ts":"2026-06-09T09:04:00Z","action":"discover","handle":"@nexusai_apps","segment":"founder","variant":"","detail":"Found via #buildinpublic search. Just launched Verzio (PH for AI-built apps). Score:8.","result":"ok"}
+{"ts":"2026-06-09T09:09:30Z","action":"failed","handle":"@maxdev","segment":"founder","variant":"","detail":"DM blocked: No Message button on profile (DMs restricted). Cannot send.","result":"failed"}
+{"ts":"2026-06-09T09:10:30Z","action":"failed","handle":"@iamphilmartin1","segment":"creator","variant":"","detail":"DM blocked: No Message button on profile (DMs restricted). Cannot send.","result":"failed"}
+{"ts":"2026-06-09T09:38Z","action":"outcome","handle":"@niteshsingh2907","segment":"founder","variant":"free-demo-opener","detail":"positive","result":"ok"}
+{"ts":"2026-06-09T09:38Z","action":"dm","handle":"@niteshsingh2907","segment":"founder","variant":"free-demo-opener","detail":"DM2 sent: asked which Billify workflow to demo first","result":"ok"}
+{"ts":"2026-06-09T09:35Z","action":"outcome","handle":"@JustinXiaochen","segment":"founder","variant":"free-demo-opener","detail":"declined","result":"ok"}
+{"ts":"2026-06-09T09:35Z","action":"failed","handle":"@chrislutzxy","segment":"founder","variant":"free-demo-opener","detail":"DM not found in chat list. Session 10 DM may have failed silently.","result":"failed"}
+{"ts":"2026-06-09T09:44Z","action":"follow","handle":"@monawwarx","segment":"founder","variant":"","detail":"Followed before DM","result":"ok"}
+{"ts":"2026-06-09T09:44Z","action":"dm","handle":"@monawwarx","segment":"founder","variant":"free-demo-opener","detail":"DM1 sent: Wave PH #2 launch, offered narrated demo of voice-to-text flow","result":"ok"}
+{"ts":"2026-06-09T09:45Z","action":"follow","handle":"@faizan10114","segment":"founder","variant":"","detail":"Followed before DM","result":"ok"}
+{"ts":"2026-06-09T09:45Z","action":"dm","handle":"@faizan10114","segment":"founder","variant":"free-demo-opener","detail":"DM1 sent: Alfa PH #6 launch today, offered demo showing setup-to-growth-insights flow","result":"ok"}
+{"ts":"2026-06-09T09:46Z","action":"follow","handle":"@MaberFate","segment":"founder","variant":"","detail":"Followed before DM","result":"ok"}
+{"ts":"2026-06-09T09:46Z","action":"dm","handle":"@MaberFate","segment":"founder","variant":"free-demo-opener","detail":"DM1 sent: IndieClash PH launch, $0-to-$30k mission, offered demo showing product listing/discovery","result":"ok"}
+{"ts":"2026-06-09T09:42Z","action":"failed","handle":"@markjivko","segment":"founder","variant":"","detail":"DM restricted - no Message button on profile","result":"failed"}
+{"ts":"2026-06-09T09:47Z","action":"failed","handle":"@balicien","segment":"founder","variant":"","detail":"DM restricted - no Message button on profile","result":"failed"}
+{"ts":"2026-06-09T09:41Z","action":"discover","handle":"@nia_thinks","segment":"community","variant":"","detail":"Community scan found 'what are you building this week' thread, 0 replies, too new to engage","result":"ok"}
