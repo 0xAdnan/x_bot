@@ -39,6 +39,17 @@ No data yet. Default to opener A (demo offer) for all segments.
 - Bias future sessions toward a tech-founder/operator personality, not only demo
   content: comment on AI tooling, devtools, launches, onboarding, product craft,
   and founder distribution.
+- Because average helpful-builder posts have not broken out yet, add a live
+  trend lane each session: scan @polymarket, X Explore/search, home timeline,
+  AI/devtool launches, founder memes, and major tech conversations. Use
+  replies/quotes first, original trend posts only when the pattern appears
+  across multiple posts.
+- Favor sharp, timely, concrete comments that translate the trend into a
+  founder/operator insight or light meme. Prefix logs with `trend:`,
+  `polymarket trend:`, or `meme:` so results can be reviewed.
+- For @polymarket, never give betting advice or odds predictions. Talk about
+  what the market reveals about tech attention, launch uncertainty, product
+  narratives, or builder behavior.
 - Add a help-first community scan before or after prospecting when reply/quote
   budget allows. Look for "rate my landing page", "roast my startup", "what are
   you building", Product Hunt launches, and AI tool threads.

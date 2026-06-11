@@ -27,6 +27,10 @@ Until then, keep engaging. Track touches in the prospect's `touches` field.
    it puts @trypitchdotco in their mentions and shows up in their quote-tweet
    feed. Use for top prospects or when you have a genuinely useful take.
    Original posting and product posting are handled separately in `content.md`.
+5. **Trend comment** when a live tech/Polymarket conversation already has
+   momentum and you have a founder/operator angle. Treat this like public
+   engagement, not prospect outreach: be timely, specific, and easy to reshare.
+   No financial advice, no dogpiling, no generic "big if true" replies.
 
 ### Community help mode
 
@@ -86,6 +90,11 @@ no em dashes, no AI words, no tidy three-item lists. Run the draft through the
   @trypitchdotco if it's genuinely the answer, and even then keep it soft.
   ("there are tools now that turn a written walkthrough straight into a narrated
   demo, skips the whole editing pass.")
+- **Trend translation:** connect a live topic to what founders should do or
+  notice. ("the useful part of this AI launch is not the feature list. it's that
+  the demo makes the before/after obvious in 5 seconds.")
+- **Light meme:** one specific joke about the situation, not the person. Works
+  best on founder pain, demo pain, launch chaos, and tech hype cycles.
 
 ### Reply do-not
 

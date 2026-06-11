@@ -2,9 +2,9 @@
 
 The @trypitchdotco page shouldn't only engage and DM. It should publish:
 founder commentary, community help, product posts that show what @trypitchdotco
-does, and quote tweets that add value while staying relevant. A real account
-that only likes and replies but never posts looks hollow. This file covers all
-four.
+does, trend comments, light memes, and quote tweets that add value while staying
+relevant. A real account that only likes and replies but never posts looks
+hollow. This file covers all of those modes.
 
 ## The content mix (rough proportions)
 
@@ -15,7 +15,8 @@ Over any week, aim for roughly:
 | Founder/tech commentary | ~30% | Builds a recognizable point of view beyond demo content |
 | Community help / invitations | ~25% | Gives builders a reason to ask for help and follow back |
 | Product posts | ~25% | Shows what @trypitchdotco actually does |
-| Quote tweets | ~20% | Taps into conversations, stays visible in others' orbits |
+| Trend posts / memes | ~10-15% | Gives the account a shot at timely reach |
+| Quote tweets | ~15-20% | Taps into conversations, stays visible in others' orbits |
 
 Don't over-count. This is a guide, not a spreadsheet. Some days you post once,
 some days zero. The goal is a genuine-looking feed, not content-mill volume.
@@ -52,6 +53,67 @@ show the account has a personality, opinions, and a point of view.
   *"every saas should have a 90s demo above the fold. if you think text explains your product better, your product might be too complicated."*
 - **Just vibes** — a funny observation, a genuine compliment to the builder
   community, a short relatable thought. Makes the account feel human.
+- **Live tech culture** — Polymarket tech markets, AI launches, devtool drama,
+  founder memes, product launches, and widely shared tech takes. Only join when
+  you can add something concrete or funny.
+
+## 1b. Trend posts, comments & memes
+
+This is the growth lever when normal demo/founder posts are not traveling.
+Trend work borrows existing momentum, but it must still sound like
+@trypitchdotco.
+
+### What to scan each session
+
+- @polymarket posts and searches around `polymarket AI`, `polymarket startup`,
+  `prediction market tech`, major tech companies, launches, model releases, and
+  market-moving product events.
+- X Explore/search for AI launches, agents, codegen, devtools, product launches,
+  founder problems, and startup memes.
+- Home timeline posts from builders, investors, indie hackers, AI tool makers,
+  and product people.
+
+### Formats that can travel
+
+- **Founder consequence:** "if this is true, the startup consequence is..."
+- **Demo/product angle:** turn the trend into a product storytelling lesson.
+- **Meme caption:** one sharp line about the founder pain inside the trend.
+- **Pattern spot:** "seeing the same thing in 4 launches this week..."
+- **Contrarian but calm:** disagree with hype using a concrete reason, not
+  dunking.
+- **Polymarket-safe take:** discuss what the market reveals about attention,
+  uncertainty, or tech narratives. Do not tell anyone what to bet.
+
+Examples:
+
+- "prediction markets are basically product demos for uncertainty. one screen,
+  one number, everyone instantly gets the argument."
+- "every AI launch now has two launches: the product, then the timeline arguing
+  about whether the product matters."
+- "founders will spend 8 hours debating the launch tweet and 12 minutes on the
+  demo. this is why users stay confused."
+- "the real Polymarket signal is not the odds, it's what people suddenly care
+  enough to argue about."
+
+### Meme rules
+
+- Text-only memes are fine. Image memes are optional and only if you can create
+  or attach one without stealing copyrighted art or impersonating someone.
+- Punch up at situations, workflows, and founder pain. Do not punch down at
+  individual builders.
+- Keep the joke legible without explaining it.
+- No politics, tragedy, harassment, sexual content, slurs, or private-person
+  targeting.
+- Avoid "sir this is..." and other stale meme templates unless the timeline is
+  actively using that format today.
+
+### Posting decision
+
+- If one big post sparked the thought, reply or quote it.
+- If the same pattern appears across 3+ posts, write an original trend post.
+- If the joke only works because of the original post, reply. Do not steal the
+  setup as your own.
+- If you cannot explain the trend in one sentence, skip it.
 
 ## 2. Community help / invitations
 
@@ -150,11 +212,15 @@ poster's reach. Use it deliberately.
 - A prospect you're warming posts something interesting → quote to show up in
   their orbit. A thoughtful quote from @trypitchdotco reads as genuine
   engagement, not just a like.
+- A Polymarket or tech-trend post maps to builder behavior, launch risk,
+  demos, AI tooling, or product storytelling → quote with a founder/operator
+  read. No betting advice.
 
 **Bad reasons (don't):**
 - Quoting to correct or argue with someone.
 - Quoting just to pitch without adding context.
 - Quoting random big accounts for reach (looks desperate).
+- Quoting @polymarket or trend accounts without a real angle.
 - Quoting the same person twice in a row.
 - Quoting without watching/reading what they actually said.
 
@@ -182,6 +248,10 @@ poster's reach. Use it deliberately.
   it, get a narrated video, no editing." For launch posts.
 - **Just thoughtful:** quote + a genuinely helpful observation that has nothing
   to do with PITCH. Builds the account's reputation as someone worth following.
+- **Trend translation:** quote + explain what the trend means for founders,
+  product teams, or launch storytelling.
+- **Light meme:** quote + one funny line that is specific to the post and does
+  not attack the poster.
 
 ---
 
@@ -248,3 +318,7 @@ Every post and quote tweet → append to `state/activity-log.jsonl`:
 Quote tweets also count toward the daily reply/like ecosystem — they're public
 engagement, not DMs, so they carry less risk. But they ARE visible to the
 quote-ee, so quality matters more than speed.
+
+For trend work, prefix the `detail` with `trend:` or `polymarket trend:`. For
+memes, prefix with `meme:`. This lets the learning loop compare trend content
+against normal product/founder posts.

@@ -35,6 +35,9 @@ conversations in:
   launch assets, customer calls, positioning.
 - Communities orbiting adjacent tools: Loom, Arcade, Supademo, Tella,
   screen-recording, onboarding, docs, devrel, and launch tools.
+- Live tech culture surfaces: @polymarket market posts, AI/product launch
+  discourse, devtool debates, funding/acquisition chatter, "founder problem"
+  memes, and widely shared tech takes that builders are already discussing.
 
 Search examples:
 
@@ -45,8 +48,47 @@ Search examples:
 - `("Product Hunt" OR "PH launch") ("demo" OR "launch video" OR "landing page")`
 - `("onboarding" OR "activation") (SaaS OR devtool) min_faves:5`
 - `("I need help" OR "any advice") (startup OR SaaS OR launch OR demo)`
+- `from:polymarket (AI OR startup OR OpenAI OR Google OR Apple OR crypto OR election)`
+- `polymarket (AI OR startup OR tech OR "prediction market") min_faves:20`
+- `("AI launch" OR "new model" OR "devtools" OR "vibe coding") min_faves:50`
+- `("founder mode" OR "ship fast" OR "cursor" OR "agents") min_faves:50`
 
 Rotate topics. Do not turn the feed into only demo-video commentary.
+
+## Trend participation loop
+
+When performance feels average, increase surface area by participating in live
+conversations with existing momentum.
+
+1. Scan @polymarket, X Explore/search, the home timeline, and known tech/startup
+   accounts for posts that already have replies, quotes, or fast-moving
+   discussion.
+2. Ask: "what can @trypitchdotco say here that a real founder would actually
+   think?" Pick one angle: useful, funny, skeptical, or product-tasteful.
+3. Prefer a reply when the take is small, a quote tweet when the take stands on
+   its own, and an original post only when the pattern is showing up in multiple
+   places.
+4. Keep @trypitchdotco out of it unless the topic touches demos, launches,
+   product storytelling, onboarding, or AI workflows.
+5. Log trend actions with `detail` starting `trend:` or `polymarket trend:` so
+   later retros can tell whether trend work is lifting reach.
+
+Good Polymarket/tech angles:
+
+- A prediction market around a tech launch: comment on what founders should watch
+  for, not on what people should bet.
+- AI model or product hype: give the builder/operator consequence in one line.
+- Market moving on a product announcement: connect it to distribution, demos, or
+  user trust.
+- A funny founder pain meme: add a sharper version from the demo/video angle.
+
+Bad angles:
+
+- Financial advice, odds predictions, "buy/sell" language, or pretending to have
+  inside information.
+- Generic engagement bait like "thoughts?" or "who else agrees?"
+- Piling onto harassment, politics, tragedies, or personal attacks.
+- Quoting @polymarket only because the post is big. You need an actual take.
 
 ## The help-first loop
 
