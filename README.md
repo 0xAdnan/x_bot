@@ -28,34 +28,41 @@ by its `description` and loaded on demand.
     dm-templates.md             per-segment opening-DM bank (scaffolds)
     learn.md                    learning loop, how it evolves its approach
     voice.md                    brand voice, approved claims, compliance
-    safety.md                   daily caps, pacing, anti-ban, self-healing
-    scripts/budget.sh           today's remaining action budget from the log
+    safety.md                   caps, pacing, anti-ban, circuit breaker
+    state/account.json          operating identity (@adnanspitch, @trypitchdotco, ramp dates)
+    state/prospects.jsonl       the CRM pipeline
+    state/activity-log.jsonl    every action + outcome (rate-limiting + learning)
+    state/insights.md           adaptive memory, what's working (self-edited)
+    state/circuit-breaker.jsonl kill-switch trip log (auto-pause)
+    scripts/budget.sh           remaining budget; auto-applies cold-start 25% caps
+    scripts/circuit-breaker.sh  auto-pause after repeated kill-switches (human --reset)
     scripts/stats.sh            reply/conversion rates per segment & variant
     scripts/runner.sh           always-on orchestrator (jittered bounded sessions)
 opencode.jsonc                  browser MCP wiring (Playwright)
-state/
-  prospects.jsonl               the CRM pipeline
-  activity-log.jsonl            every action + outcome (rate-limiting + learning)
-  insights.md                   adaptive memory, what's working (self-edited)
-  README.md                     state schema
 ```
 
 ## Setup
 
 1. **Install OpenCode** and a browser MCP. This config uses Playwright MCP via
    `npx @playwright/mcp@latest` (auto-downloaded on first run; needs Node).
-2. **Use a dedicated X account** with a complete profile. Don't point this at
+2. **Use a dedicated X account** with a complete profile. The current operating
+   account is **@adnanspitch** (see `state/account.json`). Don't point this at
    your personal/main account.
-3. **Persist login** (recommended): in `opencode.jsonc`, swap `--isolated` for
-   `--user-data-dir=./.browser-profile`, run once, log into X manually in that
-   browser, then close. Future sessions reuse the cookies.
-4. *(Optional)* set the agent's `model` in `.opencode/agent/x-growth.md`
+3. **Persist login** (recommended): in `opencode.jsonc`, run once, log into X
+   manually in that browser (the old @adnanxpitch profile was moved out of
+   `./.browser-profile`), then close. Future sessions reuse the cookies.
+4. **Warm the new account manually before automation.** @adnanxpitch was banned
+   in 6 days by running automation at full speed on a new account. The skill
+   now auto-applies 25% cold-start caps until 2026-08-30 and blocks all
+   outbound DMs until 2026-08-23. A week of real manual use (browsing, liking,
+   posting) before ramping automation reduces the ban risk substantially.
+5. *(Optional)* set the agent's `model` in `.opencode/agent/x-growth.md`
    frontmatter to your preferred provider/model.
 
 ## Run
 
 ```bash
-cd /home/adnan/Documents/x_bot
+cd /home/adnan/x_bot
 opencode
 ```
 
@@ -71,20 +78,21 @@ everything, and reports back.
 
 A session is **bounded**, it ends when caps are hit or the kill-switch trips.
 For "always running", use the orchestrator, which keeps the *process* alive but
-keeps the *X activity* human-like (jittered gaps, waking hours only, backs off
-on caps):
+keeps the *X activity* human-like (jittered gaps, waking hours only, max 3
+sessions/day, backs off on caps):
 
 ```bash
 bash .opencode/skills/x-growth/scripts/runner.sh &   # start
-tail -f state/runner.log                             # watch
-touch state/PAUSE                                     # pause (stays up; rm to resume)
-touch state/STOP                                      # stop gracefully
-kill "$(cat state/runner.pid)"                        # stop now
+tail -f .opencode/skills/x-growth/state/runner.log   # watch
+touch .opencode/skills/x-growth/state/PAUSE          # pause (stays up; rm to resume)
+touch .opencode/skills/x-growth/state/STOP           # stop gracefully
+kill "$(cat .opencode/skills/x-growth/state/runner.pid)"  # stop now
 ```
 
 > ⚠️ Do **not** make it run actions continuously/24-7, that's the fastest way to
-> get banned. The runner deliberately sleeps, throttles, and restricts to waking
-> hours. Tune with env vars (`WAKE_START`, `WAKE_END`, `MIN_GAP`, `MAX_GAP`).
+> get banned (it got @adnanxpitch banned in 6 days). The runner deliberately
+> sleeps, throttles, and restricts to waking hours. Tune with env vars
+> (`WAKE_START`, `WAKE_END`, `MIN_GAP`, `MAX_GAP`, `MAX_SESSIONS`).
 > Dry-run the schedule without touching X: `DRY=1 RUN_ONCE=1 bash …/runner.sh`.
 
 ## How it works (the loop)
@@ -103,11 +111,19 @@ kill "$(cat state/runner.pid)"                        # stop now
 ## Guardrails baked in
 
 - **Hard daily caps** (likes/replies/follows/DMs) + randomized human-like pacing.
+- **Cold-start ramp**: `budget.sh` auto-applies 25% caps until 2026-08-30, and
+  no outbound DMs before 2026-08-23.
+- **Session cap**: max 3 sessions/day, min 2h apart (`runner.sh`).
+- **Burst cap**: at most 10 ok actions per rolling hour; no repeated identical
+  actions in a row.
 - **No spam**: every message personalized; no identical blasts; warm-up required
   before any DM.
 - **Instant opt-out**: "no"/"stop" → `do-not-contact`, forever.
 - **Approved claims only**: no invented features, pricing, or metrics.
-- **Kill-switch**: stops on any CAPTCHA / rate-limit / X warning and reports.
+- **Kill-switch + circuit breaker**: stops on any CAPTCHA / rate-limit / X
+  warning; after 3 trips in 24h the breaker writes `state/HARD_STOP` and
+  automation pauses until a human runs `circuit-breaker.sh --reset`. This
+  prevents the old 200-session kill-switch loop.
 
 ## Learns & heals over time
 

@@ -169,3 +169,19 @@ Use existing action types:
 
 For `detail`, start with `community help:` or `community invite:` so later
 retros can identify which actions built trust.
+
+## Thread self-promo limits (learned from the ban)
+
+"drop your link" / "what are you building" threads are the fastest way to look
+like a bot. The old account replied to 8+ of these in an hour with the same
+"building @trypitchdotco..." line and got permanently banned that week. Hard
+limits, enforced per day by [safety.md](safety.md):
+
+- **Max 2 self-promo thread replies per day** (replies that mention
+  @trypitchdotco). Prefer helping without mentioning the product at all.
+- **Never the same wording twice.** Each one must reference something specific in
+  that thread and add value before any product mention.
+- **Space them out.** Never two within the same hour, and never right after a DM
+  or post (no cluster of self-promo signals).
+- **Inbound still wins.** If the thread or a person replies to you, answer that
+  before your next planned thread reply.

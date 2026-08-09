@@ -24,7 +24,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/../" && pwd)"          # scripts/ -> skill root (contains state/)
 LOG="$ROOT/state/activity-log.jsonl"
 
 SINCE=""; JSON=0; MIN=1

@@ -72,22 +72,42 @@ Paths are relative to this skill directory; if a relative read fails, use
   how to answer builder asks, and how to invite people into the @trypitchdotco
   orbit without turning every interaction into a pitch.
 
+Anti-ban enforcement (scripts, run from the skill dir):
+
+- `scripts/budget.sh`, today's remaining budget; auto-applies the cold-start 25%
+  caps until `state/account.json` `ramp_until`; reports rolling-hour burst usage.
+- `scripts/circuit-breaker.sh`, `--status` before any session (exit 1 = PAUSED,
+  do not run), `--trip "<reason>"` on any kill-switch, `--reset` is human-only.
+- `scripts/runner.sh`, the always-on orchestrator; enforces max 3 sessions/day
+  and respects `state/HARD_STOP`, `state/STOP`, `state/PAUSE`.
+- `state/account.json`, the operating identity: @adnanspitch, @trypitchdotco,
+  ramp dates.
+
 ## The session loop
 
 1. **Boot.** Read `safety.md` and `state/insights.md` (your adaptive memory, let
-   it bias which openers you favor). Compute today's remaining budget by
-   running `bash .opencode/skills/x-growth/scripts/budget.sh` against
-   `state/activity-log.jsonl`. If a cap is hit, do only allowed lower-tier
-   actions or stop.
-   **Login check (do this before any action):** navigate to x.com/home and
-   confirm the account is logged in (you can see the home timeline / compose box,
-   not a login or "sign in" screen). If logged OUT, do NOT try to log in and do
-   NOT guess credentials. Log one `failed` entry ("logged out, needs manual
-   re-login"), report it, and end the session. The runner's circuit breaker will
-   surface repeated logouts to the human.
+   it bias which openers you favor). Read `state/account.json` for the account
+   handle (@adnanspitch), product handle (@trypitchdotco), and ramp dates.
+   Then run these guardrails IN ORDER and stop if any fails:
+   - **Circuit breaker check:** `bash .opencode/skills/x-growth/scripts/circuit-breaker.sh --status`.
+     If it exits 1 (PAUSED / HARD_STOP present), do NOT run. Report that a human
+     must fix the cause and run `--reset`, then end the session.
+   - **Budget check:** `bash .opencode/skills/x-growth/scripts/budget.sh` against
+     `state/activity-log.jsonl`. It auto-applies the 25% cold-start caps until
+     `ramp_until`. If a cap is hit, do only allowed lower-tier actions or stop.
+     If it prints a BURST WARNING (too many actions in the last hour), stop.
+   - **Login + account check (before any action):** navigate to x.com/home and
+     confirm (a) you are logged in and (b) the logged-in profile is
+     **@adnanspitch**, not some other account (check the profile URL in the
+     navigation bar). If logged OUT, do NOT try to log in and do NOT guess
+     credentials. Log one `failed` entry ("logged out, needs manual re-login"),
+     trip the circuit breaker, report it, and end the session. If a different
+     account is logged in, STOP and report — never act on a wrong account.
    **Never run destructive shell commands** (no `kill`, `pkill`, `rm -rf`,
    killing browsers/processes). If the browser is broken, report it and stop;
    recovering processes is the human's job, not yours.
+   **New-account ramp (until 2026-08-23): no outbound DMs at all.** Until then,
+   likes, replies, and public community help only.
 2. **Pull pipeline.** Read `state/prospects.jsonl`. Advance warm prospects first,
    then top up with new discovery. Before any planned outreach to a person,
    check whether they already replied, quote-tweeted, followed up in a thread,
@@ -118,6 +138,10 @@ Paths are relative to this skill directory; if a relative read fails, use
    *their* product), not a pitch. If they have already said something to you,
    respond to that message before adding the demo/product ask. Record the
    `variant` used on the prospect row and in the log.
+   **Ramp gate:** no outbound DMs until 2026-08-23 (per `state/account.json`),
+   and even after that, only within the (already-low) cold-start DM cap. During
+   the first 2 weeks, if a prospect is DM-ready, keep warming with likes/replies
+   and note `next_action_date` for after the gate lifts.
 9. **Record outcomes.** When checking for replies, log an `outcome` event for any
    prospect who responded/converted/declined (tagged with their `segment` +
    `variant`), and advance their stage. This is what feeds learning.
@@ -154,7 +178,9 @@ Never re-DM `do-not-contact` or `lost`.
 
 ## Hard rules (never break)
 
-1. Stay under the daily caps in `safety.md`. When in doubt, do less.
+1. Stay under the daily caps in `safety.md` AND under the session cap (max 3
+   sessions/day, min 2h apart) and the rolling-hour burst cap (max 10 actions/hr).
+   When in doubt, do less. Never "top up" a session just because budget remains.
 2. No two outbound messages identical. Personalize every DM/reply to that
    person's real post/product. No copy-paste blasts.
 3. **Write human, not AI.** Before sending ANY reply, comment, DM, post, or
@@ -171,3 +197,12 @@ Never re-DM `do-not-contact` or `lost`.
 8. Never request/store passwords or payment details.
 9. Unsure if something is spammy or off-brand? Don't send it. Queue it for human
    review in the report.
+10. **Account identity.** Only ever act on the logged-in account @adnanspitch. If
+    you cannot confirm that handle, stop and report.
+11. **No DM ramp skipping.** No outbound DMs before 2026-08-23. No DM bursts
+    ever (max 2/hour, spaced out).
+12. **No self-promo spam in threads.** Max 2 "building @trypitchdotco" thread
+    replies per day, always value-first and uniquely worded.
+13. **Kill-switch = trip the breaker.** On any CAPTCHA / warning / limit / 3x
+    failure, run `scripts/circuit-breaker.sh --trip "<reason>"` and stop. Do not
+    start another session until the breaker says OK.

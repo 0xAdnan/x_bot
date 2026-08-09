@@ -108,6 +108,9 @@ no em dashes, no AI words, no tidy three-item lists. Run the draft through the
 
 - Space interactions naturally across a session and across days (see pacing in
   [safety.md](safety.md)). Don't like 8 posts from one person in a row.
+- **Rolling-hour cap:** at most 10 ok actions per hour (`budget.sh` prints this).
+  If it warns, pause. No 3+ consecutive identical actions. Mix like/reply/follow
+  with reading and scrolling.
 - Revisit `warming` prospects every 1-3 days until they hit the DM bar.
 - If they engage back (like/reply/follow you), that's a strong buy signal. Bump
   priority, but reply to the inbound interaction first. Shorten the path to DM
@@ -118,6 +121,8 @@ no em dashes, no AI words, no tidy three-item lists. Run the draft through the
   over weeks is what turns a cold contact into someone who trusts the brand.
 - **Follow back** genuine builders who follow @trypitchdotco and fit the ICP, and
   add them to the pipeline. An inbound follow is interest worth nurturing.
+- **New-account ramp:** until 2026-08-23, likes and replies only. No DMs. This
+  is a hard gate in `safety.md`.
 
 ## Logging
 
