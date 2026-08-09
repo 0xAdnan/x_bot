@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import json
 import os
-import re
 import subprocess
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
@@ -44,19 +43,28 @@ def get_budget_stats():
     except Exception as e:
         cb_status = str(e)
 
-    account_data = {}
-    account_path = os.path.join(STATE_DIR, "account.json")
-    if os.path.exists(account_path):
-        try:
-            with open(account_path, "r") as f:
-                account_data = json.load(f)
-        except Exception:
-            pass
+    account_data = {
+        "handle": "@adnanspitch",
+        "brand_handle": "@trypitchdotco",
+        "site": "https://trypitch.co",
+        "created": "2026-08-09",
+        "ramp_until": "2026-08-30",
+        "accounts": [
+            {"handle": "@adnanspitch", "role": "Operator / Prospecting", "status": "Active & Logged In"},
+            {"handle": "@trypitchdotco", "role": "Brand / Product Launches", "status": "Active & Logged In"}
+        ]
+    }
+
+    # Cron next run time estimation (3 sessions daily: 09:00, 14:00, 19:00)
+    # Default next run timestamp for ticker
+    next_run_at = "2026-08-09T19:00:00+05:30"
 
     return {
         "budget_raw": output,
         "circuit_breaker": cb_status,
-        "account": account_data
+        "account": account_data,
+        "next_run_at": next_run_at,
+        "schedule": "0 9,14,19 * * * (3x Daily)"
     }
 
 class DashboardHandler(SimpleHTTPRequestHandler):

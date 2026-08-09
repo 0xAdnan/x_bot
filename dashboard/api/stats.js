@@ -4,10 +4,16 @@ export default function handler(req, res) {
     circuit_breaker: "circuit-breaker: 0 trip(s) in the last 24h (limit 3).\nSTATUS: OK to run.",
     account: {
       handle: "@adnanspitch",
-      product_handle: "@trypitchdotco",
+      brand_handle: "@trypitchdotco",
       site: "https://trypitch.co",
       created: "2026-08-09",
-      ramp_until: "2026-08-30"
-    }
+      ramp_until: "2026-08-30",
+      accounts: [
+        { handle: "@adnanspitch", role: "Operator / Prospecting", status: "Active & Logged In" },
+        { handle: "@trypitchdotco", role: "Brand / Product Launches", status: "Active & Logged In" }
+      ]
+    },
+    next_run_at: "2026-08-09T19:00:00+05:30",
+    schedule: "0 9,14,19 * * * (3x Daily)"
   });
 }

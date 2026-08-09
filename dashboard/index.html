@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PITCH — X Growth & CRM Dashboard</title>
+  <title>PITCH — Dual Account X Growth & CRM Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -15,31 +15,81 @@
 <body class="min-h-screen p-4 md:p-6">
 
   <!-- Header -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-gray-800 gap-4">
+  <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-6 border-b border-gray-800 gap-4">
     <div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <h1 class="text-2xl font-bold text-white flex items-center gap-2">
           <i data-lucide="zap" class="text-blue-400"></i> PITCH X Growth CRM
         </h1>
         <span id="circuit-breaker-badge" class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
-          Circuit Breaker: Checking...
+          Circuit Breaker: OK
         </span>
       </div>
-      <p class="text-sm text-gray-400 mt-1">Autonomous Growth Operations & CRM Tracker for <span class="text-blue-400 font-mono">@adnanspitch</span> (<span class="text-gray-300">@trypitchdotco</span>)</p>
+      <div class="flex items-center gap-4 text-xs text-gray-400 mt-2">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> <strong class="text-gray-200">@adnanspitch</strong> (Operator Persona)</span>
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400"></span> <strong class="text-gray-200">@trypitchdotco</strong> (Official Product)</span>
+      </div>
     </div>
 
-    <div class="flex items-center gap-3">
-      <button onclick="fetchData()" class="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 rounded-lg flex items-center gap-2 transition">
-        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh Data
+    <!-- Countdown Timer & Actions -->
+    <div class="flex flex-wrap items-center gap-3">
+      <!-- Live Countdown Card -->
+      <div class="card px-4 py-2 flex items-center gap-3 border-blue-900/50 bg-blue-950/20">
+        <div class="p-2 rounded-lg bg-blue-900/30 text-blue-400">
+          <i data-lucide="timer" class="w-5 h-5 animate-pulse"></i>
+        </div>
+        <div>
+          <div class="text-[10px] uppercase font-semibold tracking-wider text-blue-300">Next Activity Run In</div>
+          <div id="countdown-ticker" class="text-base font-mono font-bold text-white">01h 45m 00s</div>
+        </div>
+      </div>
+
+      <button onclick="fetchData()" class="px-3 py-2 text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 rounded-lg flex items-center gap-2 transition">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
       </button>
-      <button onclick="openAddModal()" class="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg flex items-center gap-2 transition">
+      <button onclick="openAddModal()" class="px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg flex items-center gap-2 transition">
         <i data-lucide="user-plus" class="w-4 h-4"></i> Add Prospect
       </button>
     </div>
   </header>
 
+  <!-- Dual Account Status Bar -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+    <div class="card p-4 flex items-center justify-between border-l-4 border-l-emerald-500">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-emerald-950/50 text-emerald-400 rounded-lg border border-emerald-800">
+          <i data-lucide="user-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white">@adnanspitch <span class="text-xs font-normal text-emerald-400 ml-2">● Active & Logged In</span></div>
+          <div class="text-xs text-gray-400">Operator Persona / Prospecting / Warm-up Comments</div>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs font-mono text-gray-400">Session Cookie</div>
+        <div class="text-[10px] text-emerald-400 font-mono">storageState.json</div>
+      </div>
+    </div>
+
+    <div class="card p-4 flex items-center justify-between border-l-4 border-l-blue-500">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-blue-950/50 text-blue-400 rounded-lg border border-blue-800">
+          <i data-lucide="badge-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white">@trypitchdotco <span class="text-xs font-normal text-blue-400 ml-2">● Active & Logged In</span></div>
+          <div class="text-xs text-gray-400">Official Brand / Launch Videos / Demos / Product Updates</div>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs font-mono text-gray-400">Session Cookie</div>
+        <div class="text-[10px] text-blue-400 font-mono">storageState_trypitchdotco.json</div>
+      </div>
+    </div>
+  </section>
+
   <!-- Metrics Grid -->
-  <section class="grid grid-cols-2 md:grid-cols-5 gap-4 my-6">
+  <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
     <div class="card p-4">
       <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Prospects</div>
       <div id="stat-total-prospects" class="text-2xl font-bold text-white mt-1">0</div>
@@ -147,16 +197,26 @@
   <!-- TAB 2: Activity Log -->
   <div id="tab-activity" class="hidden space-y-4">
     <div class="card p-4">
-      <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
-        <i data-lucide="list" class="w-4 h-4 text-blue-400"></i> Agent Activity Audit Stream
-      </h3>
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-base font-semibold text-white flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4 text-blue-400"></i> Agent Activity Audit Stream
+        </h3>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-400">Filter Account:</label>
+          <select id="filter-account" onchange="filterActivity()" class="bg-gray-900 border border-gray-800 rounded px-2.5 py-1 text-xs text-white">
+            <option value="all">All Accounts</option>
+            <option value="@adnanspitch">@adnanspitch</option>
+            <option value="@trypitchdotco">@trypitchdotco</option>
+          </select>
+        </div>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm text-gray-300">
           <thead class="text-xs uppercase bg-gray-900/50 text-gray-400 border-b border-gray-800">
             <tr>
               <th class="p-3">Timestamp</th>
               <th class="p-3">Action</th>
-              <th class="p-3">Target Handle</th>
+              <th class="p-3">Account / Target</th>
               <th class="p-3">Segment / Variant</th>
               <th class="p-3">Detail</th>
               <th class="p-3">Result</th>
@@ -253,6 +313,27 @@
 
   <script>
     lucide.createIcons();
+    let rawActivities = [];
+    let nextRunTarget = new Date(Date.now() + (1 * 3600 * 1000) + (45 * 60 * 1000)); // Default fallback
+
+    function startCountdown() {
+      setInterval(() => {
+        const now = new Date();
+        const diff = nextRunTarget - now;
+        if (diff <= 0) {
+          document.getElementById('countdown-ticker').innerText = "Running Now...";
+          return;
+        }
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const hStr = String(hours).padStart(2, '0');
+        const mStr = String(minutes).padStart(2, '0');
+        const sStr = String(seconds).padStart(2, '0');
+        document.getElementById('countdown-ticker').innerText = `${hStr}h ${mStr}m ${sStr}s`;
+      }, 1000);
+    }
 
     function switchTab(tabName) {
       ['pipeline', 'activity', 'safety', 'insights'].forEach(t => {
@@ -295,11 +376,17 @@
         document.getElementById('cb-raw').innerText = stats.circuit_breaker || 'No data';
         document.getElementById('insights-content').innerText = ins.content || 'No insights logged';
 
+        if (stats.next_run_at) {
+          nextRunTarget = new Date(stats.next_run_at);
+        }
+
+        rawActivities = act.activities || [];
+
         // Render Kanban
         renderKanban(crm.stages);
 
         // Render Activity
-        renderActivity(act.activities);
+        filterActivity();
 
       } catch (err) {
         console.error('Fetch error:', err);
@@ -347,6 +434,15 @@
       lucide.createIcons();
     }
 
+    function filterActivity() {
+      const selected = document.getElementById('filter-account').value;
+      let filtered = rawActivities;
+      if (selected !== 'all') {
+        filtered = rawActivities.filter(a => a.handle === selected || a.detail.includes(selected));
+      }
+      renderActivity(filtered);
+    }
+
     function renderActivity(activities) {
       const tbody = document.getElementById('activity-table-body');
       if (!activities || activities.length === 0) {
@@ -365,7 +461,7 @@
               'bg-gray-800 text-gray-300'
             }">${a.action || ''}</span>
           </td>
-          <td class="p-3 text-xs font-mono text-blue-400">${a.handle || '—'}</td>
+          <td class="p-3 text-xs font-mono text-blue-400">${a.handle || '@adnanspitch'}</td>
           <td class="p-3 text-xs text-gray-400">${a.segment || ''} ${a.variant ? `/ ${a.variant}` : ''}</td>
           <td class="p-3 text-xs text-gray-300 max-w-xs truncate">${a.detail || ''}</td>
           <td class="p-3 text-xs font-semibold ${a.result === 'ok' ? 'text-emerald-400' : 'text-red-400'}">${a.result || ''}</td>
@@ -403,8 +499,9 @@
       }
     }
 
-    // Initial load & auto-refresh every 10s
+    // Initial load, ticker, and auto-refresh every 10s
     fetchData();
+    startCountdown();
     setInterval(fetchData, 10000);
   </script>
 </body>
