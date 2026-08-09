@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+import urllib.request
+import urllib.parse
+import json
+import base64
+import os
+import sys
+import subprocess
+
+ENV_PATH = "/home/adnan/x_bot/.env"
+
+def load_env():
+    env = {}
+    if os.path.exists(ENV_PATH):
+        with open(ENV_PATH) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    k, v = line.split('=', 1)
+                    env[k.strip()] = v.strip()
+    return env
+
+def update_env(new_access, new_refresh):
+    env_content = ""
+    if os.path.exists(ENV_PATH):
+        with open(ENV_PATH) as f:
+            lines = f.readlines()
+        with open(ENV_PATH, 'w') as f:
+            for line in lines:
+                if line.startswith('X_USER_ACCESS_TOKEN='):
+                    f.write(f"X_USER_ACCESS_TOKEN={new_access}\n")
+                elif line.startswith('X_USER_REFRESH_TOKEN='):
+                    f.write(f"X_USER_REFRESH_TOKEN={new_refresh}\n")
+                else:
+                    f.write(line)
+
+def refresh_tokens(client_id, client_secret, refresh_token):
+    token_url = "https://api.twitter.com/2/oauth2/token"
+    creds = base64.b64encode(f"{client_id}:{client_secret}".encode("utf-8")).decode("utf-8")
+    payload = urllib.parse.urlencode({
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "client_id": client_id
+    }).encode("utf-8")
+
+    req = urllib.request.Request(token_url, data=payload, headers={
+        "Authorization": f"Basic {creds}",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0"
+    })
+    try:
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode())
+            new_access = data.get("access_token")
+            new_refresh = data.get("refresh_token")
+            if new_access and new_refresh:
+                update_env(new_access, new_refresh)
+                return new_access
+    except Exception as e:
+        print(f"[Auto Token Refresh Failed]: {e}", file=sys.stderr)
+    return None
+
+def main():
+    env = load_env()
+    access_token = env.get("X_USER_ACCESS_TOKEN", "ZDdibjRaZHJ5Y1BQbDM2ei1jM01tOVZoazR1VVdMVDR4eTVkdjRHRGs0V3lxOjE3ODYzMDY3MzA4Nzg6MTowOmF0OjE")
+    client_id = env.get("X_CLIENT_ID", "bWxmMm1LWXF0ZDR0YWVsek9EdkQ6MTpjaQ")
+    client_secret = env.get("X_CLIENT_SECRET", "Q8d7SpSo-RoKLaZBDDz00aEbt59cJ9Yr44SeVPsR2X8D6g9i3D")
+    refresh_token = env.get("X_USER_REFRESH_TOKEN", "WmQ3eGlrTlVrV1prd0VnbzVDTlR2US1Pd2I0ZTFfMF9aaFBldkZqOHp4b280OjE3ODYzMDY3MzA4Nzg6MTowOnJ0OjE")
+
+    args = sys.argv[1:]
+    
+    # Try calling xurl with current access_token
+    cmd = ["xurl", "-H", f"Authorization: Bearer {access_token}"] + args
+    res = subprocess.run(cmd, capture_output=True, text=True)
+
+    if res.returncode != 0 and ("Unauthorized" in res.stdout or "401" in res.stdout or "401" in res.stderr):
+        # Refresh token and retry
+        new_token = refresh_tokens(client_id, client_secret, refresh_token)
+        if new_token:
+            cmd = ["xurl", "-H", f"Authorization: Bearer {new_token}"] + args
+            res = subprocess.run(cmd, capture_output=True, text=True)
+
+    sys.stdout.write(res.stdout)
+    sys.stderr.write(res.stderr)
+    sys.exit(res.returncode)
+
+if __name__ == "__main__":
+    main()

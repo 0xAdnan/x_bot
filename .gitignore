@@ -1,5 +1,5 @@
 # Browser sessions & cookies (contains live auth credentials)
-.browser-profile/
+.browser-profile*/
 .playwright-mcp/
 *.cookie
 *.session
@@ -15,9 +15,30 @@
 .opencode/skills/x-growth/state/PAUSE
 .opencode/skills/x-growth/state/HARD_STOP
 .opencode/skills/x-growth/state/session-count
+.opencode/skills/x-growth/state/*.json
 
-# Account configuration (may contain local handles / private setup)
-# .opencode/skills/x-growth/state/account.json
+# Temporary inspection & test scripts
+check_*.py
+debug_*.py
+inspect_*.py
+test_*.py
+scan_*.py
+poll_*.py
+click_*.py
+do_*.py
+execute_*.py
+log_*.py
+process_*.py
+run_*.py
+view_*.py
+verify_*.py
+submit_*.py
+decode_*.py
+candidates.json
+scanned_mentions.json
+*.png
+*.mp4
+*.webm
 
 # Local Python / Node / Environment artifacts
 __pycache__/
