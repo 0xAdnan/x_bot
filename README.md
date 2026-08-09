@@ -61,18 +61,62 @@ opencode.jsonc                  browser MCP wiring (Playwright)
 
 ## Run
 
+### Option 1: OpenCode
+
 ```bash
 cd /home/adnan/x_bot
 opencode
 ```
 
-Then select/invoke the **x-growth** agent and tell it to run a session, e.g.:
+Then select/invoke the **x-growth** agent and tell it to run a session.
 
-> Run a prospecting + engagement session for the founder and growth segments.
+---
 
-Or just: **"run a session"**, it boots safety limits, pulls the pipeline,
-scans community conversations, discovers, warms, converts, follows up, logs
-everything, and reports back.
+### Option 2: Hermes Agent (Interactive or Background)
+
+Hermes Agent natively runs `x-growth` alongside installed remote growth skills.
+
+#### Interactive Mode (Terminal)
+Run interactive turns directly inside Hermes:
+
+```text
+# Examples:
+"Run an x-growth session: check budget, engage warm prospects, and log outcomes."
+"Draft a launch tweet for YC founders using twitter-algorithm-optimizer."
+"Create a 5-tweet thread about product demo automation using twitter-thread-creation."
+```
+
+#### Autonomous Background Mode (`cronjob`)
+ Hermes runs `x-growth` automatically on a schedule in the background, even when the terminal is closed:
+
+```bash
+# Manage Hermes background growth jobs:
+hermes cron list                               # View scheduled background jobs
+hermes cron run --id 8af37af0d747             # Trigger an immediate background run
+hermes cron pause --id 8af37af0d747           # Pause scheduled execution
+hermes cron resume --id 8af37af0d747          # Resume scheduled execution
+```
+
+Or via Hermes tools inside chat:
+* `cronjob(action='list')`
+* `cronjob(action='run', job_id='8af37af0d747')`
+* `cronjob(action='pause', job_id='8af37af0d747')`
+
+---
+
+## Installed Growth Skill Stack
+
+Hermes combines your local `x-growth` engine with installed specialized skills:
+
+| Skill | Source | Purpose |
+| --- | --- | --- |
+| **`x-growth`** | Local (`.opencode/skills/x-growth`) | Core safety, CRM pipeline (`prospects.jsonl`), session loop, browser automation |
+| **`twitter-algorithm-optimizer`** | `skills.sh` | Optimizes post reach via Real-graph, SimClusters, and TwHIN algorithm signals |
+| **`twitter-thread-creation`** | `skills.sh` | Formats product updates and launch stories into high-retention X threads |
+| **`developer-marketing-playbook`** | `clawhub` | Technical, no-fluff copywriting tailored for founders, devs, and tech builders |
+| **`x-growth-strategy`** | `clawhub` | Defines content pillars, target audience graphs, and weekly growth experiments |
+| **`x-growth-review`** | `clawhub` | Weekly account & profile conversion audit to eliminate weak formats |
+
 
 ### Always-on (the safe way)
 
