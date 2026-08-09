@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PITCH — Dual Account X Growth & CRM Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 0.5rem; }
+    .kanban-col { background-color: #161b22; border: 1px solid #30363d; border-radius: 0.5rem; min-height: 500px; }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-6">
+
+  <!-- Header -->
+  <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-6 border-b border-gray-800 gap-4">
+    <div>
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="zap" class="text-blue-400"></i> PITCH X Growth CRM
+        </h1>
+        <span id="circuit-breaker-badge" class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
+          Circuit Breaker: OK
+        </span>
+      </div>
+      <div class="flex items-center gap-4 text-xs text-gray-400 mt-2">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> <strong class="text-gray-200">@adnanspitch</strong> (Operator Persona)</span>
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400"></span> <strong class="text-gray-200">@trypitchdotco</strong> (Official Product)</span>
+      </div>
+    </div>
+
+    <!-- Countdown Timer & Actions -->
+    <div class="flex flex-wrap items-center gap-3">
+      <!-- Live Countdown Card -->
+      <div class="card px-4 py-2 flex items-center gap-3 border-blue-900/50 bg-blue-950/20">
+        <div class="p-2 rounded-lg bg-blue-900/30 text-blue-400">
+          <i data-lucide="timer" class="w-5 h-5 animate-pulse"></i>
+        </div>
+        <div>
+          <div class="text-[10px] uppercase font-semibold tracking-wider text-blue-300">Next Activity Run In</div>
+          <div id="countdown-ticker" class="text-base font-mono font-bold text-white">01h 45m 00s</div>
+        </div>
+      </div>
+
+      <button onclick="fetchData()" class="px-3 py-2 text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 rounded-lg flex items-center gap-2 transition">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
+      </button>
+      <button onclick="openAddModal()" class="px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg flex items-center gap-2 transition">
+        <i data-lucide="user-plus" class="w-4 h-4"></i> Add Prospect
+      </button>
+    </div>
+  </header>
+
+  <!-- Dual Account Status Bar -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+    <div class="card p-4 flex items-center justify-between border-l-4 border-l-emerald-500">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-emerald-950/50 text-emerald-400 rounded-lg border border-emerald-800">
+          <i data-lucide="user-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white">@adnanspitch <span class="text-xs font-normal text-emerald-400 ml-2">● Active & Logged In</span></div>
+          <div class="text-xs text-gray-400">Operator Persona / Prospecting / Warm-up Comments</div>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs font-mono text-gray-400">Session Cookie</div>
+        <div class="text-[10px] text-emerald-400 font-mono">storageState.json</div>
+      </div>
+    </div>
+
+    <div class="card p-4 flex items-center justify-between border-l-4 border-l-blue-500">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-blue-950/50 text-blue-400 rounded-lg border border-blue-800">
+          <i data-lucide="badge-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white">@trypitchdotco <span class="text-xs font-normal text-blue-400 ml-2">● Active & Logged In</span></div>
+          <div class="text-xs text-gray-400">Official Brand / Launch Videos / Demos / Product Updates</div>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs font-mono text-gray-400">Session Cookie</div>
+        <div class="text-[10px] text-blue-400 font-mono">storageState_trypitchdotco.json</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics Grid -->
+  <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <div class="card p-4">
+      <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Prospects</div>
+      <div id="stat-total-prospects" class="text-2xl font-bold text-white mt-1">0</div>
+      <div class="text-xs text-gray-500 mt-1">In CRM Pipeline</div>
+    </div>
+    <div class="card p-4">
+      <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Warming Stage</div>
+      <div id="stat-warming" class="text-2xl font-bold text-amber-400 mt-1">0</div>
+      <div class="text-xs text-gray-500 mt-1">Engaged with likes/comments</div>
+    </div>
+    <div class="card p-4">
+      <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">In Conversation</div>
+      <div id="stat-in-convo" class="text-2xl font-bold text-blue-400 mt-1">0</div>
+      <div class="text-xs text-gray-500 mt-1">Active DM / replies</div>
+    </div>
+    <div class="card p-4">
+      <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Actions Logged</div>
+      <div id="stat-total-actions" class="text-2xl font-bold text-purple-400 mt-1">0</div>
+      <div class="text-xs text-gray-500 mt-1">Recorded in activity-log</div>
+    </div>
+    <div class="card p-4">
+      <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Cold-Start Ramp</div>
+      <div id="stat-ramp" class="text-2xl font-bold text-emerald-400 mt-1">Active</div>
+      <div class="text-xs text-gray-500 mt-1">25% caps until 2026-08-30</div>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <div class="flex border-b border-gray-800 mb-6">
+    <button onclick="switchTab('pipeline')" id="tab-btn-pipeline" class="px-4 py-2 border-b-2 border-blue-500 text-blue-400 font-medium text-sm flex items-center gap-2">
+      <i data-lucide="columns" class="w-4 h-4"></i> CRM Pipeline Board
+    </button>
+    <button onclick="switchTab('activity')" id="tab-btn-activity" class="px-4 py-2 border-b-2 border-transparent text-gray-400 font-medium text-sm hover:text-gray-200 flex items-center gap-2">
+      <i data-lucide="activity" class="w-4 h-4"></i> Activity Log
+    </button>
+    <button onclick="switchTab('safety')" id="tab-btn-safety" class="px-4 py-2 border-b-2 border-transparent text-gray-400 font-medium text-sm hover:text-gray-200 flex items-center gap-2">
+      <i data-lucide="shield-check" class="w-4 h-4"></i> Rate Limits & Safety Budget
+    </button>
+    <button onclick="switchTab('insights')" id="tab-btn-insights" class="px-4 py-2 border-b-2 border-transparent text-gray-400 font-medium text-sm hover:text-gray-200 flex items-center gap-2">
+      <i data-lucide="lightbulb" class="w-4 h-4"></i> Adaptive Insights
+    </button>
+  </div>
+
+  <!-- TAB 1: CRM Pipeline Board -->
+  <div id="tab-pipeline" class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+      
+      <!-- Column: New -->
+      <div class="kanban-col p-3">
+        <div class="flex justify-between items-center pb-3 mb-3 border-b border-gray-800">
+          <span class="text-xs font-semibold text-gray-300 uppercase">1. New</span>
+          <span id="cnt-new" class="px-2 py-0.5 text-xs bg-gray-800 text-gray-400 rounded-full font-mono">0</span>
+        </div>
+        <div id="col-new" class="space-y-3"></div>
+      </div>
+
+      <!-- Column: Warming -->
+      <div class="kanban-col p-3">
+        <div class="flex justify-between items-center pb-3 mb-3 border-b border-gray-800">
+          <span class="text-xs font-semibold text-amber-400 uppercase">2. Warming</span>
+          <span id="cnt-warming" class="px-2 py-0.5 text-xs bg-amber-950 text-amber-400 rounded-full font-mono">0</span>
+        </div>
+        <div id="col-warming" class="space-y-3"></div>
+      </div>
+
+      <!-- Column: Contacted -->
+      <div class="kanban-col p-3">
+        <div class="flex justify-between items-center pb-3 mb-3 border-b border-gray-800">
+          <span class="text-xs font-semibold text-blue-400 uppercase">3. Contacted</span>
+          <span id="cnt-contacted" class="px-2 py-0.5 text-xs bg-blue-950 text-blue-400 rounded-full font-mono">0</span>
+        </div>
+        <div id="col-contacted" class="space-y-3"></div>
+      </div>
+
+      <!-- Column: In Convo -->
+      <div class="kanban-col p-3">
+        <div class="flex justify-between items-center pb-3 mb-3 border-b border-gray-800">
+          <span class="text-xs font-semibold text-indigo-400 uppercase">4. In Convo</span>
+          <span id="cnt-in_convo" class="px-2 py-0.5 text-xs bg-indigo-950 text-indigo-400 rounded-full font-mono">0</span>
+        </div>
+        <div id="col-in_convo" class="space-y-3"></div>
+      </div>
+
+      <!-- Column: Trial / Customer -->
+      <div class="kanban-col p-3">
+        <div class="flex justify-between items-center pb-3 mb-3 border-b border-gray-800">
+          <span class="text-xs font-semibold text-emerald-400 uppercase">5. Customer</span>
+          <span id="cnt-customer" class="px-2 py-0.5 text-xs bg-emerald-950 text-emerald-400 rounded-full font-mono">0</span>
+        </div>
+        <div id="col-customer" class="space-y-3"></div>
+      </div>
+
+      <!-- Column: Do Not Contact -->
+      <div class="kanban-col p-3">
+        <div class="flex justify-between items-center pb-3 mb-3 border-b border-gray-800">
+          <span class="text-xs font-semibold text-red-400 uppercase">Do Not Contact</span>
+          <span id="cnt-dnc" class="px-2 py-0.5 text-xs bg-red-950 text-red-400 rounded-full font-mono">0</span>
+        </div>
+        <div id="col-dnc" class="space-y-3"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB 2: Activity Log -->
+  <div id="tab-activity" class="hidden space-y-4">
+    <div class="card p-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-base font-semibold text-white flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4 text-blue-400"></i> Agent Activity Audit Stream
+        </h3>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-400">Filter Account:</label>
+          <select id="filter-account" onchange="filterActivity()" class="bg-gray-900 border border-gray-800 rounded px-2.5 py-1 text-xs text-white">
+            <option value="all">All Accounts</option>
+            <option value="@adnanspitch">@adnanspitch</option>
+            <option value="@trypitchdotco">@trypitchdotco</option>
+          </select>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-300">
+          <thead class="text-xs uppercase bg-gray-900/50 text-gray-400 border-b border-gray-800">
+            <tr>
+              <th class="p-3">Timestamp</th>
+              <th class="p-3">Action</th>
+              <th class="p-3">Account / Target</th>
+              <th class="p-3">Segment / Variant</th>
+              <th class="p-3">Detail</th>
+              <th class="p-3">Result</th>
+            </tr>
+          </thead>
+          <tbody id="activity-table-body" class="divide-y divide-gray-800">
+            <tr><td colspan="6" class="p-4 text-center text-gray-500">Loading activity...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Safety & Budget -->
+  <div id="tab-safety" class="hidden space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="card p-5">
+        <h3 class="text-base font-semibold text-white mb-3 flex items-center gap-2">
+          <i data-lucide="gauge" class="w-4 h-4 text-emerald-400"></i> Daily Action Budget Status
+        </h3>
+        <pre id="budget-raw" class="bg-gray-950 p-4 rounded-lg text-xs font-mono text-emerald-400 overflow-x-auto border border-gray-800">Loading budget...</pre>
+      </div>
+
+      <div class="card p-5">
+        <h3 class="text-base font-semibold text-white mb-3 flex items-center gap-2">
+          <i data-lucide="shield" class="w-4 h-4 text-amber-400"></i> Circuit Breaker & Safety Guardrails
+        </h3>
+        <pre id="cb-raw" class="bg-gray-950 p-4 rounded-lg text-xs font-mono text-amber-400 overflow-x-auto border border-gray-800">Loading circuit breaker...</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Insights -->
+  <div id="tab-insights" class="hidden space-y-4">
+    <div class="card p-5">
+      <h3 class="text-base font-semibold text-white mb-3 flex items-center gap-2">
+        <i data-lucide="brain" class="w-4 h-4 text-purple-400"></i> Adaptive Memory & Learnings (`insights.md`)
+      </h3>
+      <div id="insights-content" class="bg-gray-950 p-4 rounded-lg text-xs font-mono text-gray-300 overflow-x-auto border border-gray-800 whitespace-pre-wrap">Loading insights...</div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Prospect -->
+  <div id="add-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="card w-full max-w-md p-6 space-y-4 relative">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <h3 class="text-lg font-semibold text-white">Add New Prospect to CRM</h3>
+        <button onclick="closeAddModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitProspect(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">X Handle *</label>
+          <input type="text" id="inp-handle" required placeholder="@username" class="w-full bg-gray-900 border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Name</label>
+          <input type="text" id="inp-name" placeholder="John Doe" class="w-full bg-gray-900 border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Segment</label>
+            <select id="inp-segment" class="w-full bg-gray-900 border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+              <option value="founder">Founder / CEO</option>
+              <option value="growth">Growth Lead</option>
+              <option value="agency">Agency / Marketing</option>
+              <option value="creator">Tech Creator</option>
+              <option value="community">Community Builder</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Initial Stage</label>
+            <select id="inp-stage" class="w-full bg-gray-900 border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+              <option value="new">1. New</option>
+              <option value="warming">2. Warming</option>
+              <option value="contacted">3. Contacted</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Product / Startup URL</label>
+          <input type="text" id="inp-product_url" placeholder="https://example.com" class="w-full bg-gray-900 border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Notes / Why fit?</label>
+          <textarea id="inp-notes" rows="2" placeholder="Building AI tool, asked about demo videos..." class="w-full bg-gray-900 border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeAddModal()" class="px-4 py-2 text-sm text-gray-400 hover:text-white">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded font-medium">Save Prospect</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    let rawActivities = [];
+    let nextRunTarget = new Date(Date.now() + (1 * 3600 * 1000) + (45 * 60 * 1000)); // Default fallback
+
+    function startCountdown() {
+      setInterval(() => {
+        const now = new Date();
+        const diff = nextRunTarget - now;
+        if (diff <= 0) {
+          document.getElementById('countdown-ticker').innerText = "Running Now...";
+          return;
+        }
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const hStr = String(hours).padStart(2, '0');
+        const mStr = String(minutes).padStart(2, '0');
+        const sStr = String(seconds).padStart(2, '0');
+        document.getElementById('countdown-ticker').innerText = `${hStr}h ${mStr}m ${sStr}s`;
+      }, 1000);
+    }
+
+    function switchTab(tabName) {
+      ['pipeline', 'activity', 'safety', 'insights'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+        const btn = document.getElementById('tab-btn-' + t);
+        if (btn) {
+          btn.classList.remove('border-blue-500', 'text-blue-400');
+          btn.classList.add('border-transparent', 'text-gray-400');
+        }
+      });
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-' + tabName);
+      if (activeBtn) {
+        activeBtn.classList.add('border-blue-500', 'text-blue-400');
+        activeBtn.classList.remove('border-transparent', 'text-gray-400');
+      }
+    }
+
+    async function fetchData() {
+      try {
+        const [crmRes, actRes, statsRes, insRes] = await Promise.all([
+          fetch('/api/crm'),
+          fetch('/api/activity'),
+          fetch('/api/stats'),
+          fetch('/api/insights')
+        ]);
+
+        const crm = await crmRes.json();
+        const act = await actRes.json();
+        const stats = await statsRes.json();
+        const ins = await insRes.json();
+
+        // Update stats
+        document.getElementById('stat-total-prospects').innerText = crm.total || 0;
+        document.getElementById('stat-warming').innerText = (crm.stages.warming || []).length;
+        document.getElementById('stat-in-convo').innerText = (crm.stages.in_convo || []).length;
+        document.getElementById('stat-total-actions').innerText = act.total || 0;
+
+        document.getElementById('budget-raw').innerText = stats.budget_raw || 'No data';
+        document.getElementById('cb-raw').innerText = stats.circuit_breaker || 'No data';
+        document.getElementById('insights-content').innerText = ins.content || 'No insights logged';
+
+        if (stats.next_run_at) {
+          nextRunTarget = new Date(stats.next_run_at);
+        }
+
+        rawActivities = act.activities || [];
+
+        // Render Kanban
+        renderKanban(crm.stages);
+
+        // Render Activity
+        filterActivity();
+
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    }
+
+    function renderKanban(stages) {
+      const stageMap = {
+        'new': 'col-new',
+        'warming': 'col-warming',
+        'contacted': 'col-contacted',
+        'in_convo': 'col-in_convo',
+        'customer': 'col-customer',
+        'do-not-contact': 'col-dnc'
+      };
+
+      Object.keys(stageMap).forEach(key => {
+        const el = document.getElementById(stageMap[key]);
+        const cnt = document.getElementById('cnt-' + (key === 'do-not-contact' ? 'dnc' : key));
+        const list = stages[key] || [];
+        if (cnt) cnt.innerText = list.length;
+        if (el) {
+          if (list.length === 0) {
+            el.innerHTML = '<div class="text-xs text-gray-600 italic text-center py-8">Empty</div>';
+          } else {
+            el.innerHTML = list.map(p => `
+              <div class="bg-gray-900/80 p-3 rounded border border-gray-800 hover:border-gray-700 transition space-y-1.5">
+                <div class="flex justify-between items-start">
+                  <a href="https://x.com/${p.handle.replace('@','')}" target="_blank" class="text-sm font-semibold text-blue-400 hover:underline flex items-center gap-1">
+                    ${p.handle} <i data-lucide="external-link" class="w-3 h-3 text-gray-500"></i>
+                  </a>
+                  <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">${p.segment || 'founder'}</span>
+                </div>
+                ${p.name ? `<div class="text-xs text-gray-300 font-medium">${p.name}</div>` : ''}
+                ${p.notes ? `<div class="text-xs text-gray-400 bg-gray-950 p-1.5 rounded">${p.notes}</div>` : ''}
+                <div class="flex justify-between items-center text-[10px] text-gray-500 pt-1">
+                  <span>Score: ${p.score || 0}</span>
+                  <span>Touches: ${p.touches || 0}</span>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function filterActivity() {
+      const selected = document.getElementById('filter-account').value;
+      let filtered = rawActivities;
+      if (selected !== 'all') {
+        filtered = rawActivities.filter(a => a.handle === selected || a.detail.includes(selected));
+      }
+      renderActivity(filtered);
+    }
+
+    function renderActivity(activities) {
+      const tbody = document.getElementById('activity-table-body');
+      if (!activities || activities.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">No activity recorded yet</td></tr>';
+        return;
+      }
+      tbody.innerHTML = activities.map(a => `
+        <tr class="hover:bg-gray-900/40">
+          <td class="p-3 text-xs font-mono text-gray-400">${a.ts || ''}</td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 text-xs rounded font-medium ${
+              a.action === 'like' ? 'bg-pink-950 text-pink-400 border border-pink-800' :
+              a.action === 'reply' ? 'bg-blue-950 text-blue-400 border border-blue-800' :
+              a.action === 'post' || a.action === 'quote' ? 'bg-purple-950 text-purple-400 border border-purple-800' :
+              a.action === 'dm' ? 'bg-amber-950 text-amber-400 border border-amber-800' :
+              'bg-gray-800 text-gray-300'
+            }">${a.action || ''}</span>
+          </td>
+          <td class="p-3 text-xs font-mono text-blue-400">${a.handle || '@adnanspitch'}</td>
+          <td class="p-3 text-xs text-gray-400">${a.segment || ''} ${a.variant ? `/ ${a.variant}` : ''}</td>
+          <td class="p-3 text-xs text-gray-300 max-w-xs truncate">${a.detail || ''}</td>
+          <td class="p-3 text-xs font-semibold ${a.result === 'ok' ? 'text-emerald-400' : 'text-red-400'}">${a.result || ''}</td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); }
+    function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
+
+    async function submitProspect(e) {
+      e.preventDefault();
+      const payload = {
+        handle: document.getElementById('inp-handle').value,
+        name: document.getElementById('inp-name').value,
+        segment: document.getElementById('inp-segment').value,
+        stage: document.getElementById('inp-stage').value,
+        product_url: document.getElementById('inp-product_url').value,
+        notes: document.getElementById('inp-notes').value,
+        score: 5
+      };
+
+      try {
+        const res = await fetch('/api/prospect/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          closeAddModal();
+          fetchData();
+        }
+      } catch (err) {
+        console.error('Submit error:', err);
+      }
+    }
+
+    // Initial load, ticker, and auto-refresh every 10s
+    fetchData();
+    startCountdown();
+    setInterval(fetchData, 10000);
+  </script>
+</body>
+</html>
