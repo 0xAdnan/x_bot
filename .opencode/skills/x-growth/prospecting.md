@@ -73,23 +73,23 @@ that helps them convert visitors. They're also used to getting DMs from these
 threads, so outreach feels natural. These prospects tend to warm up faster
 because they're already in a "promote my product" mindset.
 
-### Competitor Intent & Engager Targeting (Loom / Arcade / Supademo / Tella)
+### YC & Antler Competitors & Adjacent Product Demo Startups
 
-Do NOT mass DM silent follower lists (X flags bulk cold DMs to passive accounts as spam). Instead, **target active users who tweet about or engage with competitor posts**:
+Watch these accounts and target users engaging with or complaining about their tools:
 
-**1. Competitor Search Queries:**
-- `("using Loom" OR "Loom video" OR "Loom link") (editing OR "too long" OR "re-take" OR narration)`
-- `("Arcade demo" OR "Supademo" OR "Tella video" OR "Tango walkthrough")`
-- `("screen recording" OR "screencast") (editing OR "editing took" OR "record again" OR voiceover)`
+**1. Primary Competitor Accounts (YC & Antler Cohorts + Adjacent Tools):**
+- **YC Alumni:** `@supademo` (YC S22), `@tangohq` (YC W21), `@guidde_io` (YC S22), `@hyperbound` (YC W24), `@tolstoyhq` (YC W22)
+- **Interactive & Screen Recording Tools:** `@arcade_dev`, `@tella_edu`, `@screenstudio`, `@storylane_io`, `@guideflow`, `@demostack`, `@loom`, `@descript`, `@synthesiaIO`, `@heygen_ai`
+- **Antler Cohort Video Startups:** `@quickvid_ai`, `@fable_demo`, `@guideflow`
 
-**2. Competitor Post Reply Mining:**
-- Monitor recent tweets and feature launch posts from `@loom`, `@arcade`, `@supademo`, `@tella_edu`.
-- Scroll through replies looking for users asking questions about narration, video editing time, or custom branding.
+**2. Specialized Search Queries:**
+- `("Supademo" OR "Tango" OR "Guidde" OR "Storylane") (demo OR walkthrough OR "interactive demo")`
+- `("Screen Studio" OR "Tella" OR "Descript") (editing OR voiceover OR narration OR "took 2 hours")`
+- `("YC demo" OR "YC launch") (video OR "need a video" OR "explainer")`
 
-**3. The Competitor Contrast Play:**
-- **Warm-up Reply:** *"Loom/Arcade is great for quick manual recordings, but if you want automated narration and browser walkthroughs without editing or re-takes, `@trypitchdotco` builds it from plain text."*
-- **Offer:** *"Want me to make you a free 30s narrated demo of [their product] with `@trypitchdotco`?"*
-- **CRM Note:** Mark `segment: founder` or `growth`, note `"Competitor switch intent (Loom/Arcade)"`, and give `score: 8+`.
+**3. Engagement Rule:**
+When founders complain about manual editing or recording overhead on these tools, reply with `@trypitchdotco`'s contrast play: *"Automate browser capture + AI narration directly from plain text walkthroughs — zero editing required."*
+
 
 
 For community discovery, the bar is not "can we sell immediately?" The bar is
