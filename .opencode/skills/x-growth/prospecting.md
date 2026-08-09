@@ -73,22 +73,28 @@ that helps them convert visitors. They're also used to getting DMs from these
 threads, so outreach feels natural. These prospects tend to warm up faster
 because they're already in a "promote my product" mindset.
 
-### YC & Antler Competitors & Adjacent Product Demo Startups
+### YC & Antler 2026 Cohorts + Emerging Competitor Startups
 
-Watch these accounts and target users engaging with or complaining about their tools:
+Watch recent **2026 YC (W26 / S26) and 2026 Antler** cohort launches and competitor tool engagers:
 
-**1. Primary Competitor Accounts (YC & Antler Cohorts + Adjacent Tools):**
-- **YC Alumni:** `@supademo` (YC S22), `@tangohq` (YC W21), `@guidde_io` (YC S22), `@hyperbound` (YC W24), `@tolstoyhq` (YC W22)
-- **Interactive & Screen Recording Tools:** `@arcade_dev`, `@tella_edu`, `@screenstudio`, `@storylane_io`, `@guideflow`, `@demostack`, `@loom`, `@descript`, `@synthesiaIO`, `@heygen_ai`
-- **Antler Cohort Video Startups:** `@quickvid_ai`, `@fable_demo`, `@guideflow`
+**1. 2026 YC & Antler Cohort Launches:**
+- `("YC W26" OR "YC S26" OR "YC 2026") (launch OR demo OR "just shipped" OR "built this")`
+- `("Antler 2026" OR "Antler cohort") (launch OR "Product Hunt" OR "demo video")`
+- `#YCW26` / `#YCS26` hashtag monitoring for new SaaS startups needing landing page videos.
 
-**2. Specialized Search Queries:**
+**2. 2026 Competitor Startups & Video Tools:**
+- **Interactive & AI Walkthroughs:** `@supademo` (YC S22), `@tangohq` (YC W21), `@guidde_io` (YC S22), `@hyperbound` (YC W24), `@tolstoyhq` (YC W22), `@guideflow`, `@storylane_io`, `@demostack`, `@arcade_dev`
+- **Screen Recorders & Video Editors:** `@screenstudio`, `@tella_edu`, `@loom`, `@descript`, `@synthesiaIO`, `@heygen_ai`
+- **Antler Video Startups:** `@quickvid_ai`, `@fable_demo`
+
+**3. 2026 Search Queries:**
 - `("Supademo" OR "Tango" OR "Guidde" OR "Storylane") (demo OR walkthrough OR "interactive demo")`
 - `("Screen Studio" OR "Tella" OR "Descript") (editing OR voiceover OR narration OR "took 2 hours")`
-- `("YC demo" OR "YC launch") (video OR "need a video" OR "explainer")`
+- `("YC W26" OR "YC S26" OR "YC demo") (video OR "need a video" OR "explainer")`
 
-**3. Engagement Rule:**
-When founders complain about manual editing or recording overhead on these tools, reply with `@trypitchdotco`'s contrast play: *"Automate browser capture + AI narration directly from plain text walkthroughs — zero editing required."*
+**4. Engagement Rule:**
+When 2026 YC/Antler founders complain about manual editing or recording overhead on these tools, reply with `@trypitchdotco`'s contrast play: *"Automate browser capture + AI narration directly from plain text walkthroughs — zero editing required."*
+
 
 
 
