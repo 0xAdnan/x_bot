@@ -1,18 +1,31 @@
-# Live X session — DO NOT COMMIT (contains login cookies)
+# Browser sessions & cookies (contains live auth credentials)
 .browser-profile/
-
-# Playwright MCP run artifacts (page snapshots, console logs — may hold scraped data)
 .playwright-mcp/
+*.cookie
+*.session
+.env
+.env.*
+~/.xurl
 
-# Bot CRM/state SHOULD be committed so another server can `git pull` and
-# continue the same community-building history.
-# Keep: .opencode/skills/x-growth/state/{prospects.jsonl, activity-log.jsonl,
-# insights.md, account.json, circuit-breaker.jsonl}
-
-# Runner runtime files are machine-local.
-.opencode/skills/x-growth/state/runner.log
-.opencode/skills/x-growth/state/runner.pid
+# CRM data & local state logs (prospects, activity logs, circuit breaker state)
+.opencode/skills/x-growth/state/*.jsonl
+.opencode/skills/x-growth/state/*.log
+.opencode/skills/x-growth/state/*.pid
 .opencode/skills/x-growth/state/STOP
 .opencode/skills/x-growth/state/PAUSE
 .opencode/skills/x-growth/state/HARD_STOP
 .opencode/skills/x-growth/state/session-count
+
+# Account configuration (may contain local handles / private setup)
+# .opencode/skills/x-growth/state/account.json
+
+# Local Python / Node / Environment artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+node_modules/
+.DS_Store
+*.log
+.hub/
