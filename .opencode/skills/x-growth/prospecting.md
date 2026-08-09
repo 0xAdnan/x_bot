@@ -73,9 +73,24 @@ that helps them convert visitors. They're also used to getting DMs from these
 threads, so outreach feels natural. These prospects tend to warm up faster
 because they're already in a "promote my product" mindset.
 
-Also mine: replies under big devtool/SaaS launch threads, Product Hunt comment
-crowds, and the followers/engagers of adjacent tools (Loom, Arcade, Supademo,
-Tella, screen-recording tools).
+### Competitor Intent & Engager Targeting (Loom / Arcade / Supademo / Tella)
+
+Do NOT mass DM silent follower lists (X flags bulk cold DMs to passive accounts as spam). Instead, **target active users who tweet about or engage with competitor posts**:
+
+**1. Competitor Search Queries:**
+- `("using Loom" OR "Loom video" OR "Loom link") (editing OR "too long" OR "re-take" OR narration)`
+- `("Arcade demo" OR "Supademo" OR "Tella video" OR "Tango walkthrough")`
+- `("screen recording" OR "screencast") (editing OR "editing took" OR "record again" OR voiceover)`
+
+**2. Competitor Post Reply Mining:**
+- Monitor recent tweets and feature launch posts from `@loom`, `@arcade`, `@supademo`, `@tella_edu`.
+- Scroll through replies looking for users asking questions about narration, video editing time, or custom branding.
+
+**3. The Competitor Contrast Play:**
+- **Warm-up Reply:** *"Loom/Arcade is great for quick manual recordings, but if you want automated narration and browser walkthroughs without editing or re-takes, `@trypitchdotco` builds it from plain text."*
+- **Offer:** *"Want me to make you a free 30s narrated demo of [their product] with `@trypitchdotco`?"*
+- **CRM Note:** Mark `segment: founder` or `growth`, note `"Competitor switch intent (Loom/Arcade)"`, and give `score: 8+`.
+
 
 For community discovery, the bar is not "can we sell immediately?" The bar is
 "can we be genuinely useful and would this builder belong in the
