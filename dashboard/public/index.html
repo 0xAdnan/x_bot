@@ -182,6 +182,33 @@
 
     </section>
 
+    <!-- Real-Time Agent & Daemon Health Monitor -->
+    <section class="light-card p-5 space-y-3 bg-slate-900 text-white border-slate-800 rounded-2xl shadow-xl">
+      <div class="flex flex-wrap justify-between items-center gap-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+            <i data-lucide="cpu" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white flex items-center gap-2">
+              Autonomous Agent & Background Daemon Monitor
+              <span id="stat-active-agents-badge" class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                5 Agents Active
+              </span>
+            </h3>
+            <p class="text-xs text-slate-400">Live operational status, polling frequencies, and scheduled agent runtimes</p>
+          </div>
+        </div>
+        <div id="agent-monitor-last-updated" class="text-[10px] font-mono text-slate-400">
+          Last Check: Just Now
+        </div>
+      </div>
+
+      <div id="agent-monitor-grid" class="grid grid-cols-1 md:grid-cols-5 gap-3 pt-1">
+        <!-- Dynamic Agent Status Badges rendered via JS -->
+      </div>
+    </section>
+
     <!-- Metrics Grid -->
     <section class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div class="light-card p-4 space-y-1">
@@ -683,6 +710,38 @@
       renderFilteredData();
     }
 
+    function renderAgents(agents) {
+      const container = document.getElementById('agent-monitor-grid');
+      if (!container) return;
+      if (!agents || agents.length === 0) {
+        container.innerHTML = '<div class="col-span-5 text-center text-xs text-slate-400">Loading agent statuses...</div>';
+        return;
+      }
+
+      container.innerHTML = agents.map(a => {
+        const isActive = a.status === 'active';
+        const badgeBg = isActive ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+        const dotBg = isActive ? 'bg-emerald-400' : 'bg-purple-400';
+        const icon = a.id.includes('mention_daemon') ? 'bell-ring' : a.id.includes('mcp') ? 'video' : a.id.includes('hermes') ? 'cpu' : 'calendar-clock';
+
+        return `
+          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 space-y-2 hover:border-purple-500/50 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                <i data-lucide="${icon}" class="w-3.5 h-3.5 text-purple-400"></i> ${a.name}
+              </span>
+              <span class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full ${badgeBg} border flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full ${dotBg} animate-ping"></span> ${a.status.toUpperCase()}
+              </span>
+            </div>
+            <div class="text-[10px] font-mono text-purple-300 font-semibold">${a.type}</div>
+            <div class="text-[10px] text-slate-400 leading-tight">${a.description}</div>
+          </div>
+        `;
+      }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
     function startCountdown() {
       function update() {
         const now = new Date();
@@ -716,6 +775,10 @@
 
         if (resIns && resIns.content) {
           setElText('insights-content', resIns.content);
+        }
+
+        if (resStats && resStats.agents) {
+          renderAgents(resStats.agents);
         }
 
         renderFilteredData();
