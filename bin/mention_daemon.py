@@ -125,120 +125,129 @@ def sync_supabase_job(tweet_id, handle, target_url, job_id, status, video_url):
     except Exception as e:
         print(f"[Supabase Sync Error]: {e}")
 
+async def process_tweet_element(tweet_el):
+    text = await tweet_el.inner_text()
+    lines = text.split("\n")
+    
+    # Extract handle
+    user_handle = "@user"
+    for l in lines:
+        if l.startswith("@") and "trypitchdotco" not in l.lower():
+            user_handle = l.strip()
+            break
+
+    # Extract real status link and Tweet ID
+    tweet_id = None
+    tweet_url = None
+    try:
+        status_link_el = tweet_el.locator('a[href*="/status/"]').first
+        if await status_link_el.count() > 0:
+            href = await status_link_el.get_attribute("href")
+            if href and "/status/" in href:
+                parts = href.split("/status/")
+                tweet_id = parts[1].split("?")[0].split("/")[0]
+                clean_user = parts[0].replace("/", "")
+                if clean_user:
+                    user_handle = f"@{clean_user}"
+                tweet_url = f"https://x.com/{clean_user}/status/{tweet_id}"
+    except Exception:
+        pass
+
+    if not tweet_id:
+        # Fallback deterministic hash
+        tweet_id = hashlib.sha256(f"{user_handle}_{text[:100]}".encode('utf-8')).hexdigest()[:18]
+        clean_user = user_handle.replace("@", "")
+        tweet_url = f"https://x.com/{clean_user}"
+
+    processed = load_processed_tweets()
+    if tweet_id in processed or f"{user_handle}_{tweet_id}" in processed:
+        return
+
+    # Filter out tweets from @trypitchdotco itself or bot replies
+    if "trypitchdotco" in user_handle.lower() or "Here is your product demo" in text:
+        save_processed_tweet(tweet_id)
+        return
+
+    # Extract URL or domain name
+    url_match = re.search(r'https?://[^\s]+', text) or re.search(r'([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?)', text)
+    target_url = url_match.group(0) if url_match else "N/A"
+    
+    if target_url != "N/A":
+        if not target_url.startswith("http://") and not target_url.startswith("https://"):
+            target_url = f"https://{target_url}"
+        if "s3.trypitch.co" in target_url:
+            save_processed_tweet(tweet_id)
+            return
+
+    # Strict Supabase deduplication check before creating job
+    exists, existing_job = check_supabase_job_exists(tweet_id, user_handle, target_url)
+    if exists:
+        save_processed_tweet(tweet_id)
+        return
+
+    clean_text = text.replace('\n', ' ')
+    print("\n" + "="*70)
+    print("[MENTION BOT DETECTED NEW TWEET]")
+    print(f"Requested By: {user_handle}")
+    print(f"Mention Tweet URL: {tweet_url}")
+    print(f"Tweet Text: {clean_text}")
+    print(f"Target Product URL: {target_url}")
+    print("="*70 + "\n")
+
+    # Mark as processed locally
+    save_processed_tweet(tweet_id)
+
+    if target_url == "N/A":
+        # Log to Supabase so EVERY mention is tracked in the dashboard
+        print(f"[Mention Log] Tracking mention from {user_handle} (No direct URL found in text)")
+        sync_supabase_job(tweet_id, user_handle, "N/A", "", "no_url_found", "")
+        return
+
+    # Trigger Pitch MCP Video Job for mentions with target URL
+    print(f"Triggering Pitch MCP video creation for {target_url}...")
+    mcp_res = call_pitch_mcp("create_demo_video", {
+        "url": target_url,
+        "instructions": f"Create a cinematic product demo walkthrough of {target_url}. Audio: Charon, Header: Light, Background: Ocean"
+    })
+
+    job_id = mcp_res.get("jobId") if mcp_res else None
+    if job_id:
+        print(f"Pitch MCP Job Created! Job ID: {job_id}")
+        sync_supabase_job(tweet_id, user_handle, target_url, job_id, "rendering", "")
+    else:
+        print("[Pitch MCP Warning] Failed to get jobId from response, logging as submitted")
+        sync_supabase_job(tweet_id, user_handle, target_url, "", "submitted", "")
+
 async def poll_mention_feed():
     state_file = "/home/adnan/x_bot/.browser-profile-trypitchdotco/storageState_trypitchdotco.json"
-    print("=== STARTING INSTANT FALLBACK MENTION DAEMON (WITH STRICT DEDUPLICATION & TWEET LOGS) ===")
+    print("=== STARTING REAL-TIME DUAL-SCAN MENTION DAEMON (NOTIFICATIONS + SEARCH) ===")
     
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         context = await browser.new_context(storage_state=state_file)
         page = await context.new_page()
         
+        urls_to_scan = [
+            "https://x.com/notifications",
+            "https://x.com/search?q=%40trypitchdotco&f=live"
+        ]
+        
         while True:
-            try:
-                # Scan live search every 10s
-                await page.goto("https://x.com/search?q=%40trypitchdotco&f=live", wait_until="domcontentloaded")
-                await page.wait_for_timeout(3000)
-                
-                tweets = await page.locator('article[data-testid="tweet"]').all()
-                processed = load_processed_tweets()
-                
-                for tweet_el in tweets[:5]:
-                    text = await tweet_el.inner_text()
-                    lines = text.split("\n")
+            for scan_url in urls_to_scan:
+                try:
+                    await page.goto(scan_url, wait_until="domcontentloaded")
+                    await page.wait_for_timeout(3000)
                     
-                    # Extract handle
-                    user_handle = "@user"
-                    for l in lines:
-                        if l.startswith("@") and "trypitchdotco" not in l.lower():
-                            user_handle = l.strip()
-                            break
+                    tweets = await page.locator('article[data-testid="tweet"]').all()
+                    
+                    # Scan ALL visible tweets (up to 20) instead of slicing [:5]
+                    for tweet_el in tweets[:20]:
+                        await process_tweet_element(tweet_el)
+                        
+                except Exception as e:
+                    print(f"[Daemon Scan Error on {scan_url}]: {e}")
 
-                    # Extract real status link and Tweet ID
-                    tweet_id = None
-                    tweet_url = None
-                    try:
-                        status_link_el = tweet_el.locator('a[href*="/status/"]').first
-                        if await status_link_el.count() > 0:
-                            href = await status_link_el.get_attribute("href")
-                            if href and "/status/" in href:
-                                parts = href.split("/status/")
-                                tweet_id = parts[1].split("?")[0].split("/")[0]
-                                clean_user = parts[0].replace("/", "")
-                                if clean_user:
-                                    user_handle = f"@{clean_user}"
-                                tweet_url = f"https://x.com/{clean_user}/status/{tweet_id}"
-                    except Exception:
-                        pass
-
-                    if not tweet_id:
-                        # Fallback deterministic hash
-                        tweet_id = hashlib.sha256(f"{user_handle}_{text[:100]}".encode('utf-8')).hexdigest()[:18]
-                        clean_user = user_handle.replace("@", "")
-                        tweet_url = f"https://x.com/{clean_user}"
-
-                    # Local processed check
-                    if tweet_id in processed or f"{user_handle}_{tweet_id}" in processed:
-                        continue
-
-                    # Filter out tweets from @trypitchdotco itself or bot replies
-                    if "trypitchdotco" in user_handle.lower() or "Here is your product demo" in text:
-                        save_processed_tweet(tweet_id)
-                        continue
-
-                    # Extract URL or domain name
-                    url_match = re.search(r'https?://[^\s]+', text) or re.search(r'([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?)', text)
-                    if not url_match:
-                        save_processed_tweet(tweet_id)
-                        continue
-
-                    target_url = url_match.group(0)
-                    if not target_url.startswith("http://") and not target_url.startswith("https://"):
-                        target_url = f"https://{target_url}"
-
-                    # Ignore pitch s3 links
-                    if "s3.trypitch.co" in target_url:
-                        save_processed_tweet(tweet_id)
-                        continue
-
-                    # Strict Supabase deduplication check before creating job
-                    exists, existing_job = check_supabase_job_exists(tweet_id, user_handle, target_url)
-                    if exists:
-                        print(f"[SKIP DUPLICATE] Job already exists in Supabase for Tweet ID {tweet_id} ({tweet_url})")
-                        save_processed_tweet(tweet_id)
-                        continue
-
-                    # Print prominent log showing mention tweet URL and text
-                    clean_text = text.replace('\n', ' ')
-                    print("\n" + "="*70)
-                    print("[MENTION BOT DETECTED NEW TWEET]")
-                    print(f"Requested By: {user_handle}")
-                    print(f"Mention Tweet URL: {tweet_url}")
-                    print(f"Tweet Text: {clean_text}")
-                    print(f"Target Product URL: {target_url}")
-                    print("="*70 + "\n")
-
-                    # Mark as processed locally immediately to prevent race conditions
-                    save_processed_tweet(tweet_id)
-
-                    # Trigger Pitch MCP Video Job
-                    print(f"Triggering Pitch MCP video creation for {target_url}...")
-                    mcp_res = call_pitch_mcp("create_demo_video", {
-                        "url": target_url,
-                        "instructions": f"Create a cinematic product demo walkthrough of {target_url}. Audio: Charon, Header: Light, Background: Ocean"
-                    })
-
-                    job_id = mcp_res.get("jobId") if mcp_res else None
-                    if job_id:
-                        print(f"Pitch MCP Job Created! Job ID: {job_id}")
-                        sync_supabase_job(tweet_id, user_handle, target_url, job_id, "rendering", "")
-                    else:
-                        print("[Pitch MCP Warning] Failed to get jobId from response")
-
-            except Exception as e:
-                print(f"[Daemon Loop Error]: {e}")
-
-            # Sleep 10 seconds before next scan
+            # Sleep 10 seconds before next scan cycle
             await asyncio.sleep(10)
 
 if __name__ == "__main__":
