@@ -1,60 +1,67 @@
-# PITCH — OpenCode X/Twitter Growth & AI Video Demo Bot
+# PITCH (x_bot)
 
-A pure, high-performance **Rust CLI toolset, Webhook Server, and OpenCode Agent** for **PITCH** (https://trypitch.co) — the AI video editor that turns written walkthroughs into studio-quality narrated demo MP4s.
+A native Rust engine and OpenCode agent that runs X/Twitter mentions, AI video demo generation, and founder outreach for [PITCH](https://trypitch.co).
 
----
+PITCH turns written walkthroughs into 1080p narrated product demos. This repo handles the X side: receiving mention webhooks, generating demo videos via Pitch MCP, posting video replies, discovering SaaS prospects, and tracking pipeline state in a local SQLite database.
 
-## 🌟 System Overview
+## Architecture
 
-This system operates natively inside OpenCode using:
-1. **100% Pure Rust Architecture:** Single compiled binary (`./target/release/pitch-cli`) containing X API v2 client, Pitch MCP client, safety engine, and Axum Webhook Server.
-2. **Local SQLite Database Memory:** Stored at `data/pitch_bot.db`. No Supabase or external database servers required.
-3. **Decoupled Workflow (Zero Context Window Bloat):**
-   * **Part 1 (Real-Time Webhook-Driven):** Mention ingestion, receipt replies, and video generation handled automatically via the embedded Rust Webhook Server. Zero cron needed!
-   * **Part 2 (Focused Scheduled Passes):** Low-context OpenCode agent sessions for ICP prospect discovery, warm-up outreach, and founder commentary.
-
----
-
-## 🏗️ Architecture
+Everything runs locally via a single compiled Rust binary (`pitch-cli`) and a local SQLite database (`data/pitch_bot.db`). No external servers, no cloud middleware, and no polling daemons.
 
 ```
-                                 ┌─────────────────────────────┐
-                                 │     X Webhook / Trigger     │
-                                 └──────────────┬──────────────┘
-                                                │
-                          POST /webhookbase/x-webhook OR /trigger
-                                                │
-                                 ┌──────────────▼──────────────┐
-                                 │     Rust Webhook Server     │
-                                 │  (pitch-cli server - Axum)  │
-                                 └──────────────┬──────────────┘
-                                                │
-                            Dispatches Execution / Agent Session
-                                                │
-                                 ┌──────────────▼──────────────┐
-                                 │   OpenCode Agent (x-growth) │
-                                 │    pitch-cli CLI Toolset    │
-                                 └──────────────┬──────────────┘
-                                                │
-                                 ┌──────────────▼──────────────┐
-                                 │     SQLite DB Memory        │
-                                 │    (data/pitch_bot.db)      │
-                                 └─────────────────────────────┘
+                     Incoming Mention Webhook / Trigger
+                                    │
+                                    ▼
+                          Rust Webhook Server
+                      (pitch-cli server - Port 8790)
+                                    │
+                     Dispatches OpenCode Agent Pass
+                                    │
+                                    ▼
+                          OpenCode Agent (x-growth)
+                            pitch-cli Toolset
+                                    │
+                                    ▼
+                            SQLite Database
+                          (data/pitch_bot.db)
 ```
 
----
+The system splits into two distinct operational paths:
 
-## 🚀 Quick Start
+1. **Real-time webhook pipeline (Zero cron):** An embedded Rust Axum server listens on port `8790`. When X sends a mention webhook (`POST /webhookbase/x-webhook`), the server immediately posts a receipt reply on X, triggers Pitch MCP video generation, and delivers the final video link when rendering completes.
+2. **Scheduled growth passes:** Outbound prospect discovery, warm-up engagement, and founder commentary run as short, focused OpenCode agent passes.
+
+## Open Chamber Scheduler
+
+For scheduled tasks, use [Open Chamber](https://openchamber.ai)'s server-side task scheduler to trigger OpenCode agent passes without keeping a session open continuously.
+
+![Open Chamber Scheduler](assets/open-chamber-scheduler.png)
+
+### Recommended Scheduled Tasks
+
+| Task Name | Schedule | Timezone | Agent | Prompt |
+|---|---|---|---|---|
+| **Prospect Discovery** | Every 3 Hours | `Asia/Calcutta` | `x-growth` | `Discover new SaaS founder prospects and score them into SQLite` |
+| **Warm Prospect Engagement** | Daily at 09:00, 14:00, 19:00 | `Asia/Calcutta` | `x-growth` | `Engage warm prospects with likes and personalized replies` |
+| **Founder Commentary** | Daily at 11:00 AM | `Asia/Calcutta` | `x-growth` | `Scan trends and publish one founder commentary tweet` |
+| **Pipeline Sync** | Daily at 09:00 AM | `Asia/Calcutta` | `x-growth` | `Run pipeline sync and summarize database stats` |
+
+## Setup
 
 ### 1. Requirements
-* Rust 1.80+ (`cargo` / `rustc`)
-* OpenCode CLI
 
-### 2. Setup Configuration
-Copy `.env.example` to `.env` and fill in your credentials:
+- Rust 1.80+ (`cargo` / `rustc`)
+- OpenCode CLI
+
+### 2. Configuration
+
+Copy `.env.example` to `.env` and fill in your keys:
+
 ```bash
 cp .env.example .env
 ```
+
+Required variables:
 
 ```env
 X_USER_ACCESS_TOKEN=your_oauth2_user_access_token
@@ -66,84 +73,62 @@ PORT=8790
 SQLITE_DB_PATH=./data/pitch_bot.db
 ```
 
-### 3. Build Binary
+### 3. Build
+
 ```bash
 cargo build --release
 ```
 
----
+The compiled binary is saved at `./target/release/pitch-cli`.
 
-## 🛠️ Command Matrix (`pitch-cli`)
+## CLI Commands
 
-Location: `./target/release/pitch-cli` (or run via `cargo run --release -- <command>`)
+### Webhook Server
 
-### 🌐 Rust Webhook Server
-Starts the Axum Webhook Server listening on `http://0.0.0.0:8790`:
 ```bash
 ./target/release/pitch-cli server
 ```
-* **CRC Challenge:** `GET /webhookbase/x-webhook?crc_token=...`
-* **Real-time Mention Callback:** `POST /webhookbase/x-webhook`
-* **Manual Trigger:** `POST /webhookbase/trigger` (`{"action": "mentions"}` or `{"action": "session"}`)
-* **Health Check:** `GET /webhookbase/health`
-* **Pipeline Summary:** `GET /webhookbase/stats`
 
-### 💾 SQLite Database Memory
+Listens on `http://0.0.0.0:8790`. Key routes:
+- `GET /webhookbase/x-webhook?crc_token=...` (X CRC challenge check)
+- `POST /webhookbase/x-webhook` (X mention callback)
+- `POST /webhookbase/trigger` (manual webhook trigger)
+- `GET /webhookbase/health` (health check)
+- `GET /webhookbase/stats` (SQLite database summary)
+
+### Pipeline Triggers
+
 ```bash
-./target/release/pitch-cli db jobs                # List all mention jobs
+./target/release/pitch-cli inbox       # Ingest mentions and trigger Pitch MCP jobs
+./target/release/pitch-cli worker      # Poll Pitch MCP and deliver completed video demos
+./target/release/pitch-cli trigger     # Run combined inbox + worker pass
+./target/release/pitch-cli discover    # Search X for ICP prospects and score leads
+./target/release/pitch-cli sync        # Print pipeline summary
+```
+
+### Database Memory
+
+```bash
+./target/release/pitch-cli db jobs                # List mention jobs
 ./target/release/pitch-cli db jobs --status rendering  # List active rendering jobs
 ./target/release/pitch-cli db prospects           # List CRM prospects
 ./target/release/pitch-cli db insights            # Read adaptive memory insights
 ```
 
-### 🐦 X API v2 (Auto OAuth2 Token Refresh)
+### X API v2
+
 ```bash
-./target/release/pitch-cli x-api me               # Verify profile
+./target/release/pitch-cli x-api me               # Check authenticated account
 ./target/release/pitch-cli x-api mentions         # Fetch recent mentions
-./target/release/pitch-cli x-api reply <id> --text "..." # Post reply
+./target/release/pitch-cli x-api reply <id> --text "..."  # Post reply
 ./target/release/pitch-cli x-api post --text "..." # Post tweet
 ./target/release/pitch-cli x-api search "query"   # Search X
 ```
 
-### 🎬 Pitch MCP API
-```bash
-./target/release/pitch-cli mcp create <url> "<instructions>"  # Trigger AI video demo
-./target/release/pitch-cli mcp status <job_id>               # Poll video render status
-./target/release/pitch-cli mcp credits                        # Check credits
-```
+### Safety & Budget Enforcers
 
-### 🛡️ Safety & Budget Enforcers
 ```bash
 ./target/release/pitch-cli circuit-breaker        # Check circuit breaker status
 ./target/release/pitch-cli circuit-breaker --reset # Reset circuit breaker
-./target/release/pitch-cli budget                 # Check daily action caps & rolling burst limit
-```
-
-### ⚡ Unified Pipelines & Triggers
-```bash
-./target/release/pitch-cli inbox                  # Fetch mentions & trigger demo jobs
-./target/release/pitch-cli worker                 # Deliver completed demo videos
-./target/release/pitch-cli trigger                # Run unified pass (inbox + worker + stats)
-./target/release/pitch-cli discover               # Discover SaaS ICP prospects
-./target/release/pitch-cli sync                   # Display database summary
-```
-
----
-
-## 🤖 OpenCode Agent Execution (`x-growth`)
-
-Run the OpenCode agent for focused sessions:
-
-```bash
-# 1. Process Mentions & Deliver Videos
-opencode run --agent x-growth "process mentions"
-
-# 2. Discover SaaS ICP Prospects
-opencode run --agent x-growth "discover prospects"
-
-# 3. Warm-Up & Outbound DMs
-opencode run --agent x-growth "engage warm prospects"
-
-# 4. Content & Founder Commentary
-opencode run --agent x-growth "publish founder commentary"
+./target/release/pitch-cli budget                 # Check daily action caps and burst limit
 ```

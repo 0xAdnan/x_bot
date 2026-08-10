@@ -38,6 +38,7 @@ decode_*.py
 candidates.json
 scanned_mentions.json
 *.png
+!assets/*.png
 *.mp4
 *.webm
 
