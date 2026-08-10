@@ -13,9 +13,28 @@ from playwright.async_api import async_playwright
 PITCH_API_KEY = "pk_tltxrmrZgiprXR51z_dJvoIF0yWiGBVB"
 PITCH_MCP_URL = "https://api.trypitch.co/mcp"
 SUPABASE_URL = "https://jwswpryozfxzaocimadp.supabase.co"
+SYNC_API_URL = "https://dashboard-blue-five-75.vercel.app/api/sync"
 PROCESSED_TWEETS_FILE = "/home/adnan/x_bot/state/processed_tweets.json"
 
 os.makedirs("/home/adnan/x_bot/state", exist_ok=True)
+
+def ping_heartbeat():
+    """Send live heartbeat pulse to Supabase via Sync API."""
+    data = json.dumps({"activities": [{
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "action": "heartbeat",
+        "handle": "@trypitchdotco",
+        "segment": "mention_daemon",
+        "variant": "",
+        "detail": "Heartbeat pulse from mention_daemon.py",
+        "result": "ok"
+    }]}).encode("utf-8")
+    req = urllib.request.Request(SYNC_API_URL, data=data, headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(req) as resp:
+            pass
+    except Exception:
+        pass
 
 def get_supabase_key():
     for key in ["SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_ANON_KEY", "SUPABASE_KEY"]:
@@ -84,7 +103,6 @@ def call_pitch_mcp(tool_name, arguments):
     return None
 
 def check_supabase_job_exists(tweet_id, user_handle, target_url):
-    """Check if a job already exists in Supabase to prevent duplicate processing."""
     if not tweet_id:
         return False, None
     key = get_supabase_key()
@@ -129,14 +147,12 @@ async def process_tweet_element(tweet_el):
     text = await tweet_el.inner_text()
     lines = text.split("\n")
     
-    # Extract handle
     user_handle = "@user"
     for l in lines:
         if l.startswith("@") and "trypitchdotco" not in l.lower():
             user_handle = l.strip()
             break
 
-    # Extract real status link and Tweet ID
     tweet_id = None
     tweet_url = None
     try:
@@ -154,7 +170,6 @@ async def process_tweet_element(tweet_el):
         pass
 
     if not tweet_id:
-        # Fallback deterministic hash
         tweet_id = hashlib.sha256(f"{user_handle}_{text[:100]}".encode('utf-8')).hexdigest()[:18]
         clean_user = user_handle.replace("@", "")
         tweet_url = f"https://x.com/{clean_user}"
@@ -163,12 +178,10 @@ async def process_tweet_element(tweet_el):
     if tweet_id in processed or f"{user_handle}_{tweet_id}" in processed:
         return
 
-    # Filter out tweets from @trypitchdotco itself or bot replies
     if "trypitchdotco" in user_handle.lower() or "Here is your product demo" in text:
         save_processed_tweet(tweet_id)
         return
 
-    # Extract URL or domain name
     url_match = re.search(r'https?://[^\s]+', text) or re.search(r'([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?)', text)
     target_url = url_match.group(0) if url_match else "N/A"
     
@@ -179,7 +192,6 @@ async def process_tweet_element(tweet_el):
             save_processed_tweet(tweet_id)
             return
 
-    # Strict Supabase deduplication check before creating job
     exists, existing_job = check_supabase_job_exists(tweet_id, user_handle, target_url)
     if exists:
         save_processed_tweet(tweet_id)
@@ -194,16 +206,13 @@ async def process_tweet_element(tweet_el):
     print(f"Target Product URL: {target_url}")
     print("="*70 + "\n")
 
-    # Mark as processed locally
     save_processed_tweet(tweet_id)
 
     if target_url == "N/A":
-        # Log to Supabase so EVERY mention is tracked in the dashboard
         print(f"[Mention Log] Tracking mention from {user_handle} (No direct URL found in text)")
         sync_supabase_job(tweet_id, user_handle, "N/A", "", "no_url_found", "")
         return
 
-    # Trigger Pitch MCP Video Job for mentions with target URL
     print(f"Triggering Pitch MCP video creation for {target_url}...")
     mcp_res = call_pitch_mcp("create_demo_video", {
         "url": target_url,
@@ -233,6 +242,9 @@ async def poll_mention_feed():
         ]
         
         while True:
+            # Send live heartbeat pulse
+            ping_heartbeat()
+
             for scan_url in urls_to_scan:
                 try:
                     await page.goto(scan_url, wait_until="domcontentloaded")
@@ -240,14 +252,12 @@ async def poll_mention_feed():
                     
                     tweets = await page.locator('article[data-testid="tweet"]').all()
                     
-                    # Scan ALL visible tweets (up to 20) instead of slicing [:5]
                     for tweet_el in tweets[:20]:
                         await process_tweet_element(tweet_el)
                         
                 except Exception as e:
                     print(f"[Daemon Scan Error on {scan_url}]: {e}")
 
-            # Sleep 10 seconds before next scan cycle
             await asyncio.sleep(10)
 
 if __name__ == "__main__":

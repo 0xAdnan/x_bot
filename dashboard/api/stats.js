@@ -2,22 +2,35 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL || "https://jwswpryozfxzaocimadp.supabase.co";
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
-  let mentionJobsCount = 0;
-  let activitiesCount = 0;
+  let heartbeats = {};
 
   if (supabaseUrl && supabaseKey) {
     try {
       const headers = { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` };
-      const [resJobs, resAct] = await Promise.all([
-        fetch(`${supabaseUrl}/rest/v1/mention_jobs?select=id`, { headers }).then(r => r.json()).catch(() => []),
-        fetch(`${supabaseUrl}/rest/v1/activities?select=id`, { headers }).then(r => r.json()).catch(() => [])
-      ]);
-      mentionJobsCount = Array.isArray(resJobs) ? resJobs.length : 0;
-      activitiesCount = Array.isArray(resAct) ? resAct.length : 0;
+      const resHb = await fetch(`${supabaseUrl}/rest/v1/activities?action=eq.heartbeat&order=ts.desc&limit=20`, { headers }).then(r => r.json()).catch(() => []);
+      
+      if (Array.isArray(resHb)) {
+        for (const item of resHb) {
+          const seg = item.segment;
+          if (seg && !heartbeats[seg]) {
+            heartbeats[seg] = new Date(item.ts).getTime();
+          }
+        }
+      }
     } catch (e) {}
   }
 
-  const now = new Date().toISOString();
+  const nowEpoch = Date.now();
+  const daemonTimeoutMs = 60000; // 60 seconds threshold
+
+  const daemonHeartbeatActive = (seg) => {
+    const lastTs = heartbeats[seg];
+    if (!lastTs) return false;
+    return (nowEpoch - lastTs) <= daemonTimeoutMs;
+  };
+
+  const mentionDaemonActive = daemonHeartbeatActive('mention_daemon');
+  const workerDaemonActive = daemonHeartbeatActive('mention_mcp_worker');
 
   const agents = [
     {
@@ -25,20 +38,20 @@ export default async function handler(req, res) {
       name: "Mention Scanner",
       type: "10s Real-Time Poller",
       target: "x.com/notifications + /search",
-      status: "active",
-      uptime: "Continuous 10s Loop",
-      last_pulse: now,
-      description: "Scans notifications & search every 10s for @trypitchdotco mentions."
+      status: mentionDaemonActive ? "active" : "stopped",
+      uptime: mentionDaemonActive ? "Continuous 10s Loop" : "Offline",
+      last_pulse: heartbeats['mention_daemon'] ? new Date(heartbeats['mention_daemon']).toISOString() : "None",
+      description: mentionDaemonActive ? "Scans notifications & search every 10s for @trypitchdotco mentions." : "Daemon process is stopped. Mention scanning paused."
     },
     {
       id: "mention_mcp_worker",
       name: "Pitch MCP Worker",
       type: "Queue & Video Generator",
       target: "Supabase <-> Pitch MCP API",
-      status: "active",
-      uptime: "Continuous 10s Loop",
-      last_pulse: now,
-      description: "Claims pending jobs, triggers Pitch MCP rendering, and posts X replies."
+      status: workerDaemonActive ? "active" : "stopped",
+      uptime: workerDaemonActive ? "Continuous 10s Loop" : "Offline",
+      last_pulse: heartbeats['mention_mcp_worker'] ? new Date(heartbeats['mention_mcp_worker']).toISOString() : "None",
+      description: workerDaemonActive ? "Claims pending jobs, triggers Pitch MCP rendering, and posts X replies." : "Worker daemon is stopped. Video generation queue paused."
     },
     {
       id: "hermes_gateway",
@@ -47,7 +60,7 @@ export default async function handler(req, res) {
       target: "Background Agent Engine",
       status: "active",
       uptime: "Active Gateway",
-      last_pulse: now,
+      last_pulse: new Date().toISOString(),
       description: "Triggers scheduled growth sessions, content posting, and cron jobs."
     },
     {
@@ -72,18 +85,14 @@ export default async function handler(req, res) {
     }
   ];
 
+  const activeDaemonsCount = agents.filter(a => a.status === 'active').length;
+
   return res.status(200).json({
     status: "ok",
-    timestamp: now,
+    timestamp: new Date().toISOString(),
     agents,
     total_agents: agents.length,
-    active_daemons_count: 3,
-    scheduled_cron_count: 2,
-    metrics: {
-      mention_jobs_count: mentionJobsCount,
-      activities_count: activitiesCount,
-      circuit_breaker: "Normal (0 trips in 24h)",
-      cold_ramp_until: "2026-08-30"
-    }
+    active_daemons_count: activeDaemonsCount,
+    scheduled_cron_count: 2
   });
 }
