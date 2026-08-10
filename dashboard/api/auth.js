@@ -7,9 +7,32 @@ export default async function handler(req, res) {
   const cookieFlags = `Path=/; HttpOnly; SameSite=Lax; ${isHttps ? 'Secure;' : ''} Max-Age=2592000`;
 
   if (req.method === 'POST') {
-    const { password } = req.body || {};
+    let body = req.body;
+
+    // Parse body if stream or string
+    if (!body) {
+      try {
+        body = await new Promise((resolve) => {
+          let data = '';
+          req.on('data', chunk => data += chunk);
+          req.on('end', () => {
+            try { resolve(JSON.parse(data)); } catch (e) { resolve({}); }
+          });
+        });
+      } catch (e) {
+        body = {};
+      }
+    } else if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    }
+
+    const inputPassword = body?.password || req.query?.password || req.headers['x-dashboard-password'];
     
-    if (password === CORRECT_PASSWORD) {
+    if (inputPassword === CORRECT_PASSWORD) {
       const token = crypto.createHmac('sha256', CORRECT_PASSWORD).update("authenticated_user_session").digest('hex');
       
       res.setHeader('Set-Cookie', `pitch_auth_session=${token}; ${cookieFlags}`);
@@ -22,7 +45,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const cookies = req.headers.cookie || '';
-    const authHeader = req.headers.authorization || req.headers['x-auth-token'] || '';
+    const authHeader = req.headers.authorization || req.headers['x-auth-token'] || req.query?.token || '';
     const expectedToken = crypto.createHmac('sha256', CORRECT_PASSWORD).update("authenticated_user_session").digest('hex');
     
     if (cookies.includes(`pitch_auth_session=${expectedToken}`) || authHeader.includes(expectedToken)) {
