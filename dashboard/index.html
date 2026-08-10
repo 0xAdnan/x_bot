@@ -548,7 +548,12 @@
 
     async function checkAuthStatus() {
       try {
-        const res = await fetch('/api/auth').then(r => r.json());
+        const token = localStorage.getItem('pitch_auth_token') || '';
+        const headers = {};
+        if (token) {
+          headers['X-Auth-Token'] = token;
+        }
+        const res = await fetch('/api/auth', { headers }).then(r => r.json());
         if (res && res.authenticated) {
           document.getElementById('auth-overlay').classList.add('hidden');
           document.getElementById('dashboard-content').classList.remove('hidden');
@@ -578,6 +583,10 @@
         });
 
         if (res.ok) {
+          const data = await res.json();
+          if (data.token) {
+            localStorage.setItem('pitch_auth_token', data.token);
+          }
           checkAuthStatus();
         } else {
           errEl.classList.remove('hidden');
