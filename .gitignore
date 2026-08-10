@@ -41,7 +41,14 @@ scanned_mentions.json
 *.mp4
 *.webm
 
-# Local Python / Node / Environment artifacts
+# Local Database & SQLite
+data/
+*.sqlite
+*.db
+
+# Local Python / Node / Rust artifacts
+target/
+dist/
 __pycache__/
 *.py[cod]
 *$py.class

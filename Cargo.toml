@@ -1,0 +1,28 @@
+[package]
+name = "pitch-cli"
+version = "1.0.0"
+edition = "2021"
+description = "Pure Rust CLI, Webhook Server, Safety Engine, and Pipeline for Pitch X/Twitter Agent"
+
+[[bin]]
+name = "pitch-cli"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+axum = "0.7"
+reqwest = { version = "0.12", features = ["json"] }
+rusqlite = { version = "0.31", features = ["bundled"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+dotenvy = "0.15"
+chrono = { version = "0.4", features = ["serde"] }
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.22"
+tower-http = { version = "0.5", features = ["trace", "cors"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+regex = "1.10"
+urlencoding = "2.1"

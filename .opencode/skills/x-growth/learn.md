@@ -2,7 +2,7 @@
 
 The agent doesn't change its **hard rules** or brand voice. What it evolves is
 **which approaches it favors**, based on real outcomes. The living memory is
-`state/insights.md`; the evidence is `scripts/stats.sh`.
+`state/insights.md`; the evidence is `./target/release/pitch-cli sync`.
 
 ## When to run the retro
 
@@ -13,7 +13,7 @@ The agent doesn't change its **hard rules** or brand voice. What it evolves is
 
 ## The retro routine
 
-1. Run `bash .opencode/skills/x-growth/scripts/stats.sh --min 5` (and
+1. Run `./target/release/pitch-cli sync` (and inspect SQLite database memory).
    `--since <date>` for a recent window). Variants with < 5 sent are noise, so
    ignore them.
 2. For each segment, identify the **best** and **worst** opener variant by

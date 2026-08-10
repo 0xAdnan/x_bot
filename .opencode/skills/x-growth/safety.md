@@ -8,8 +8,8 @@ maximum actions per hour. When in doubt, do less.
 **This account @adnanspitch replaced @adnanxpitch, which was permanently banned
 on Jun 14 2026 in 6 days by ignoring these exact rules (106 actions in one day,
 11+ sessions/day, DM bursts, copy-paste self-promo replies). Do not repeat any of
-that.** The controls below are enforced by `scripts/budget.sh`, `runner.sh`, and
-`circuit-breaker.sh`; respect them as hard limits.
+that.** The controls below are enforced by `./target/release/pitch-cli budget` and
+`./target/release/pitch-cli circuit-breaker`; respect them as hard limits.
 
 ## Account & operator identity
 
@@ -41,7 +41,7 @@ that.** The controls below are enforced by `scripts/budget.sh`, `runner.sh`, and
 | New prospects discovered | 40 | 10 | Scoring + dedupe, not blind adds |
 | **Sessions per day** | **3** | **3** | Enforced by runner.sh; min 2h between sessions |
 
-Before each action, run `bash .opencode/skills/x-growth/scripts/budget.sh` to see
+Before each action, run `./target/release/pitch-cli budget` to see
 today's remaining budget (it auto-applies the ramp). If a cap is hit, skip that
 action type for the rest of the day. Never "borrow" from tomorrow.
 
@@ -108,15 +108,15 @@ in 5 minutes and 10+ likes in a row. Never do that.
 Any X warning, verification prompt, CAPTCHA, temporary limit, or 3 consecutive
 failed actions = **kill-switch**. On a kill-switch:
 
-1. Run `bash .opencode/skills/x-growth/scripts/circuit-breaker.sh --trip "<reason>"`
+1. Run `./target/release/pitch-cli circuit-breaker --trip "<reason>"`
    and log a `failed`/`skipped` entry to `state/activity-log.jsonl`.
 2. Stop the session and report to the human. Do not start another session.
 3. After **3 trips in 24h**, the circuit breaker writes `state/HARD_STOP` and
-   both `runner.sh` and the session boot refuse to run until a human runs
-   `circuit-breaker.sh --reset`. This is what prevents the old 200-session
+   the session boot refuses to run until a human runs
+   `./target/release/pitch-cli circuit-breaker --reset`. This is what prevents the old 200-session
    kill-switch loop.
 
-Before any session, run `circuit-breaker.sh --status`; if it exits 1, do not run.
+Before any session, run `./target/release/pitch-cli circuit-breaker`; if it exits 1, do not run.
 
 ## Self-healing & resilience (when automation breaks)
 

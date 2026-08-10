@@ -72,14 +72,13 @@ Paths are relative to this skill directory; if a relative read fails, use
   how to answer builder asks, and how to invite people into the @trypitchdotco
   orbit without turning every interaction into a pitch.
 
-Anti-ban enforcement (scripts, run from the skill dir):
+Anti-ban enforcement (Rust CLI):
 
-- `scripts/budget.sh`, today's remaining budget; auto-applies the cold-start 25%
+- `./target/release/pitch-cli budget`, today's remaining budget; auto-applies the cold-start 25%
   caps until `state/account.json` `ramp_until`; reports rolling-hour burst usage.
-- `scripts/circuit-breaker.sh`, `--status` before any session (exit 1 = PAUSED,
+- `./target/release/pitch-cli circuit-breaker`, `--status` before any session (exit 1 = PAUSED,
   do not run), `--trip "<reason>"` on any kill-switch, `--reset` is human-only.
-- `scripts/runner.sh`, the always-on orchestrator; enforces max 3 sessions/day
-  and respects `state/HARD_STOP`, `state/STOP`, `state/PAUSE`.
+- `./target/release/pitch-cli server`, the Rust Axum webhook server; listens on http://0.0.0.0:8790.
 - `state/account.json`, the operating identity: @adnanspitch, @trypitchdotco,
   ramp dates.
 
@@ -89,12 +88,11 @@ Anti-ban enforcement (scripts, run from the skill dir):
    it bias which openers you favor). Read `state/account.json` for the account
    handle (@adnanspitch), product handle (@trypitchdotco), and ramp dates.
    Then run these guardrails IN ORDER and stop if any fails:
-   - **Circuit breaker check:** `bash .opencode/skills/x-growth/scripts/circuit-breaker.sh --status`.
+   - **Circuit breaker check:** `./target/release/pitch-cli circuit-breaker`.
      If it exits 1 (PAUSED / HARD_STOP present), do NOT run. Report that a human
      must fix the cause and run `--reset`, then end the session.
-   - **Budget check:** `bash .opencode/skills/x-growth/scripts/budget.sh` against
-     `state/activity-log.jsonl`. It auto-applies the 25% cold-start caps until
-     `ramp_until`. If a cap is hit, do only allowed lower-tier actions or stop.
+   - **Budget check:** `./target/release/pitch-cli budget`.
+     It auto-applies the 25% cold-start caps until `ramp_until`. If a cap is hit, do only allowed lower-tier actions or stop.
      If it prints a BURST WARNING (too many actions in the last hour), stop.
    - **Login + account check (before any action):** navigate to x.com/home and
      confirm (a) you are logged in and (b) the logged-in profile is
@@ -150,7 +148,7 @@ Anti-ban enforcement (scripts, run from the skill dir):
    `state/prospects.jsonl` (stage, last_touch, next_action_date, touches,
    last_variant, outcome, notes).
 12. **Learn (periodic).** Roughly every ~10-15 DMs-with-outcomes or weekly, run
-    the retro in `learn.md`: `scripts/stats.sh`, then update `state/insights.md`.
+    the retro in `learn.md`: `./target/release/pitch-cli sync`, then update `state/insights.md`.
     Never edit the hard rules, `voice.md` claims, or `safety.md` caps.
 13. **Report.** Summarize: discovered, warmed, DM'd, replied, community helps,
     trend comments, memes, posts, quotes, conversions, what `insights.md`
@@ -204,5 +202,5 @@ Never re-DM `do-not-contact` or `lost`.
 12. **No self-promo spam in threads.** Max 2 "building @trypitchdotco" thread
     replies per day, always value-first and uniquely worded.
 13. **Kill-switch = trip the breaker.** On any CAPTCHA / warning / limit / 3x
-    failure, run `scripts/circuit-breaker.sh --trip "<reason>"` and stop. Do not
+    failure, run `./target/release/pitch-cli circuit-breaker --trip "<reason>"` and stop. Do not
     start another session until the breaker says OK.
