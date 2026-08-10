@@ -8,6 +8,7 @@
 ~/.xurl
 
 # CRM data & local state logs (prospects, activity logs, circuit breaker state)
+state/
 .opencode/skills/x-growth/state/*.jsonl
 .opencode/skills/x-growth/state/*.log
 .opencode/skills/x-growth/state/*.pid
