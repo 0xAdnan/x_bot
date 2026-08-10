@@ -31,6 +31,34 @@ The system splits into two distinct operational paths:
 1. **Real-time webhook pipeline (Zero cron):** An embedded Rust Axum server listens on port `8790`. When X sends a mention webhook (`POST /api/webhook/x`), the server immediately posts a receipt reply on X, triggers Pitch MCP video generation, and delivers the final video link when rendering completes.
 2. **Scheduled growth passes:** Outbound prospect discovery, warm-up engagement, and founder commentary run as short, focused OpenCode agent passes.
 
+## Tool & API Execution Sequence
+
+Here is when each component, API, and tool is called:
+
+### Real-time Mention Webhook (`POST /api/webhook/x`)
+Triggered automatically by X whenever a user tweets at `@trypitchdotco` with a product URL. The Rust server receives the payload, extracts the URL, posts an instant receipt reply via X API, and submits the render job to Pitch MCP.
+
+### Manual Webhook Trigger (`POST /api/webhook/trigger`)
+Called by external schedulers (such as Open Chamber) or `curl` to dispatch an immediate background pass. Passing `{"action": "mentions"}` triggers inbox processing, while `{"action": "growth"}` triggers prospect discovery.
+
+### X API v2 (`pitch-cli x-api`)
+Called during inbox ingestion to post receipt replies and video links, during discovery to search X for ICP leads (`search_recent`), and during outreach to engage prospects (`like_tweet` / `post_tweet`).
+
+### Pitch MCP API (`pitch-cli mcp`)
+Called when a mention contains a valid URL to render a 1080p product demo video (`create`), and checked periodically to query render status (`status`).
+
+### Safety Engine (`pitch-cli budget` & `circuit-breaker`)
+Called at the start of every session before any write action on X to verify account health and enforce daily action limits.
+
+## Database Role (`data/pitch_bot.db`)
+
+The local SQLite database serves as the single source of truth for pipeline state, lead CRM, and safety accounting:
+
+- **`mention_jobs` Table:** Tracks every tweet ID, user handle, product URL, Pitch MCP `jobId`, render status (`pending -> rendering -> delivered | failed | no_url_found`), and final S3 video link. Prevents duplicate replies and guarantees idempotent execution.
+- **`prospects` Table:** Stores the agent's CRM pipeline (`new -> warming -> contacted -> in_convo -> customer`). Tracks handles, fit scores (1–10), pre-cooked pitch hooks, notes, and touch counts.
+- **`activities` Table:** Logs every like, reply, DM, and discovery action with exact timestamps. Used by `pitch-cli budget` to calculate remaining daily action caps and enforce 60-minute burst limits.
+- **`insights` Table:** Stores adaptive memory learned from reply and conversion rates across different outreach variants.
+
 ## Webhook API Endpoints (`/api/webhook/`)
 
 The embedded Rust server listens on `http://0.0.0.0:8790` and exposes the following endpoints:
@@ -42,22 +70,6 @@ The embedded Rust server listens on `http://0.0.0.0:8790` and exposes the follow
 | **`POST`** | `/api/webhook/trigger` | **Manual Webhook Trigger** | `curl -X POST http://localhost:8790/api/webhook/trigger -H "Content-Type: application/json" -d '{"action":"mentions"}'` |
 | **`GET`** | `/api/webhook/health` | **Health Check** & uptime | `curl http://localhost:8790/api/webhook/health` |
 | **`GET`** | `/api/webhook/stats` | **Pipeline Stats** & SQLite DB summary | `curl http://localhost:8790/api/webhook/stats` |
-
-### Trigger Endpoint Examples (`POST /api/webhook/trigger`)
-
-Trigger an inbox mention pass:
-```bash
-curl -X POST http://localhost:8790/api/webhook/trigger \
-  -H "Content-Type: application/json" \
-  -d '{"action": "mentions"}'
-```
-
-Trigger an outbound prospect discovery pass:
-```bash
-curl -X POST http://localhost:8790/api/webhook/trigger \
-  -H "Content-Type: application/json" \
-  -d '{"action": "growth"}'
-```
 
 ## Open Chamber Scheduler
 
