@@ -12,7 +12,7 @@ Everything runs locally via a single compiled Rust binary (`pitch-cli`) and a lo
                      Incoming Mention Webhook / Trigger
                                     │
                                     ▼
-                          Rust Webhook Server
+                           Rust Webhook Server
                       (pitch-cli server - Port 8790)
                                     │
                      Dispatches OpenCode Agent Pass
@@ -28,8 +28,36 @@ Everything runs locally via a single compiled Rust binary (`pitch-cli`) and a lo
 
 The system splits into two distinct operational paths:
 
-1. **Real-time webhook pipeline (Zero cron):** An embedded Rust Axum server listens on port `8790`. When X sends a mention webhook (`POST /webhookbase/x-webhook`), the server immediately posts a receipt reply on X, triggers Pitch MCP video generation, and delivers the final video link when rendering completes.
+1. **Real-time webhook pipeline (Zero cron):** An embedded Rust Axum server listens on port `8790`. When X sends a mention webhook (`POST /api/webhook/x`), the server immediately posts a receipt reply on X, triggers Pitch MCP video generation, and delivers the final video link when rendering completes.
 2. **Scheduled growth passes:** Outbound prospect discovery, warm-up engagement, and founder commentary run as short, focused OpenCode agent passes.
+
+## Webhook API Endpoints (`/api/webhook/`)
+
+The embedded Rust server listens on `http://0.0.0.0:8790` and exposes the following endpoints:
+
+| Method | Endpoint | Purpose | Example |
+|---|---|---|---|
+| **`GET`** | `/api/webhook/x` | **X CRC Challenge Check** (Account Activity API registration) | `curl "http://localhost:8790/api/webhook/x?crc_token=test"` |
+| **`POST`** | `/api/webhook/x` | **X Real-Time Mention Callback** | Triggered by X on new `@trypitchdotco` mention |
+| **`POST`** | `/api/webhook/trigger` | **Manual Webhook Trigger** | `curl -X POST http://localhost:8790/api/webhook/trigger -H "Content-Type: application/json" -d '{"action":"mentions"}'` |
+| **`GET`** | `/api/webhook/health` | **Health Check** & uptime | `curl http://localhost:8790/api/webhook/health` |
+| **`GET`** | `/api/webhook/stats` | **Pipeline Stats** & SQLite DB summary | `curl http://localhost:8790/api/webhook/stats` |
+
+### Trigger Endpoint Examples (`POST /api/webhook/trigger`)
+
+Trigger an inbox mention pass:
+```bash
+curl -X POST http://localhost:8790/api/webhook/trigger \
+  -H "Content-Type: application/json" \
+  -d '{"action": "mentions"}'
+```
+
+Trigger an outbound prospect discovery pass:
+```bash
+curl -X POST http://localhost:8790/api/webhook/trigger \
+  -H "Content-Type: application/json" \
+  -d '{"action": "growth"}'
+```
 
 ## Open Chamber Scheduler
 
@@ -88,13 +116,6 @@ The compiled binary is saved at `./target/release/pitch-cli`.
 ```bash
 ./target/release/pitch-cli server
 ```
-
-Listens on `http://0.0.0.0:8790`. Key routes:
-- `GET /webhookbase/x-webhook?crc_token=...` (X CRC challenge check)
-- `POST /webhookbase/x-webhook` (X mention callback)
-- `POST /webhookbase/trigger` (manual webhook trigger)
-- `GET /webhookbase/health` (health check)
-- `GET /webhookbase/stats` (SQLite database summary)
 
 ### Pipeline Triggers
 

@@ -57,8 +57,8 @@ To prevent context bloat and token waste, the system is strictly split into two 
 
 The Rust Webhook Server (`./target/release/pitch-cli server`) listens on `http://0.0.0.0:8790` and handles all incoming mention events in real time:
 
-* **CRC Challenge Endpoint:** `GET /webhookbase/x-webhook?crc_token=...`
-* **Real-time Mention Event:** `POST /webhookbase/x-webhook`
+* **CRC Challenge Endpoint:** `GET /api/webhook/x?crc_token=...`
+* **Real-time Mention Event:** `POST /api/webhook/x`
   1. Receives mention webhook callback from X.
   2. Posts instant receipt reply on X.
   3. Triggers Pitch MCP video generation.

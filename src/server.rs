@@ -69,6 +69,7 @@ pub async fn run_server(port_override: Option<u16>) {
     let state = Arc::new(AppState { client_secret });
 
     let webhook_routes = Router::new()
+        .route("/x", get(handle_crc).post(handle_x_webhook))
         .route("/x-webhook", get(handle_crc).post(handle_x_webhook))
         .route("/trigger", post(handle_manual_trigger))
         .route("/health", get(handle_health))
@@ -76,13 +77,14 @@ pub async fn run_server(port_override: Option<u16>) {
         .with_state(state);
 
     let app = Router::new()
-        .nest("/webhookbase", webhook_routes)
+        .nest("/api/webhook", webhook_routes.clone())
+        .nest("/webhook", webhook_routes)
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
     info!("🚀 Pitch Rust Webhook Server listening on http://{}", addr);
-    info!("📌 Routes available under /webhookbase/ (x-webhook, trigger, health, stats)");
+    info!("📌 Routes available under /api/webhook/ (x, trigger, health, stats)");
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
@@ -99,7 +101,7 @@ async fn handle_crc(
                 StatusCode::OK,
                 Json(serde_json::json!({
                     "status": "active",
-                    "endpoint": "/webhookbase/x-webhook",
+                    "endpoint": "/api/webhook/x",
                     "info": "X Webhook CRC Endpoint Active"
                 })),
             )
