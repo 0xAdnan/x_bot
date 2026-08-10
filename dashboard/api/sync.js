@@ -12,10 +12,17 @@ export default async function handler(req, res) {
     'Content-Type': 'application/json'
   };
 
+  const makeSignature = (a) => {
+    const ts = (a.ts || '').slice(0, 19); // Compare up to seconds
+    const action = a.action || '';
+    const handle = a.handle || '';
+    const detail = (a.detail || '').replace(/\s+/g, ' ').trim();
+    return `${ts}_${action}_${handle}_${detail}`;
+  };
+
   // 1. GET: Clean/Deduplicate existing Supabase activities
   if (req.method === 'GET') {
     try {
-      // Fetch all activities
       const fetchResp = await fetch(`${supabaseUrl}/rest/v1/activities?select=id,ts,action,handle,detail&order=id.asc`, { headers });
       if (!fetchResp.ok) {
         return res.status(500).json({ error: "Failed to fetch activities from Supabase" });
@@ -26,7 +33,7 @@ export default async function handler(req, res) {
       const duplicateIds = [];
 
       for (const a of activities) {
-        const key = `${a.ts}_${a.action}_${a.handle || ''}_${a.detail || ''}`;
+        const key = makeSignature(a);
         if (seen.has(key)) {
           duplicateIds.push(a.id);
         } else {
@@ -72,29 +79,26 @@ export default async function handler(req, res) {
       let skippedActivitiesCount = 0;
 
       if (incomingActivities.length > 0) {
-        // Fetch existing activity signatures to prevent duplicates
         const existingResp = await fetch(`${supabaseUrl}/rest/v1/activities?select=ts,action,handle,detail`, { headers });
         let existingSignatures = new Set();
         if (existingResp.ok) {
           const existingData = await existingResp.json();
           for (const item of existingData) {
-            existingSignatures.add(`${item.ts}_${item.action}_${item.handle || ''}_${item.detail || ''}`);
+            existingSignatures.add(makeSignature(item));
           }
         }
 
-        // Filter incoming items
         const newActivities = [];
         for (const item of incomingActivities) {
-          const sig = `${item.ts}_${item.action}_${item.handle || ''}_${item.detail || ''}`;
+          const sig = makeSignature(item);
           if (!existingSignatures.has(sig)) {
             newActivities.push(item);
-            existingSignatures.add(sig); // Prevent duplicates within the incoming batch itself
+            existingSignatures.add(sig);
           } else {
             skippedActivitiesCount++;
           }
         }
 
-        // Insert new activities
         if (newActivities.length > 0) {
           const insertResp = await fetch(`${supabaseUrl}/rest/v1/activities`, {
             method: 'POST',
