@@ -22,5 +22,9 @@
       ],
       "enabled": true
     }
+  },
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
   }
 }
