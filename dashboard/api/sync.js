@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   };
 
   const makeSignature = (a) => {
-    const ts = (a.ts || '').slice(0, 19); // Compare up to seconds
+    const ts = (a.ts || '').slice(0, 19);
     const action = a.action || '';
     const handle = a.handle || '';
     const detail = (a.detail || '').replace(/\s+/g, ' ').trim();
@@ -41,7 +41,6 @@ export default async function handler(req, res) {
         }
       }
 
-      // Delete duplicates in batches of 50
       let deletedCount = 0;
       if (duplicateIds.length > 0) {
         for (let i = 0; i < duplicateIds.length; i += 50) {
@@ -68,12 +67,17 @@ export default async function handler(req, res) {
     }
   }
 
-  // 2. POST: Deduplicate and Sync incoming activities/prospects
+  // 2. POST: Deduplicate and Sync incoming activities, prospects, and mention_jobs
   if (req.method === 'POST') {
     try {
-      const body = req.body || {};
+      let body = req.body || {};
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch (e) {}
+      }
+
       const incomingActivities = Array.isArray(body) ? body : (body.activities || []);
       const incomingProspects = body.prospects || [];
+      const incomingMentionJobs = body.mention_jobs || body.jobs || [];
 
       let syncedActivitiesCount = 0;
       let skippedActivitiesCount = 0;
@@ -107,9 +111,6 @@ export default async function handler(req, res) {
           });
           if (insertResp.ok) {
             syncedActivitiesCount = newActivities.length;
-          } else {
-            const errText = await insertResp.text();
-            console.error("[Sync Insert Error]:", errText);
           }
         }
       }
@@ -128,11 +129,26 @@ export default async function handler(req, res) {
         }
       }
 
+      // Sync Mention Jobs if present
+      let mentionJobsSynced = 0;
+      if (incomingMentionJobs.length > 0) {
+        const jobHeaders = { ...headers, 'Prefer': 'resolution=merge-duplicates' };
+        const jobResp = await fetch(`${supabaseUrl}/rest/v1/mention_jobs`, {
+          method: 'POST',
+          headers: jobHeaders,
+          body: JSON.stringify(incomingMentionJobs)
+        });
+        if (jobResp.ok) {
+          mentionJobsSynced = incomingMentionJobs.length;
+        }
+      }
+
       return res.status(200).json({
         status: "ok",
         synced_activities: syncedActivitiesCount,
         skipped_duplicates: skippedActivitiesCount,
-        prospects_synced: prospectsSynced
+        prospects_synced: prospectsSynced,
+        mention_jobs_synced: mentionJobsSynced
       });
     } catch (err) {
       console.error("[Sync POST Error]:", err);
