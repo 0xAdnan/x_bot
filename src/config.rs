@@ -11,9 +11,7 @@ pub struct Config {
     pub x_refresh: String,
     pub x_client_id: String,
     pub x_client_secret: String,
-    pub x_user_id: String,
     pub _x_operator_handle: String,
-    pub pitch_api_key: String,
     pub db_path: PathBuf,
 }
 
@@ -39,11 +37,8 @@ impl Config {
             x_refresh: env::var("X_USER_REFRESH_TOKEN").unwrap_or_default(),
             x_client_id: env::var("X_CLIENT_ID").unwrap_or_default(),
             x_client_secret: env::var("X_CLIENT_SECRET").unwrap_or_default(),
-            x_user_id: env::var("X_USER_ID").unwrap_or_default(),
             _x_operator_handle: env::var("X_OPERATOR_HANDLE")
                 .unwrap_or_else(|_| "@trypitchdotco".to_string()),
-            pitch_api_key: env::var("PITCH_API_KEY")
-                .unwrap_or_else(|_| "pk_tltxrmrZgiprXR51z_dJvoIF0yWiGBVB".to_string()),
             db_path,
         }
     }

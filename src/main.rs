@@ -1,16 +1,12 @@
 mod config;
 mod db;
 mod discover;
-mod inbox;
-mod pitch_mcp;
 mod safety;
 mod server;
-mod worker;
 mod x_api;
 
 use clap::{Parser, Subcommand};
 use db::{Activity, Database, MentionJob, Prospect};
-use x_api::XApiClient;
 
 #[derive(Parser)]
 #[command(name = "pitch-cli")]
@@ -22,22 +18,10 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Run the Axum Webhook Server on port 8080 (or PORT env var)
+    /// Run the Axum webhook dispatcher server (default port 8790, or PORT env var)
     Server {
         #[arg(short, long)]
         port: Option<u16>,
-    },
-
-    /// X API v2 Operations (auto OAuth2 token refresh)
-    XApi {
-        #[command(subcommand)]
-        cmd: XApiCommands,
-    },
-
-    /// Pitch MCP API Operations
-    Mcp {
-        #[command(subcommand)]
-        cmd: McpCommands,
     },
 
     /// SQLite Database Memory Operations
@@ -46,36 +30,12 @@ enum Commands {
         cmd: DbCommands,
     },
 
-    /// Trigger one-shot mention inbox ingestion
-    Inbox {
-        #[arg(long)]
-        dry: bool,
-        #[arg(long)]
-        no_ack: bool,
-    },
-
-    /// Trigger one-shot demo video rendering delivery worker
-    Worker {
-        #[arg(long)]
-        dry: bool,
-        #[arg(short, long, default_value = "10")]
-        limit: usize,
-    },
-
     /// Search X for ICP SaaS prospects and save to SQLite CRM
     Discover {
         #[arg(long)]
         dry: bool,
         #[arg(short, long, default_value = "5")]
         max: usize,
-    },
-
-    /// Unified trigger pass (Inbox + Worker + Stats)
-    Trigger {
-        #[arg(long)]
-        dry: bool,
-        #[arg(long)]
-        no_ack: bool,
     },
 
     /// Check remaining daily action budget & rolling burst caps
@@ -91,70 +51,6 @@ enum Commands {
 
     /// Print database summary & stats
     Sync,
-}
-
-#[derive(Subcommand)]
-enum XApiCommands {
-    /// Get authenticated user details
-    Me,
-    /// Force an OAuth2 token refresh
-    Refresh,
-    /// Perform interactive PKCE OAuth2 authorization flow
-    Authorize {
-        #[arg(long, default_value = "18795")]
-        port: u16,
-        #[arg(long, default_value = "http://127.0.0.1:18795/callback")]
-        redirect_uri: String,
-    },
-    /// Lookup user by username
-    Lookup { username: String },
-    /// Fetch recent mentions
-    Mentions {
-        #[arg(long)]
-        since_id: Option<String>,
-        #[arg(short, long, default_value = "20")]
-        max: usize,
-    },
-    /// Reply to a tweet
-    Reply {
-        tweet_id: String,
-        #[arg(short, long)]
-        text: String,
-        #[arg(long)]
-        dry: bool,
-    },
-    /// Post a tweet
-    Post {
-        #[arg(short, long)]
-        text: String,
-        #[arg(long)]
-        dry: bool,
-    },
-    /// Like a tweet
-    Like {
-        tweet_id: String,
-        #[arg(long)]
-        dry: bool,
-    },
-    /// Search recent tweets
-    Search {
-        query: String,
-        #[arg(short, long, default_value = "10")]
-        max: usize,
-    },
-}
-
-#[derive(Subcommand)]
-enum McpCommands {
-    /// Trigger AI video generation for a URL
-    Create {
-        url: String,
-        instructions: Option<String>,
-    },
-    /// Query job rendering status
-    Status { job_id: String },
-    /// Check account credit balance
-    Credits,
 }
 
 #[derive(Subcommand)]
@@ -200,90 +96,6 @@ async fn main() {
         Commands::Server { port } => {
             server::run_server(port).await;
         }
-
-        Commands::XApi { cmd } => {
-            let mut x_client = XApiClient::new();
-            match cmd {
-                XApiCommands::Me => match x_client.get_me().await {
-                    Ok(me) => println!("{}", serde_json::to_string_pretty(&me).unwrap()),
-                    Err(e) => eprintln!("[X API Error]: {}", e),
-                },
-                XApiCommands::Refresh => match x_client.refresh_token().await {
-                    Ok(_) => println!("[OK] Token refreshed successfully"),
-                    Err(e) => eprintln!("[X API Error]: {}", e),
-                },
-                XApiCommands::Authorize { port, redirect_uri } => {
-                    match x_client.authorize(port, &redirect_uri).await {
-                        Ok(_) => println!("[OK] Authorization completed successfully"),
-                        Err(e) => eprintln!("[X API Error]: {}", e),
-                    }
-                },
-                XApiCommands::Lookup { username } => match x_client.lookup_user(&username).await {
-                    Ok(u) => println!("{}", serde_json::to_string_pretty(&u).unwrap()),
-                    Err(e) => eprintln!("[X API Error]: {}", e),
-                },
-                XApiCommands::Mentions { since_id, max } => {
-                    match x_client.get_mentions(since_id.as_deref(), max).await {
-                        Ok(m) => println!("{}", serde_json::to_string_pretty(&m).unwrap()),
-                        Err(e) => eprintln!("[X API Error]: {}", e),
-                    }
-                }
-                XApiCommands::Reply { tweet_id, text, dry } => {
-                    if dry {
-                        println!("[DRY RUN] Reply to {}: {}", tweet_id, text);
-                    } else {
-                        match x_client.post_tweet(&text, Some(&tweet_id)).await {
-                            Ok(id) => println!("[OK] Posted reply ID: {}", id),
-                            Err(e) => eprintln!("[X API Error]: {}", e),
-                        }
-                    }
-                }
-                XApiCommands::Post { text, dry } => {
-                    if dry {
-                        println!("[DRY RUN] Post: {}", text);
-                    } else {
-                        match x_client.post_tweet(&text, None).await {
-                            Ok(id) => println!("[OK] Published tweet ID: {}", id),
-                            Err(e) => eprintln!("[X API Error]: {}", e),
-                        }
-                    }
-                }
-                XApiCommands::Like { tweet_id, dry } => {
-                    if dry {
-                        println!("[DRY RUN] Like {}", tweet_id);
-                    } else {
-                        match x_client.like_tweet(&tweet_id).await {
-                            Ok(true) => println!("[OK] Liked tweet {}", tweet_id),
-                            Ok(false) => println!("[WARN] Could not confirm like for {}", tweet_id),
-                            Err(e) => eprintln!("[X API Error]: {}", e),
-                        }
-                    }
-                }
-                XApiCommands::Search { query, max } => {
-                    match x_client.search_recent(&query, max).await {
-                        Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
-                        Err(e) => eprintln!("[X API Error]: {}", e),
-                    }
-                }
-            }
-        }
-
-        Commands::Mcp { cmd } => match cmd {
-            McpCommands::Create { url, instructions } => {
-                match pitch_mcp::create_demo_video(&url, instructions.as_deref()).await {
-                    Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
-                    Err(e) => eprintln!("[Pitch MCP Error]: {}", e),
-                }
-            }
-            McpCommands::Status { job_id } => match pitch_mcp::get_job_status(&job_id).await {
-                Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
-                Err(e) => eprintln!("[Pitch MCP Error]: {}", e),
-            },
-            McpCommands::Credits => match pitch_mcp::get_credits().await {
-                Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
-                Err(e) => eprintln!("[Pitch MCP Error]: {}", e),
-            },
-        },
 
         Commands::Db { cmd } => match Database::open() {
             Ok(db) => match cmd {
@@ -344,23 +156,8 @@ async fn main() {
             Err(e) => eprintln!("[DB Error]: {}", e),
         },
 
-        Commands::Inbox { dry, no_ack } => {
-            let _ = inbox::process_mention_inbox(dry, no_ack).await;
-        }
-
-        Commands::Worker { dry, limit } => {
-            let _ = worker::advance_rendering_queue(dry, limit).await;
-        }
-
         Commands::Discover { dry, max } => {
             let _ = discover::discover_prospects(max, dry).await;
-        }
-
-        Commands::Trigger { dry, no_ack } => {
-            println!("⚡ [EXECUTING UNIFIED RUST TRIGGER PASS]");
-            let _ = inbox::process_mention_inbox(dry, no_ack).await;
-            let _ = worker::advance_rendering_queue(dry, 10).await;
-            print_sync_summary();
         }
 
         Commands::Budget => {
@@ -393,8 +190,14 @@ fn print_sync_summary() {
         let mention_jobs = db.get_mention_jobs_by_status(None, 100).unwrap_or_default();
         let prospects = db.get_all_prospects(None).unwrap_or_default();
 
-        let delivered = mention_jobs.iter().filter(|j| j.status == "delivered").count();
-        let rendering = mention_jobs.iter().filter(|j| j.status == "rendering").count();
+        let delivered = mention_jobs
+            .iter()
+            .filter(|j| j.status == "delivered")
+            .count();
+        let rendering = mention_jobs
+            .iter()
+            .filter(|j| j.status == "rendering")
+            .count();
 
         println!("\n=== [PITCH X BOT SQLITE DATABASE SUMMARY] ===");
         println!(

@@ -1,12 +1,36 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
-  // All browser automation in this project runs through the `agent-webbridge`
-  // skill, which drives REAL Google Chrome with the user's LIVE logins in the
-  // "Testing" profile (Chrome profile dir "Profile 5"). No Playwright MCP here:
-  // the fleet is brought up with `awb up "Testing"` (router on 127.0.0.1:10086).
   "skills": {
-    "paths": [".opencode/skills"]
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+  "mcp": {
+    "pitch": {
+      "type": "remote",
+      "url": "https://api.trypitch.co/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:PITCH_API_KEY}"
+      },
+      "enabled": true,
+      "timeout": 300000
+    },
+    "xmcp": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@xdevplatform/xurl",
+        "mcp",
+        "https://api.x.com/mcp"
+      ],
+      "environment": {
+        "CLIENT_ID": "{env:X_CLIENT_ID}",
+        "CLIENT_SECRET": "{env:X_CLIENT_SECRET}"
+      },
+      "enabled": true,
+      "timeout": 300000
+    }
   },
   "compaction": {
     "auto": true,

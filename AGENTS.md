@@ -2,17 +2,27 @@
 
 PITCH (https://trypitch.co) is an AI video editor that turns task descriptions into
 studio-quality narrated demo MP4s. This repo is the X/Twitter growth-to-sales funnel that
-promotes it: a pure-Rust CLI/webhook pipeline plus an opencode skill suite that drives the
-real browser and the X API v2.
+promotes it: a small Rust webhook dispatcher plus an opencode skill suite that drives the
+real browser and the X API v2 (via the `xmcp` MCP server).
 
 ## Architecture
 
 - **`src/`** — `pitch-cli` (Rust, Cargo workspace bin `pitch-cli`). Modules: `server` (Axum
-  webhook server, port 8080/`PORT`), `inbox` (mention ingestion), `worker` (demo-render
-  delivery), `discover` (ICP prospect search), `x_api` (X API v2 client with OAuth2
-  auto-refresh), `safety` (daily budget + circuit breaker), `pitch_mcp` (Pitch video MCP),
-  `db` (SQLite), `config` (env loading).
+  webhook dispatcher, port 8790/`PORT` — receives X mention events + Pitch MCP completions
+  and **spawns an `opencode run` session** per event), `discover` (ICP prospect search),
+  `x_api` (internal X API v2 client, legacy/heavy path — prefer `xmcp`), `safety` (daily
+  budget + circuit breaker), `db` (SQLite), `config` (env loading). The old `inbox`,
+  `worker`, and `pitch_mcp` modules were deleted: the webhook dispatcher hands each event
+  to an opencode session instead.
 - **`data/pitch_bot.db`** — SQLite CRM + mention job queue (unless `SQLITE_DB_PATH` set).
+- **`data/sessions/`** — stdout logs of every dispatched opencode session (capped by
+  `MAX_OPENCODE_SESSIONS`, default 3 concurrent).
+- **`opencode.jsonc`** — registers the two **MCP servers** the agent uses
+  directly: `pitch` (remote `https://api.trypitch.co/mcp`, Bearer
+  `PITCH_API_KEY`) and `xmcp` (official X MCP via the local `xurl` bridge to
+  hosted `https://api.x.com/mcp`, OAuth2 via `CLIENT_ID`/`CLIENT_SECRET` from
+  `.env`). Agent tools call these servers; `pitch-cli` no longer exposes
+  `mcp`/`x-api` subcommands.
 - **`.opencode/skills/x-growth/`** — orchestrator skill: boot, guardrails, session loop,
   state schemas, 13 hard rules. Shared resources: `safety.md`, `voice.md`, `learn.md`,
   `state/account.json`, `state/insights.md`.
@@ -23,7 +33,8 @@ real browser and the X API v2.
 - **`.opencode/agent/x-growth.md`** — primary agent definition; declares the skills + tools.
 - **`.opencode/skills/agent-webbridge/SKILL.md`** — drives the user's REAL Chrome (profile
   `Testing`, router `127.0.0.1:10086`) via agent-webbridge; full setup/install/diagnose is
-  in this file (see Browser automation below).
+  in this file (see Browser automation below). **All X writes go through webbridge**
+  (`Testing`), never the internal X API client.
 
 ## Build, test & key commands
 
@@ -31,17 +42,21 @@ real browser and the X API v2.
   suite configured.
 - Verify config/skills: `opencode debug skill`, `opencode debug config`,
   `opencode debug agent x-growth`.
-- Server: `pitch-cli server` (health `GET /api/webhook/health`, CRC
-  `/api/webhook/x?crc_token=...`, `pitch-cli server --port 8790` for local runs).
+- Server: `pitch-cli server` (unified webhook base `/api/webhook`: X CRC +
+  mentions at `/x`, Pitch MCP completion at `/pitch`, `trigger`, `health`,
+  `stats`; `--port 8790` for local runs). Each incoming event dispatches an
+  `opencode run` session that executes the matching skill.
 - Safety: `pitch-cli budget` (daily caps + burst), `pitch-cli circuit-breaker` (status),
   `--trip "reason"` (pause), `--reset` (resume). Always check budget + breaker BEFORE any
   X write.
-- Pipeline (all `--dry` first): `pitch-cli trigger`, `inbox`, `worker`, `discover`,
-  `sync` (DB summary).
-- DB: `pitch-cli db jobs|get-job|prospects|get-prospect|insights get`.
-- X API: `pitch-cli x-api me|lookup|search|mentions|post|reply|like|refresh`
-  (post/reply/like support `--dry`; writes currently 401 — see Gotchas).
-- Pitch MCP: `pitch-cli mcp create <url> [instructions]|status <job_id>|credits`.
+- Other commands: `pitch-cli discover` (prospect search), `pitch-cli db
+  jobs|get-job|prospects|get-prospect|insights get`, `pitch-cli sync` (DB summary).
+- X API: for reads, drive the `xmcp` MCP server tools (me/lookup/search/
+  mentions) callable from opencode. **For writes (post/reply/like), always use
+  agent-webbridge (`Testing` profile)**, not the internal X API client.
+- Pitch MCP: call the `pitch` MCP server tools (`create_demo_video`, `get_job`,
+  `get_credits`) in opencode; `PITCH_WEBHOOK_URL` is optional now — dispatched
+  sessions poll `get_job` themselves rather than relying on the `/pitch` callback.
 
 ## Operating rules (hard)
 
@@ -69,9 +84,12 @@ skill/tool availability.
 ## `.env` requirements (gitignored)
 
 Required vars (see `src/config.rs`): `X_CLIENT_ID`, `X_CLIENT_SECRET`,
-`X_USER_ACCESS_TOKEN`, `X_USER_REFRESH_TOKEN`, `X_USER_ID`, `X_OPERATOR_HANDLE`,
-`X_USERNAME`, `X_PASSWORD`, `PITCH_API_KEY`, optional `SQLITE_DB_PATH`, `X_WEBHOOK_ID`. Legacy keys
-`X_API_KEY`/`X_API_SECRET`/`X_BEARER_TOKEN` are unused by the code.
+`X_OPERATOR_HANDLE`, `X_USERNAME`, `X_PASSWORD`, `PITCH_API_KEY`, optional
+`SQLITE_DB_PATH`, `PITCH_WEBHOOK_URL` (public URL of `/api/webhook/pitch` on the
+webhook server), `X_WEBHOOK_ID`, `MAX_OPENCODE_SESSIONS` (default 3). Legacy
+keys `X_API_KEY`/`X_API_SECRET`/`X_BEARER_TOKEN` and the OAuth2 `X_USER_*`
+tokens are unused by the code (the internal `x_api` client is off-limits).
+`X_CLIENT_ID`/`X_CLIENT_SECRET` feed the `xmcp` xurl bridge OAuth2 login.
 
 ## Browser automation (agent-webbridge)
 
@@ -83,8 +101,10 @@ Quick start: `npm i -g agent-webbridge`, `awb setup "Testing"`, `awb connect "Te
 
 ## Gotchas
 
-- **X API v2 401**: OAuth2 user tokens in `.env` are expired/invalid; `x-api me` fails
-  even after `refresh`. Any X API write flow (x-mention, discover via API) is blocked until
-  fresh tokens are saved to `.env`. Browser-based actions via webbridge are NOT blocked.
-- **Hardcoded key**: `src/config.rs` falls back to a real `PITCH_API_KEY` if unset — do not
-  rely on that fallback; always supply it via `.env`.
+- **X MCP auth via `xmcp`**: the OAuth2 user tokens in `.env`
+  (`X_USER_ACCESS_TOKEN`/`X_USER_REFRESH_TOKEN`) are expired/invalid for the old
+  `x-api` client. The `xmcp` MCP server (official X MCP through the `xurl`
+  bridge) uses its own OAuth2 PKCE login cached in `~/.xurl`; first run opens the
+  browser (or run `xurl auth oauth2` once). X reads go through `xmcp`; X writes
+  go through agent-webbridge (`Testing` profile) and are NOT blocked. The single
+  remaining internal X call is `discover` — blocked until `.env` has fresh tokens.

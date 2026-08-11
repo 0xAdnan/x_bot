@@ -1,60 +1,61 @@
-# Automated X API v2 OAuth2 PKCE Authorization
+# X OAuth2 Authorization (via `xurl` / the `xmcp` MCP server)
 
-This document describes the automated OAuth2 PKCE authorization flow in `pitch-cli` (`x-api authorize`).
+The old `pitch-cli x-api authorize` flow was removed. X operations now run
+through the official **X MCP** server (`xmcp` in `opencode.jsonc`), reached via
+the first-party **`xurl`** local bridge that owns the OAuth2 PKCE login and
+auto-refreshes tokens.
 
 ---
 
 ## Overview
 
-When X API user tokens (`X_USER_ACCESS_TOKEN` / `X_USER_REFRESH_TOKEN`) expire or get revoked, `pitch-cli x-api authorize` provides a 100% automated PKCE re-authorization flow using `agent-webbridge`.
+`xmcp` is a local stdio MCP server: `npx -y @xdevplatform/xurl mcp
+https://api.x.com/mcp`. On first use with no cached token, the bridge opens the
+browser for a one-time OAuth2 login, then caches and auto-refreshes the token in
+`~/.xurl`. Credentials come from the `environment` block in `opencode.jsonc`
+(`CLIENT_ID` / `CLIENT_SECRET`), which interpolate `X_CLIENT_ID` /
+`X_CLIENT_SECRET` from `.env`.
+
+The same bridge is used by the `pitch-cli` pipeline's X calls only indirectly —
+the internal `src/x_api.rs` client still uses `.env` OAuth2 user tokens
+(`X_USER_ACCESS_TOKEN` / `X_USER_REFRESH_TOKEN`).
 
 ---
 
-## Architecture & Flow
-
-1. **Callback Server**:
-   - `pitch-cli` binds a temporary HTTP server on `http://127.0.0.1:18795`.
-   - Dedicated callback URL registered in X Developer Portal:
-     `http://127.0.0.1:18795/callback`
-
-2. **PKCE Parameters**:
-   - Generates SHA-256 base64url `code_verifier` and `code_challenge`.
-   - Constructs authorization URL with scopes:
-     `tweet.read tweet.write users.read offline.access like.read like.write`
-
-3. **Automated Browser Approval**:
-   - Sends a `navigate` request to `agent-webbridge` (`http://127.0.0.1:10086/command`) targeting the logged-in `Testing` Chrome profile.
-   - Spawns a background worker that polls the accessibility snapshot for the **"Authorize app"** button.
-   - Automatically issues a synthetic `click` command to `agent-webbridge` once the button is located.
-
-4. **Token Exchange & `.env` Update**:
-   - Captures the `code` parameter from X's redirect to `http://127.0.0.1:18795/callback`.
-   - Sends a `POST` request to `https://api.twitter.com/2/oauth2/token` to exchange `code` + `code_verifier` for fresh tokens.
-   - Automatically updates `X_USER_ACCESS_TOKEN` and `X_USER_REFRESH_TOKEN` in `.env`.
-
----
-
-## Usage
-
-Run the authorization command from `pitch-cli`:
+## One-time login (browser)
 
 ```bash
-./target/release/pitch-cli x-api authorize
+# env comes from .env; register a default app once
+xurl auth apps add my-app --client-id "$X_CLIENT_ID" --client-secret "$X_CLIENT_SECRET"
+xurl auth oauth2 --app my-app
 ```
 
-### Custom Port / Callback URL (Optional)
+The first tool call through `xmcp` also triggers this login automatically.
+
+### Dev app prerequisites (X Developer Portal → app → User authentication settings)
+
+* **Callback / Redirect URI**: `http://localhost:8080/callback`
+  (or set `REDIRECT_URI` to a registered alternative; the bridge default is
+  `http://localhost:8080/callback`).
+* **App Permissions**: `Read and write` (plus `Direct message` if DMs are needed).
+* **Type of App**: `Web App, Automated App or Bot`.
+* Move the app to the **Pay-per-use** package and the **Production** environment
+  (`client-not-enrolled` errors otherwise).
+
+## Headless / remote machines
+
+No browser reachable? Authenticate out-of-band once, then the bridge reuses the
+cached token:
 
 ```bash
-./target/release/pitch-cli x-api authorize --port 18795 --redirect-uri http://127.0.0.1:18795/callback
+export CLIENT_ID="$X_CLIENT_ID" CLIENT_SECRET="$X_CLIENT_SECRET"
+xurl auth oauth2 --app my-app --headless   # open URL on any device, paste back the code
 ```
 
----
+## Verify
 
-## Developer Portal Prerequisites
-
-In **X Developer Console → App Settings → User authentication settings**:
-
-* **Callback URL / Redirect URI**: `http://127.0.0.1:18795/callback`
-* **Website URL**: `https://trypitch.co`
-* **App Permissions**: `Read and write and Direct message`
-* **Type of App**: `Web App, Automated App or Bot`
+```bash
+xurl auth status     # shows registered apps + users + token state
+xurl whoami          # confirms the acting account
+xurl token           # prints a fresh access token (for debugging only)
+```
