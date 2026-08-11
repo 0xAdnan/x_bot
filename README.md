@@ -179,6 +179,67 @@ ngrok http 8790        # → https://<random>.ngrok.app
 Let `<public-url>` be that base (e.g. `https://pitch-bot.example.com`). All of
 the paths below are appended to it.
 
+#### Cloudflare Tunnel at `x.trypitch.co`
+
+This project uses a Cloudflare Tunnel so the webhook is reachable at
+`https://x.trypitch.co` (which maps to the local server on port 8790).
+
+**1. Install `cloudflared`** (https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads):
+
+```bash
+brew install cloudflared        # macOS
+# or: sudo apt install cloudflared   # Debian/Ubuntu
+```
+
+**2. Authorize the tunnel for your Cloudflare account:**
+
+```bash
+cloudflared tunnel login        # opens browser; select your domain (trypitch.co)
+```
+
+**3. Create a named tunnel** (do this once):
+
+```bash
+cloudflared tunnel create pitch-webhook
+# → Writes a credentials JSON to ~/.cloudflared/<tunnel-id>.json
+```
+
+**4. Define the ingress in `~/.cloudflared/config.yml`** — route
+`x.trypitch.co` to the local webhook server:
+
+```yaml
+tunnel: pitch-webhook
+credentials-file: /Users/<you>/.cloudflared/<tunnel-id>.json
+
+ingress:
+  - hostname: x.trypitch.co
+    service: http://127.0.0.1:8790
+  - service: http_status:404
+```
+
+**5. Add the DNS route** (maps `x.trypitch.co` → the tunnel):
+
+```bash
+cloudflared tunnel route dns pitch-webhook x.trypitch.co
+```
+
+**6. Run the tunnel:**
+
+```bash
+cloudflared tunnel run pitch-webhook          # foreground
+# or to run as a service (auto-restart, login on boot):
+cloudflared service install && cloudflared tunnel run pitch-webhook &
+```
+
+Verify `https://x.trypitch.co/api/webhook/health` returns `200` from any
+machine. Then register X and Pitch MCP webhooks against
+`https://x.trypitch.co/api/webhook/...` (sections 2-4 below).
+
+> Cloudflare TLS terminates at the edge, and `cloudflared` proxies to plain HTTP
+> on 127.0.0.1:8790, so the server doesn't need its own TLS config. Keep the
+> `config.yml` tunnel name and `<tunnel-id>` in sync, and re-run `route dns` if
+> the tunnel is recreated.
+
 ### 2. X Account Activity webhook (mentions)
 
 This is the primary webhook: X calls it on every new `@trypitchdotco` mention,
@@ -278,6 +339,111 @@ curl http://localhost:8790/api/webhook/stats
 4. Optional `PITCH_WEBHOOK_URL` set and `/api/webhook/pitch` verified.
 5. Optional cron curling `/api/webhook/trigger` `{"action":"mentions"}`.
 
+## Running the webhook as a background service
+
+`pitch-cli server` must be **always-on** for X and Pitch MCP callbacks to arrive.
+Don't rely on a terminal window — install it as a launchd (macOS) or systemd
+(Linux) service so it starts at boot and restarts on crash. The repo root below
+is `/opt/pitch-xbot`; adjust to your path.
+
+### macOS (launchd)
+
+Create `~/Library/LaunchAgents/co.trypitch.webhook.plist`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>co.trypitch.webhook</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/pitch-xbot/target/release/pitch-cli</string>
+    <string>server</string>
+    <string>--port</string>
+    <string>8790</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/opt/pitch-xbot</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PORT</key>
+    <string>8790</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/opt/pitch-xbot/data/webhook.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/opt/pitch-xbot/data/webhook.err.log</string>
+</dict>
+</plist>
+```
+
+Load it:
+
+```bash
+launchctl load ~/Library/LaunchAgents/co.trypitch.webhook.plist
+launchctl start co.trypitch.webhook
+launchctl list | rg trypitch            # verify running
+tail -f /opt/pitch-xbot/data/webhook.err.log
+```
+
+To stop/reload after a code change:
+
+```bash
+launchctl unload ~/Library/LaunchAgents/co.trypitch.webhook.plist
+# rebuild, then:
+launchctl load ~/Library/LaunchAgents/co.trypitch.webhook.plist
+```
+
+### Linux (systemd)
+
+Create `/etc/systemd/system/pitch-webhook.service`:
+
+```ini
+[Unit]
+Description=PITCH X webhook dispatcher (pitch-cli server)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pitch-xbot
+ExecStart=/opt/pitch-xbot/target/release/pitch-cli server --port 8790
+Restart=always
+RestartSec=5
+Environment=PORT=8790
+EnvironmentFile=/opt/pitch-xbot/.env
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now pitch-webhook
+systemctl status pitch-webhook
+journalctl -u pitch-webhook -f
+```
+
+### Notes
+
+- Each event spawns `opencode run` (capped by `MAX_OPENCODE_SESSIONS`, logs in
+  `data/sessions/`), so the service account needs the opencode CLI + model
+  provider authed, and the `agent-webbridge` Chrome fleet available (`awb up
+  "Testing"`) — otherwise dispatched sessions can't post to X.
+- The `.env` file (or `EnvironmentFile=`/`EnvironmentVariables=` above) must
+  contain `X_CLIENT_SECRET` before boot, or X CRC checks will sign with the
+  placeholder secret.
+- Logs written to `data/webhook.out.log` / `data/webhook.err.log` (launchd) or
+  `journalctl` (systemd).
+
 ## Job state machine
 
 `mention_jobs` table (one row per tweet):
@@ -318,12 +484,13 @@ examples: `/opt/pitch-xbot` (your repo root).
 # or: PORT=9000 ./target/release/pitch-cli server
 ```
 
-Run under a process manager (launchd on macOS, systemd on Linux; or e.g.
-`nohup`, tmux, pm2-anywhere). It must be reachable by X on a public URL
-(e.g. ngrok tunnel or reverse proxy in front of port 8790) for webhooks to
-arrive. Each event spawns `opencode run` (concurrency capped by
-`MAX_OPENCODE_SESSIONS`, logs under `data/sessions/`), so the host also needs
-the opencode CLI and the model provider authed.
+For production, install it as an always-on background service (launchd on macOS
+or systemd on Linux) — see **Running the webhook as a background service**
+above. It must be reachable by X on a public URL (e.g. the Cloudflare Tunnel at
+`x.trypitch.co` described above) for webhooks to arrive. Each event spawns
+`opencode run` (concurrency capped by `MAX_OPENCODE_SESSIONS`, logs under
+`data/sessions/`), so the host also needs the opencode CLI and the model provider
+authed.
 
 ### 2. Recovery net
 
