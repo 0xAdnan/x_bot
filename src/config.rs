@@ -23,7 +23,7 @@ impl Config {
         let env_path = repo_root.join(".env");
 
         if env_path.exists() {
-            let _ = dotenvy::from_path(&env_path);
+            let _ = dotenvy::from_path_override(&env_path);
         } else {
             let _ = dotenvy::dotenv();
         }
