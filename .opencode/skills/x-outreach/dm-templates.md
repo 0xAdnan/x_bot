@@ -6,7 +6,7 @@ specific you actually saw on their profile or posts, and cut anything that
 doesn't fit. If a template feels copy-pasted, rewrite it in your own words.
 
 **Write like a human, not a bot.** Before sending ANY message, run it through the
-rules in [voice.md](voice.md) ("Human writing"). Specifically:
+rules in `.opencode/skills/x-growth/voice.md` ("Human writing"). Specifically:
 
 - **No em dashes or en dashes.** They read as AI. Use a period, a comma, or just
   split into two short sentences.
@@ -116,6 +116,6 @@ Placeholders: `[name]` `[product]` `[specific_post]` `[specific_detail]`
 
 ## reply if they push back
 
-Pull the matching response from [outreach.md](outreach.md) ("Objection
+Pull the matching response from the `x-outreach` skill's SKILL.md ("Objection
 handling") and put it in your own words for their specific objection. Never
 argue. "not interested" or "stop" means `do-not-contact`, immediately.

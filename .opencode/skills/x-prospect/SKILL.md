@@ -1,8 +1,40 @@
+---
+name: x-prospect
+version: 1.0.0
+description: >-
+  Prospect and discover qualified SaaS/tech leads on X for PITCH (trypitch.co).
+  Use when finding people who need product demo/marketing videos: running X
+  search queries, mining "drop your link" / "what are you building" threads,
+  scanning YC/Antler cohort and competitor-tool engagers, qualifying and
+  disqualifying leads, scoring prospects (0-10), deduping against the pipeline,
+  or appending new qualified prospects at stage `new`.
+license: MIT
+compatibility: claude-code opencode
+allowed-tools:
+  - read
+  - write
+  - edit
+  - bash
+  - webfetch
+---
+
 # Prospecting, who to target & how to find them
 
 Goal: find people on X who plausibly need product demo / marketing videos and
 could buy PITCH. Quality over volume. A good prospect is worth ten random
 follows.
+
+## Guardrails before any discovery action
+
+- Read `.opencode/skills/x-growth/safety.md` first; it sets the daily caps on
+  discovery (`discover`), likes, and follows that apply here.
+- Run `./target/release/pitch-cli circuit-breaker` (stop if it exits 1) and
+  `./target/release/pitch-cli budget`; discovery consumes the `discover` cap.
+- Only run searches and open accounts in the real browser via the
+  `agent-webbridge` skill, always with `"profile":"Testing"`. Confirm the
+  logged-in account is @adnanspitch before acting.
+- New prospects are appended to `.opencode/skills/x-growth/state/prospects.jsonl`
+  at stage `new`; never DM a `new` prospect (warm up first via `x-engage`).
 
 ## ICP and community segments
 
@@ -95,9 +127,6 @@ Watch recent **2026 YC (W26 / S26) and 2026 Antler** cohort launches and competi
 **4. Engagement Rule:**
 When 2026 YC/Antler founders complain about manual editing or recording overhead on these tools, reply with `@trypitchdotco`'s contrast play: *"Automate browser capture + AI narration directly from plain text walkthroughs — zero editing required."*
 
-
-
-
 For community discovery, the bar is not "can we sell immediately?" The bar is
 "can we be genuinely useful and would this builder belong in the
 @trypitchdotco orbit?" If yes, help first and add them as `community` or the
@@ -131,7 +160,8 @@ Sum the signals above. Set `score` on the prospect row.
 
 ## Recording a new prospect
 
-Before adding, **dedupe**: grep `state/prospects.jsonl` for the handle. If
-present, update instead of duplicating. New qualified prospects are appended at
-stage `new` with `score`, `segment`, `product_url`, and a one-line `why` (the
-specific reason they fit, referenced later in outreach so it's personal).
+Before adding, **dedupe**: grep `.opencode/skills/x-growth/state/prospects.jsonl`
+for the handle. If present, update instead of duplicating. New qualified
+prospects are appended at stage `new` with `score`, `segment`, `product_url`,
+and a one-line `why` (the specific reason they fit, referenced later in
+outreach so it's personal).

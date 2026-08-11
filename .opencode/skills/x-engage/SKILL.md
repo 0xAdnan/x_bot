@@ -1,7 +1,39 @@
+---
+name: x-engage
+version: 1.0.0
+description: >-
+  Warm up X prospects for PITCH (trypitch.co) with human-like engagement.
+  Use when liking recent posts, leaving genuinely useful replies, deciding who
+  to follow, advancing prospects from `new` to `warming`, applying the warm-up
+  bar, following the reply recipes, or managing the engagement cadence and
+  touches. Never pitch in a first reply.
+license: MIT
+compatibility: claude-code opencode
+allowed-tools:
+  - read
+  - write
+  - edit
+  - bash
+  - webfetch
+---
+
 # Engagement, warming up before you ever pitch
 
 Nobody buys from a stranger who slides into DMs cold. Earn recognition first.
 Engagement is how a prospect goes from `new` → `warming` → ready-to-DM.
+
+## Guardrails before any engagement action
+
+- Read `.opencode/skills/x-growth/safety.md` first; it sets daily caps on
+  likes, replies, and follows, the rolling-hour burst cap, and pacing rules.
+- Run `./target/release/pitch-cli circuit-breaker` (stop if it exits 1) and
+  `./target/release/pitch-cli budget` before any session.
+- Drive every action in real Chrome via the `agent-webbridge` skill,
+  `"profile":"Testing"`, confirmed as @adnanspitch.
+- Follow the reply do-not list below; run every reply draft through the
+  `humanizer` skill and `.opencode/skills/x-growth/voice.md`.
+- Log to `.opencode/skills/x-growth/state/activity-log.jsonl` and bump the
+  prospect's `touches` / `last_touch` in `.opencode/skills/x-growth/state/prospects.jsonl`.
 
 ## The warm-up bar (gate before any DM)
 
@@ -22,11 +54,12 @@ Until then, keep engaging. Track touches in the prospect's `touches` field.
    early, once you've decided someone is a real prospect, not as a mass-follow.
 3. **Reply** with something genuinely useful (see recipes). This is the move
    that gets you noticed.
-4. **Quote tweet** when it adds value (see `content.md` for full playbook). A
-   thoughtful quote tweet on a prospect's post is stronger than a plain reply —
-   it puts @trypitchdotco in their mentions and shows up in their quote-tweet
-   feed. Use for top prospects or when you have a genuinely useful take.
-   Original posting and product posting are handled separately in `content.md`.
+4. **Quote tweet** when it adds value (see the `x-content` skill for the full
+   playbook). A thoughtful quote tweet on a prospect's post is stronger than a
+   plain reply — it puts @trypitchdotco in their mentions and shows up in their
+   quote-tweet feed. Use for top prospects or when you have a genuinely useful
+   take. Original posting and product posting are handled separately in the
+   `x-content` skill.
 5. **Trend comment** when a live tech/Polymarket conversation already has
    momentum and you have a founder/operator angle. Treat this like public
    engagement, not prospect outreach: be timely, specific, and easy to reshare.
@@ -69,15 +102,15 @@ campaign step.
 - **Follow then show up.** A follow on its own does little. The point is that it
   keeps their content in front of you so you keep liking and replying over the
   following days. That consistency is what reads as a real connection.
-- **Stay under the follow cap** in [safety.md](safety.md), and follow gradually
-  across the session, not in a burst.
+- **Stay under the follow cap** in `.opencode/skills/x-growth/safety.md`, and
+  follow gradually across the session, not in a burst.
 
 ## Reply recipes (pick by context, never template verbatim)
 
 Every reply must reference the **specific thing they posted**. Lead with value,
-not the product. **Write it human** (see [voice.md](voice.md) "Human writing"):
-no em dashes, no AI words, no tidy three-item lists. Run the draft through the
-`humanizer` skill before posting.
+not the product. **Write it human** (see `.opencode/skills/x-growth/voice.md`
+"Human writing"): no em dashes, no AI words, no tidy three-item lists. Run the
+draft through the `humanizer` skill before posting.
 
 - **Add insight:** answer their question or extend their point with a concrete
   tip. ("for a PH launch the first 3 seconds matter most. open on the outcome,
@@ -107,10 +140,11 @@ no em dashes, no AI words, no tidy three-item lists. Run the draft through the
 ## Cadence
 
 - Space interactions naturally across a session and across days (see pacing in
-  [safety.md](safety.md)). Don't like 8 posts from one person in a row.
-- **Rolling-hour cap:** at most 10 ok actions per hour (`budget.sh` prints this).
-  If it warns, pause. No 3+ consecutive identical actions. Mix like/reply/follow
-  with reading and scrolling.
+  `.opencode/skills/x-growth/safety.md`). Don't like 8 posts from one person in
+  a row.
+- **Rolling-hour cap:** at most 10 ok actions per hour (`./target/release/pitch-cli budget`
+  prints this). If it warns, pause. No 3+ consecutive identical actions. Mix
+  like/reply/follow with reading and scrolling.
 - Revisit `warming` prospects every 1-3 days until they hit the DM bar.
 - If they engage back (like/reply/follow you), that's a strong buy signal. Bump
   priority, but reply to the inbound interaction first. Shorten the path to DM
@@ -122,10 +156,12 @@ no em dashes, no AI words, no tidy three-item lists. Run the draft through the
 - **Follow back** genuine builders who follow @trypitchdotco and fit the ICP, and
   add them to the pipeline. An inbound follow is interest worth nurturing.
 - **New-account ramp:** until 2026-08-23, likes and replies only. No DMs. This
-  is a hard gate in `safety.md`.
+  is a hard gate in `.opencode/skills/x-growth/safety.md`.
 
 ## Logging
 
-Every like/reply/follow → append to `state/activity-log.jsonl` and increment the
-prospect's `touches`, update `last_touch`. When the warm-up bar is met, move the
-prospect to stage `warming` → ready, and set `next_action_date` for the DM.
+Every like/reply/follow → append to `.opencode/skills/x-growth/state/activity-log.jsonl`
+and increment the prospect's `touches`, update `last_touch`. When the warm-up
+bar is met, move the prospect to stage `warming` → ready, and set
+`next_action_date` for the DM. Hand off DM-ready prospects to the `x-outreach`
+skill.

@@ -1,167 +1,322 @@
-# PITCH (x_bot)
+# PITCH X Growth Engine (x_bot)
 
-A native Rust engine and OpenCode agent that runs X/Twitter mentions, AI video demo generation, and founder outreach for [PITCH](https://trypitch.co).
+Developer documentation for the automated X/Twitter growth pipeline behind
+[PITCH](https://trypitch.co). Everything runs from one compiled Rust binary
+(`pitch-cli`) plus a local SQLite database. This doc covers every request flow,
+how the pipeline is scheduled (webhook real-time + cron polling), how webhook
+endpoints trigger specific skills, and how those skills accomplish the business
+goals of PITCH.
 
-PITCH turns written walkthroughs into 1080p narrated product demos. This repo handles the X side: receiving mention webhooks, generating demo videos via Pitch MCP, posting video replies, discovering SaaS prospects, and tracking pipeline state in a local SQLite database.
-
-## Architecture
-
-Everything runs locally via a single compiled Rust binary (`pitch-cli`) and a local SQLite database (`data/pitch_bot.db`). No external servers, no cloud middleware, and no polling daemons.
+## System overview
 
 ```
-                     Incoming Mention Webhook / Trigger
-                                    │
-                                    ▼
-                           Rust Webhook Server
-                      (pitch-cli server - Port 8790)
-                                    │
-                     Dispatches OpenCode Agent Pass
-                                    │
-                                    ▼
-                          OpenCode Agent (x-growth)
-                            pitch-cli Toolset
-                                    │
-                                    ▼
-                            SQLite Database
-                          (data/pitch_bot.db)
+                        ┌──────────────────────────────────────┐
+                        │        pitch-cli  (Rust / Axum)      │
+   X Account Activity   │                                      │
+   webhook  ───────────►│   server (port 8790)                 │
+   (POST /api/webhook/x)│      │                               │
+                        │      ▼                               │
+   cron / manual ──────►│   trigger ──► inbox ──► workers      │
+   (pitch-cli trigger)  │                │  │                  │
+                        │                ▼  ▼                  │
+                        │   discover (outbound prospecting)   │
+                        │                                      │
+                        │  x_api (X API v2, OAuth2 refresh)    │
+                        │  pitch_mcp (api.trypitch.co/mcp)     │
+                        │  safety (budget + circuit breaker)   │
+                        └──────────────┬───────────────────────┘
+                                       │
+                                       ▼
+                        data/pitch_bot.db  (SQLite: mention_jobs,
+                                            prospects, activities, insights)
 ```
 
-The system splits into two distinct operational paths:
+Two ways work gets triggered:
 
-1. **Real-time webhook pipeline (Zero cron):** An embedded Rust Axum server listens on port `8790`. When X sends a mention webhook (`POST /api/webhook/x`), the server immediately posts a receipt reply on X, triggers Pitch MCP video generation, and delivers the final video link when rendering completes.
-2. **Scheduled growth passes:** Outbound prospect discovery, warm-up engagement, and founder commentary run as short, focused OpenCode agent passes.
+1. **Real-time webhook** — X calls `POST /api/webhook/x` when someone mentions
+   `@trypitchdotco`. The server spawns a background pass (`inbox` then
+   `worker`) and returns `200` immediately.
+2. **Cron / polling** — the CLI subcommands (`trigger`, `inbox`, `worker`,
+   `discover`) are invoked on a schedule by cron (see [Schedules & cron](#schedules--cron)).
+   This is the recovery net: if a webhook POST is lost, the next polled pass
+   picks up the same mentions (the DB makes every job idempotent).
 
-## Tool & API Execution Sequence
+## Webhook Endpoints → Skill Mapping → Business Accomplishments
 
-Here is when each component, API, and tool is called:
+The system exposes 5 HTTP webhook routes via Axum. Below is the mapping from
+each endpoint to its triggered skill, execution pipeline, and business outcome:
 
-### Real-time Mention Webhook (`POST /api/webhook/x`)
-Triggered automatically by X whenever a user tweets at `@trypitchdotco` with a product URL. The Rust server receives the payload, extracts the URL, posts an instant receipt reply via X API, and submits the render job to Pitch MCP.
-
-### Manual Webhook Trigger (`POST /api/webhook/trigger`)
-Called by external schedulers (such as Open Chamber) or `curl` to dispatch an immediate background pass. Passing `{"action": "mentions"}` triggers inbox processing, while `{"action": "growth"}` triggers prospect discovery.
-
-### X API v2 (`pitch-cli x-api`)
-Called during inbox ingestion to post receipt replies and video links, during discovery to search X for ICP leads (`search_recent`), and during outreach to engage prospects (`like_tweet` / `post_tweet`).
-
-### Pitch MCP API (`pitch-cli mcp`)
-Called when a mention contains a valid URL to render a 1080p product demo video (`create`), and checked periodically to query render status (`status`).
-
-### Safety Engine (`pitch-cli budget` & `circuit-breaker`)
-Called at the start of every session before any write action on X to verify account health and enforce daily action limits.
-
-## Database Role (`data/pitch_bot.db`)
-
-The local SQLite database serves as the single source of truth for pipeline state, lead CRM, and safety accounting:
-
-- **`mention_jobs` Table:** Tracks every tweet ID, user handle, product URL, Pitch MCP `jobId`, render status (`pending -> rendering -> delivered | failed | no_url_found`), and final S3 video link. Prevents duplicate replies and guarantees idempotent execution.
-- **`prospects` Table:** Stores the agent's CRM pipeline (`new -> warming -> contacted -> in_convo -> customer`). Tracks handles, fit scores (1–10), pre-cooked pitch hooks, notes, and touch counts.
-- **`activities` Table:** Logs every like, reply, DM, and discovery action with exact timestamps. Used by `pitch-cli budget` to calculate remaining daily action caps and enforce 60-minute burst limits.
-- **`insights` Table:** Stores adaptive memory learned from reply and conversion rates across different outreach variants.
-
-## Webhook API Endpoints (`/api/webhook/`)
-
-The embedded Rust server listens on `http://0.0.0.0:8790` and exposes the following endpoints:
-
-| Method | Endpoint | Purpose | Example |
+| Endpoint | Triggered Skill | Pipeline Execution | Business Accomplishment (ROI) |
 |---|---|---|---|
-| **`GET`** | `/api/webhook/x` | **X CRC Challenge Check** (Account Activity API registration) | `curl "http://localhost:8790/api/webhook/x?crc_token=test"` |
-| **`POST`** | `/api/webhook/x` | **X Real-Time Mention Callback** | Triggered by X on new `@trypitchdotco` mention |
-| **`POST`** | `/api/webhook/trigger` | **Manual Webhook Trigger** | `curl -X POST http://localhost:8790/api/webhook/trigger -H "Content-Type: application/json" -d '{"action":"mentions"}'` |
-| **`GET`** | `/api/webhook/health` | **Health Check** & uptime | `curl http://localhost:8790/api/webhook/health` |
-| **`GET`** | `/api/webhook/stats` | **Pipeline Stats** & SQLite DB summary | `curl http://localhost:8790/api/webhook/stats` |
+| **`POST /api/webhook/x`** | `x-mention` | 1. Receipt ack reply tweet<br>2. Pitch MCP render (1080p MP4)<br>3. In-thread S3 video delivery | **Inbound Viral Demo Funnel:** Users receive a studio-quality video demo of their URL in <2 min. Public replies showcase PITCH's magic to all followers, driving viral social proof & signups. |
+| **`POST /api/webhook/trigger`**<br>`{"action": "growth"}` | `x-prospect` | 1. Search X API v2 for SaaS launch keywords<br>2. Lead scoring (1–10 fit)<br>3. Upsert to SQLite (`stage: new`) | **High-Intent Lead Pipeline:** Automatically builds a pipeline of SaaS founders launching products who need video walkthroughs. |
+| **`POST /api/webhook/trigger`**<br>`{"action": "mentions"}` | `x-mention` | 1. Fetch unhandled mentions<br>2. Submit pending renders to MCP<br>3. Deliver finished video replies | **Inbound Recovery Net:** Guarantees zero missed mentions even if an X webhook callback fails or drops. |
+| **Scheduled Agent Pass**<br>`(opencode run --agent x-growth)` | `x-engage`<br>`x-outreach` | 1. Like/reply to warm leads (`stage: warming`)<br>2. Custom DM with user's URL walkthrough<br>3. Update CRM (`stage: contacted / in_convo`) | **Paid Subscriber Conversion:** Nurtures SaaS founders in public, then converts them in DMs into paid PITCH subscribers. |
+| **Daily Scheduled Pass**<br>`(opencode run --agent x-growth)` | `x-content`<br>`x-community` | 1. Post product updates & tech takes<br>2. Help indie hackers in public threads<br>3. Drive organic profile impressions | **Brand Authority & Awareness:** Builds trust, follower growth, and organic inbound traffic for `@trypitchdotco`. |
+| **`GET /api/webhook/x`** | System Utility | HMAC-SHA256 CRC token verification challenge | **X API Compliance:** Required by X Account Activity API to register webhooks. |
+| **`GET /api/webhook/health`** | System Utility | Liveness probe returning HTTP 200 OK | **Deployment Health:** Ensures server is operational. |
+| **`GET /api/webhook/stats`** | System Utility | Pipeline metrics query from SQLite | **Observability:** Monitors total jobs, renders, and CRM prospects. |
 
-## Open Chamber Scheduler
+## Request flows
 
-For scheduled tasks, use [Open Chamber](https://openchamber.ai)'s server-side task scheduler to trigger OpenCode agent passes without keeping a session open continuously.
+### Flow A — X mention webhook (`x-mention` skill)
 
-![Open Chamber Scheduler](assets/open-chamber-scheduler.png)
+Endpoints: `GET /api/webhook/x` (CRC handshake) and `POST /api/webhook/x`
+(event callback).
 
-### Recommended Scheduled Tasks
+**CRC registration (GET).** `GET /api/webhook/x?crc_token=<token>` returns
+`{"response_token": "sha256=<base64(HMAC-SHA256(crc_token, X_CLIENT_SECRET))>"}`.
+Handled by `handle_crc` in `src/server.rs:93`.
 
-| Task Name | Schedule | Timezone | Agent | Prompt |
-|---|---|---|---|---|
-| **Prospect Discovery** | Every 3 Hours | `Asia/Calcutta` | `x-growth` | `Discover new SaaS founder prospects and score them into SQLite` |
-| **Warm Prospect Engagement** | Daily at 09:00, 14:00, 19:00 | `Asia/Calcutta` | `x-growth` | `Engage warm prospects with likes and personalized replies` |
-| **Founder Commentary** | Daily at 11:00 AM | `Asia/Calcutta` | `x-growth` | `Scan trends and publish one founder commentary tweet` |
-| **Pipeline Sync** | Daily at 09:00 AM | `Asia/Calcutta` | `x-growth` | `Run pipeline sync and summarize database stats` |
+**Event callback (POST).** Payload body is ignored; the handler
+(`src/server.rs:136`) immediately spawns a background task:
+
+1. `process_mention_inbox(false, false)` (`src/inbox.rs:22`)
+2. `advance_rendering_queue(false, 10)` (`src/worker.rs:7`)
+
+Then returns `200 {"status":"ok","triggered":true}` to X.
+
+**Inbox stage** (`process_mention_inbox`):
+
+1. Fetches up to 20 recent mentions via X API v2 (`GET /users/{id}/mentions`).
+2. Skips mentions authored by `@trypitchdotco` and tweets already present in
+   `mention_jobs` (idempotency — never double-bills a render or double-replies).
+3. Extracts a URL from the tweet text (`https?://...` first, then a bare
+   domain, `src/inbox.rs:8`).
+4. **No URL / `s3.trypitch.co` URL** → records the job with status
+   `no_url_found` and stops for that tweet.
+5. **Valid URL** → posts an instant receipt reply on X
+   (`x-api reply`, honoring `--dry` / `--no-ack`), then calls the Pitch MCP
+   tool `create_demo_video` (`src/pitch_mcp.rs:62`).
+   - Returns a `jobId` → job saved as `rendering`.
+   - No `jobId` → job saved as `submitted` (retried by the next worker pass).
+
+**Worker stage** (`advance_rendering_queue`): polls the Pitch MCP tool
+`get_job` for every job in `rendering` or `submitted` status:
+
+- `COMPLETED` → extract S3 artifact URL (`src/pitch_mcp.rs:93`; falls back to
+  `https://trypitch.co/editor/<jobId>`), post the demo link back to the
+  original tweet via X API, mark the job `delivered` (stores `s3_video_url`
+  and `x_reply_id`).
+- `FAILED` / `ERROR` → mark the job `failed`.
+- Otherwise → leave as-is for the next worker pass.
+
+### Flow B — Manual trigger endpoint
+
+`POST /api/webhook/trigger` with optional JSON body `{"action": "..."}`
+(`src/server.rs:154`). Spawns a background pass:
+
+- `action` = `growth` or `session` → runs `discover_prospects(5, false)` first.
+- Always then runs `process_mention_inbox(false, false)` and
+  `advance_rendering_queue(false, 10)`.
+
+Responds `200 {"status":"ok","action":...,"triggered":true}` and returns
+immediately (all heavy work happens in the spawned task). Useful for calling
+from an external scheduler or `curl` for an on-demand pass.
+
+### Flow C — Outbound prospecting (`x-prospect` skill)
+
+`discover_prospects(max_per_query, dry_run)` (`src/discover.rs:67`), triggered
+via `pitch-cli discover` or the webhook `action=growth` path:
+
+1. Runs the fixed ICP search-query list (`src/discover.rs:7`) against X search
+   recent (`GET /tweets/search/recent`).
+2. Skips `@trypitchdotco`, `@adnanspitch`, and already-known handles.
+3. Scores each lead 1–10 (`calculate_lead_score`, `src/discover.rs:32`) using
+   URL presence, competitor keywords (tella, screen studio, loom, ...), and
+   intent keywords (need, looking for, how to, launched, building).
+4. Builds a pre-cooked DM hook (`generate_pitch_hook`) and upserts the prospect
+   into `prospects` (stage `new`, segment `founder`) plus `state/prospects.jsonl`.
+
+### Flow D — Health, stats, checks
+
+- `GET /api/webhook/health` → `{"status":"ok", ...}` (`src/server.rs:181`).
+- `GET /api/webhook/stats` → counts of jobs (`mention_jobs_total`,
+  `delivered`, `rendering`) and `prospects_total` (`src/server.rs:194`).
+- `pitch-cli sync` → same summary to stdout.
+- `pitch-cli budget` → remaining daily caps per action + rolling 1-hour burst
+  count (`src/safety.rs:157`). Writes are blocked when a cap is 0 or the
+  breaker is tripped.
+- `pitch-cli circuit-breaker` → `OK to run` / `PAUSED`; trips are recorded in
+  `state/circuit-breaker.jsonl` and 3 trips in 24h create `state/HARD_STOP`
+  (hard pause) until `--reset`.
+
+## Routes table
+
+Server binds `0.0.0.0:{PORT}`, where `PORT` defaults to `8790`
+(`src/server.rs:52`). All routes are mounted under both `/api/webhook/...`
+and `/webhook/...` (`src/server.rs:79`).
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/api/webhook/x` | X webhook CRC challenge (HMAC-SHA256 token) |
+| `POST` | `/api/webhook/x` | X mention event → spawn inbox + worker pass |
+| `POST` | `/api/webhook/trigger` | Manual/on-demand pass (`{"action":"mentions"\|"growth"}`) |
+| `GET` | `/api/webhook/health` | Liveness probe |
+| `GET` | `/api/webhook/stats` | DB pipeline counts |
+
+## Job state machine
+
+`mention_jobs` table (one row per tweet):
+
+```
+no_url_found ─► (terminal; nothing to render)
+      submitted ─► rendering ─► delivered
+                     │
+                     └────────► failed
+```
+
+`no_ack` / `--dry` flag affects only the receipt reply, not job creation.
+`--dry` never calls X or Pitch MCP, only prints what it would do.
+
+## Database
+
+`data/pitch_bot.db` (override with `SQLITE_DB_PATH`), WAL mode, tables
+created at startup (`src/db.rs:67`):
+
+- **`mention_jobs`** — idempotent demo pipeline state (unique `tweet_id`).
+- **`prospects`** — CRM; upsert keyed on `handle`, mirrored to
+  `.opencode/skills/x-growth/state/prospects.jsonl`.
+- **`activities`** — every action (`ts`, `action`, `handle`, `result`), the
+  input for `budget`. Mirrored to `activity-log.jsonl`.
+- **`insights`** — adaptive memory blob (single-row table, `id=1`).
+
+## Schedules & cron
+
+The binary has **no internal scheduler**. Automation = the always-on webhook
+server for real-time flow + cron for the passes listed below. Directory used in
+examples: `/opt/pitch-xbot` (your repo root).
+
+### 1. Run the real-time server
+
+```bash
+./target/release/pitch-cli server          # binds 0.0.0.0:8790
+# or: PORT=9000 ./target/release/pitch-cli server
+```
+
+Run under a process manager (launchd on macOS, systemd on Linux; or e.g.
+`nohup`, tmux, pm2-anywhere). It must be reachable by X on a public URL
+(e.g. ngrok tunnel or reverse proxy in front of port 8790) for webhooks to
+arrive.
+
+### 2. Fallback polling cron (recovery net)
+
+Even with the webhook live, schedule a polled pass every 5 minutes. This
+catches lost webhook posts, re-polls slow render jobs, and delivers videos
+that the webhook-spawned worker didn't have time to finish:
+
+```cron
+# every 5 min: ingest mentions + advance render queue + DB summary
+*/5 * * * * cd /opt/pitch-xbot && ./target/release/pitch-cli trigger >> /var/log/pitch/trigger.log 2>&1
+```
+
+`trigger` = `inbox` + `worker` + `sync` in one pass (`src/main.rs:346`).
+
+If you prefer narrower jobs (`--dry` first to verify):
+
+```cron
+*/10 * * * * cd /opt/pitch-xbot && ./target/release/pitch-cli inbox   >> /var/log/pitch/inbox.log 2>&1
+*/3  * * * * cd /opt/pitch-xbot && ./target/release/pitch-cli worker  >> /var/log/pitch/worker.log 2>&1
+```
+
+### 3. Outbound prospecting
+
+ICP discovery is rate-sensitive — spread it out, never burst. `discover` is
+blocked while `budget` shows 0 remaining for the `discover` action (cap 40/day
+default, scaled by ramp factor during cold start — see `src/safety.rs:177`).
+
+```cron
+# every 3 hours, 08:00-23:00 ASIA/KOLKATA
+0 8-23/3 * * * cd /opt/pitch-xbot && ./target/release/pitch-cli discover --max 5 >> /var/log/pitch/discover.log 2>&1
+```
+
+### 4. Safety & observability
+
+```cron
+# daily heartbeat: verify breaker open + budget healthy + pipeline summary
+0 9 * * * cd /opt/pitch-xbot && ./target/release/pitch-cli circuit-breaker && ./target/release/pitch-cli budget && ./target/release/pitch-cli sync >> /var/log/pitch/daily.log 2>&1
+```
+
+Manual controls when needed:
+
+```bash
+./target/release/pitch-cli circuit-breaker --trip "reason"   # pause automation
+./target/release/pitch-cli circuit-breaker --reset           # resume (also clears trip log)
+```
+
+Recommended schedule summary:
+
+| Pass | Cadence | Rationale |
+|---|---|---|
+| `server` | always-on | real-time mention → demo flow |
+| `trigger` | every 5 min | recovery net; idempotent; advances renders |
+| `discover` | every 3 h | ICP lead discovery, spaced for rate limits |
+| `circuit-breaker`+`budget`+`sync` | daily 09:00 | health + budget heartbeat |
+| `/api/webhook/trigger` | on manual demand | arbitrary on-demand pass |
+
+Add spacing discipline if you push cron further: X burst hygiene in this
+project requires ≥90s between consecutive writes; the safety engine enforces a
+10-actions/hour burst signal via `budget`.
 
 ## Setup
 
 ### 1. Requirements
 
 - Rust 1.80+ (`cargo` / `rustc`)
-- OpenCode CLI
+- A reachable public endpoint for the webhook server (or tunnel)
 
-### 2. Configuration
+### 2. Environment (`.env`, gitignored)
 
-Copy `.env.example` to `.env` and fill in your keys:
-
-```bash
-cp .env.example .env
-```
-
-Required variables:
+Keys read by the code (`src/config.rs`):
 
 ```env
-X_USER_ACCESS_TOKEN=your_oauth2_user_access_token
-X_USER_REFRESH_TOKEN=your_oauth2_user_refresh_token
 X_CLIENT_ID=your_x_client_id
 X_CLIENT_SECRET=your_x_client_secret
-PITCH_API_KEY=pk_tltxrmrZgiprXR51z_dJvoIF0yWiGBVB
-PORT=8790
-SQLITE_DB_PATH=./data/pitch_bot.db
+X_USER_ACCESS_TOKEN=your_oauth2_user_access_token
+X_USER_REFRESH_TOKEN=your_oauth2_user_refresh_token
+X_USER_ID=your_x_user_id
+X_OPERATOR_HANDLE=@trypitchdotco
+PITCH_API_KEY=your_pitch_api_key        # required; do NOT rely on the src/config.rs fallback
+SQLITE_DB_PATH=./data/pitch_bot.db      # optional override
+PORT=8790                               # optional override
 ```
 
-### 3. Build
+- `X_USER_ACCESS_TOKEN` / `X_USER_REFRESH_TOKEN`: must be functional. The
+  client auto-refreshes on a `401` (`src/x_api.rs:143`) but cannot mint
+  tokens from scratch. **Known state (2026-08):** stored OAuth2 user tokens are
+  expired/invalid — `pitch-cli x-api me` returns `401`. Fresh tokens must be
+  saved to `.env` before any X API v2 write flow (receipt replies, video
+  delivery, discovery) works.
+- Legacy cache keys (`X_API_KEY`, `X_API_SECRET`, `X_BEARER_TOKEN`,
+  `X_WEBHOOK_ID`) are unused by the code.
+- Never commit `.env` or expose `PITCH_API_KEY` / OAuth2 tokens in logs.
+
+### 3. Build & verify
 
 ```bash
 cargo build --release
+./target/release/pitch-cli sync                 # empty DB → zeros
+./target/release/pitch-cli circuit-breaker      # expect "OK to run"
+./target/release/pitch-cli budget               # confirm caps + 0 used
+./target/release/pitch-cli mcp credits          # confirm Pitch MCP auth
+./target/release/pitch-cli server --port 8790 & # boot server
+curl http://localhost:8790/api/webhook/health   # ok
+curl "http://localhost:8790/api/webhook/x?crc_token=test"  # sha256=...
 ```
 
-The compiled binary is saved at `./target/release/pitch-cli`.
+### 4. Wire the webhook in X
 
-## CLI Commands
+Register `https://<public-url>/api/webhook/x` as the Account Activity webhook
+URL in your X app. X will call `GET` (CRC) during registration and `POST` on
+every mention thereafter.
 
-### Webhook Server
+## Automation checklist (end to end)
 
-```bash
-./target/release/pitch-cli server
-```
-
-### Pipeline Triggers
-
-```bash
-./target/release/pitch-cli inbox       # Ingest mentions and trigger Pitch MCP jobs
-./target/release/pitch-cli worker      # Poll Pitch MCP and deliver completed video demos
-./target/release/pitch-cli trigger     # Run combined inbox + worker pass
-./target/release/pitch-cli discover    # Search X for ICP prospects and score leads
-./target/release/pitch-cli sync        # Print pipeline summary
-```
-
-### Database Memory
-
-```bash
-./target/release/pitch-cli db jobs                # List mention jobs
-./target/release/pitch-cli db jobs --status rendering  # List active rendering jobs
-./target/release/pitch-cli db prospects           # List CRM prospects
-./target/release/pitch-cli db insights            # Read adaptive memory insights
-```
-
-### X API v2
-
-```bash
-./target/release/pitch-cli x-api me               # Check authenticated account
-./target/release/pitch-cli x-api mentions         # Fetch recent mentions
-./target/release/pitch-cli x-api reply <id> --text "..."  # Post reply
-./target/release/pitch-cli x-api post --text "..." # Post tweet
-./target/release/pitch-cli x-api search "query"   # Search X
-```
-
-### Safety & Budget Enforcers
-
-```bash
-./target/release/pitch-cli circuit-breaker        # Check circuit breaker status
-./target/release/pitch-cli circuit-breaker --reset # Reset circuit breaker
-./target/release/pitch-cli budget                 # Check daily action caps and burst limit
-```
+1. `.env` populated with working OAuth2 user tokens + `PITCH_API_KEY`.
+2. `cargo build --release` passes.
+3. `pitch-cli circuit-breaker` says `OK to run`; `pitch-cli budget` shows
+   remaining caps.
+4. `pitch-cli server` is always-on behind a public URL.
+5. `*/5` cron runs `pitch-cli trigger`; `*/3`h cron runs `pitch-cli discover`.
+6. Watch `/var/log/pitch/*.log` + `GET /api/webhook/stats`; trip/reset the
+   breaker from cron output on anomalies.

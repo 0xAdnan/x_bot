@@ -109,6 +109,202 @@ impl XApiClient {
         Ok(())
     }
 
+    pub async fn authorize(&mut self, port: u16, redirect_uri: &str) -> Result<(), XApiError> {
+        if self.config.x_client_id.is_empty() {
+            return Err(XApiError("Missing X_CLIENT_ID in .env".to_string()));
+        }
+
+        use base64::Engine;
+        use sha2::{Digest, Sha256};
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let seed = format!(
+            "{:?}-{}-pitch-pkce",
+            std::time::SystemTime::now(),
+            std::process::id()
+        );
+        let mut hasher = Sha256::new();
+        hasher.update(seed.as_bytes());
+        let hash = hasher.finalize();
+        let code_verifier = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(hash);
+
+        let mut challenge_hasher = Sha256::new();
+        challenge_hasher.update(code_verifier.as_bytes());
+        let challenge_hash = challenge_hasher.finalize();
+        let code_challenge =
+            base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(challenge_hash);
+
+        let scope = urlencoding::encode("tweet.read tweet.write users.read offline.access like.read like.write");
+        let encoded_redirect = urlencoding::encode(redirect_uri);
+        let auth_url = format!(
+            "https://twitter.com/i/oauth2/authorize?response_type=code&client_id={}&redirect_uri={}&scope={}&state=state123&code_challenge={}&code_challenge_method=S256",
+            self.config.x_client_id,
+            encoded_redirect,
+            scope,
+            code_challenge
+        );
+
+        let addr = format!("127.0.0.1:{}", port);
+        let listener = tokio::net::TcpListener::bind(&addr)
+            .await
+            .map_err(|e| XApiError(format!("Failed to bind callback listener on {}: {}", addr, e)))?;
+
+        println!("\n========================================================");
+        println!("🔐 X OAuth2 PKCE Authorization Flow");
+        println!("========================================================");
+        println!("Callback listener active on http://{}", addr);
+        println!("Navigating Chrome to authorization page...\n");
+        println!("URL: {}\n", auth_url);
+
+        let webbridge_payload = serde_json::json!({
+            "action": "navigate",
+            "args": { "url": auth_url, "newTab": true },
+            "profile": "Testing",
+            "session": "oauth-auth"
+        });
+        let _ = self
+            .client
+            .post("http://127.0.0.1:10086/command")
+            .json(&webbridge_payload)
+            .send()
+            .await;
+
+        let client_clone = self.client.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+            for _ in 0..10 {
+                let snap_req = serde_json::json!({
+                    "action": "snapshot",
+                    "args": {},
+                    "profile": "Testing",
+                    "session": "oauth-auth"
+                });
+                if let Ok(res) = client_clone
+                    .post("http://127.0.0.1:10086/command")
+                    .json(&snap_req)
+                    .send()
+                    .await
+                {
+                    if let Ok(val) = res.json::<serde_json::Value>().await {
+                        let tree = val["data"]["tree"].to_string();
+                        if let Ok(re) = regex::Regex::new(r#""Authorize app".*?"ref"\s*:\s*"(@e\d+)""#) {
+                            if let Some(caps) = re.captures(&tree) {
+                                let btn_ref = &caps[1];
+                                println!("[Auto-Click] Found 'Authorize app' button ({}), clicking automatically via agent-webbridge...", btn_ref);
+                                let click_req = serde_json::json!({
+                                    "action": "click",
+                                    "args": { "selector": btn_ref },
+                                    "profile": "Testing",
+                                    "session": "oauth-auth"
+                                });
+                                let _ = client_clone
+                                    .post("http://127.0.0.1:10086/command")
+                                    .json(&click_req)
+                                    .send()
+                                    .await;
+                                break;
+                            }
+                        }
+                    }
+                }
+                tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+            }
+        });
+
+        let (mut socket, _) = listener
+            .accept()
+            .await
+            .map_err(|e| XApiError(format!("Callback accept error: {}", e)))?;
+
+        let mut buffer = [0u8; 2048];
+        let n = socket.read(&mut buffer).await.unwrap_or(0);
+        let req_str = String::from_utf8_lossy(&buffer[..n]);
+
+        let mut code = String::new();
+        if let Some(first_line) = req_str.lines().next() {
+            if let Some(query_start) = first_line.find('?') {
+                if let Some(query_end) = first_line[query_start..].find(' ') {
+                    let query = &first_line[query_start + 1..query_start + query_end];
+                    for pair in query.split('&') {
+                        let mut parts = pair.split('=');
+                        if let (Some(k), Some(v)) = (parts.next(), parts.next()) {
+                            if k == "code" {
+                                code = urlencoding::decode(v).unwrap_or_default().to_string();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        let html_response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><body><h1>OAuth Authorization Successful!</h1><p>You can close this tab now and return to pitch-cli.</p></body></html>";
+        let _ = socket.write_all(html_response.as_bytes()).await;
+        let _ = socket.flush().await;
+
+        if code.is_empty() {
+            return Err(XApiError(
+                "No authorization code found in callback request".to_string(),
+            ));
+        }
+
+        println!("[✓] Captured authorization code!");
+        println!("[...] Exchanging code for OAuth2 tokens...");
+
+        let mut params = HashMap::new();
+        params.insert("grant_type", "authorization_code");
+        params.insert("code", code.as_str());
+        params.insert("redirect_uri", redirect_uri);
+        params.insert("code_verifier", code_verifier.as_str());
+        params.insert("client_id", self.config.x_client_id.as_str());
+
+        let mut req = self
+            .client
+            .post(TOKEN_URL)
+            .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+            .header(USER_AGENT, UA)
+            .form(&params);
+
+        if !self.config.x_client_secret.is_empty() {
+            let creds = base64::engine::general_purpose::STANDARD.encode(format!(
+                "{}:{}",
+                self.config.x_client_id, self.config.x_client_secret
+            ));
+            req = req.header(AUTHORIZATION, format!("Basic {}", creds));
+        }
+
+        let res = req
+            .send()
+            .await
+            .map_err(|e| XApiError(format!("Token exchange network error: {}", e)))?;
+
+        if !res.status().is_success() {
+            let err_text = res.text().await.unwrap_or_default();
+            return Err(XApiError(format!("Token exchange failed: {}", err_text)));
+        }
+
+        let data: Value = res
+            .json()
+            .await
+            .map_err(|e| XApiError(format!("Invalid token JSON response: {}", e)))?;
+
+        let new_access = data["access_token"]
+            .as_str()
+            .ok_or_else(|| XApiError("No access_token in token response".to_string()))?;
+        let new_refresh = data["refresh_token"]
+            .as_str()
+            .ok_or_else(|| XApiError("No refresh_token in token response".to_string()))?;
+
+        let mut updates = HashMap::new();
+        updates.insert("X_USER_ACCESS_TOKEN".to_string(), new_access.to_string());
+        updates.insert("X_USER_REFRESH_TOKEN".to_string(), new_refresh.to_string());
+
+        let _ = self.config.update_env(updates);
+        self.config = Config::load();
+
+        println!("[✓] OAuth2 tokens successfully acquired and saved to .env!");
+        Ok(())
+    }
+
     pub async fn request<T: serde::de::DeserializeOwned>(
         &mut self,
         method: reqwest::Method,

@@ -1,3 +1,22 @@
+---
+name: x-content
+version: 1.0.0
+description: >-
+  Create content for PITCH's X account @trypitchdotco and the @adnanspitch
+  founder personality. Use when writing original founder/tech commentary posts,
+  trend posts and Polymarket takes, product posts, quote tweets, light memes,
+  community invitation posts, or posting mechanics (compose, quote, media,
+  selectors). Covers the content mix, posting cadence, and browser posting flow.
+license: MIT
+compatibility: claude-code opencode
+allowed-tools:
+  - read
+  - write
+  - edit
+  - bash
+  - webfetch
+---
+
 # Content creation, original posts & quote tweets
 
 The @trypitchdotco page shouldn't only engage and DM. It should publish:
@@ -5,6 +24,22 @@ founder commentary, community help, product posts that show what @trypitchdotco
 does, trend comments, light memes, and quote tweets that add value while staying
 relevant. A real account that only likes and replies but never posts looks
 hollow. This file covers all of those modes.
+
+## Guardrails before any post
+
+- Read `.opencode/skills/x-growth/safety.md` first. Original posts and quote
+  tweets have their own daily caps (usually the lowest); check
+  `./target/release/pitch-cli budget` before and after.
+- Run `./target/release/pitch-cli circuit-breaker` (stop if it exits 1).
+- All writing must follow `.opencode/skills/x-growth/voice.md` approved claims,
+  brand voice, and "Human writing" rules. **Run every caption through the
+  `humanizer` skill** before posting. Product posts are the most likely to sound
+  like AI copy.
+- Post via real Chrome (`agent-webbridge`, `"profile":"Testing"`), confirmed as
+  @adnanspitch. Never run destructive shell commands.
+- Log to `.opencode/skills/x-growth/state/activity-log.jsonl`; prefix `detail`
+  with `trend:`, `polymarket trend:`, `meme:`, `community help:`, or
+  `community invite:` where relevant for the learning loop.
 
 ## The content mix (rough proportions)
 
@@ -145,8 +180,8 @@ Rules:
   complaining about demo production, that's your cue to post about it.
 - Reference recent discoveries or trends you noticed while prospecting.
 - Keep it one idea, 1-3 sentences. X rewards brevity.
-- Write in @trypitchdotco's voice (see `voice.md`): peer, not pitch. Concrete.
-  Warm. Concise.
+- Write in @trypitchdotco's voice (see `.opencode/skills/x-growth/voice.md`):
+  peer, not pitch. Concrete. Warm. Concise.
 
 ---
 
@@ -173,15 +208,15 @@ show, not tell. Demo-first, description-second.
 
 ### Hard rules for product posts
 
-- Stay within approved claims in `voice.md`. No invented features or metrics.
+- Stay within approved claims in `.opencode/skills/x-growth/voice.md`. No
+  invented features or metrics.
 - Always refer to the product as **@trypitchdotco** (the handle), not just
   "PITCH".
 - Demo-first: if you claim it does something, show it doing it. A product post
   without a video or screenshot is just a billboard.
 - Don't post the same demo three times. Rotate examples.
-- **Run the caption through `humanizer` skill** and `voice.md` "Human writing"
-  checks before posting. Product posts are the most likely to sound like AI
-  copy. Don't let them.
+- **Run the caption through `humanizer` skill** and `.opencode/skills/x-growth/voice.md`
+  "Human writing" checks before posting.
 
 ---
 
@@ -257,7 +292,8 @@ poster's reach. Use it deliberately.
 
 ## Posting mechanics (how to do it in the browser)
 
-All posting is done via Playwright MCP on x.com/home or x.com/compose/post.
+All posting is done in real Chrome via the `agent-webbridge` skill on x.com/home
+or x.com/compose/post, always with `"profile":"Testing"` on every command.
 
 ### Original post / product post
 1. Navigate to `https://x.com/home` or `https://x.com/compose/post`
@@ -309,7 +345,7 @@ X changes UI often. If the selectors above fail:
 
 ## Logging
 
-Every post and quote tweet → append to `state/activity-log.jsonl`:
+Every post and quote tweet → append to `.opencode/skills/x-growth/state/activity-log.jsonl`:
 
 ```json
 {"ts":"ISO-8601","action":"post|quote","handle":"@trypitchdotco","segment":"","variant":"","detail":"post text or 'Quoted @user: your comment'","result":"ok|failed"}

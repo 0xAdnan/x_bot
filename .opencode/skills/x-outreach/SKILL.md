@@ -1,13 +1,51 @@
+---
+name: x-outreach
+version: 1.0.0
+description: >-
+  Send value-first DM outreach to warm X prospects for PITCH (trypitch.co).
+  Use when drafting or sending DMs, running the DM sequence, handling
+  objections, offering the free done-for-you demo play or CTA ladder, sending
+  follow-ups, converting warm prospects, or picking per-segment opening DM
+  templates from dm-templates.md. Only after the warm-up bar from x-engage is
+  met.
+license: MIT
+compatibility: claude-code opencode
+allowed-tools:
+  - read
+  - write
+  - edit
+  - bash
+  - webfetch
+---
+
 # Outreach, DMs that convert without spamming
 
-The DM only happens after the warm-up bar ([engagement.md](engagement.md)) is
-met. The whole philosophy: **give value before you ask for anything.** The unfair
-advantage in outreach is that @trypitchdotco can show, not tell. You generate a
-demo of the prospect's own product and hand it over.
+The DM only happens after the warm-up bar (see `x-engage`) is met. The whole
+philosophy: **give value before you ask for anything.** The unfair advantage in
+outreach is that @trypitchdotco can show, not tell. You generate a demo of the
+prospect's own product and hand it over.
 
-**Write every message human** ([voice.md](voice.md) "Human writing"): no em
-dashes, no AI words, no rule-of-three lists. Run the draft through the
-`humanizer` skill before sending. Mention the product as **@trypitchdotco**.
+**Write every message human** (`.opencode/skills/x-growth/voice.md` "Human
+writing"): no em dashes, no AI words, no rule-of-three lists. Run the draft
+through the `humanizer` skill before sending. Mention the product as
+**@trypitchdotco**.
+
+## Guardrails before any DM
+
+- **Ramp gate:** no outbound DMs at all before 2026-08-23 (check
+  `.opencode/skills/x-growth/state/account.json`). Until then, keep warming.
+- Read `.opencode/skills/x-growth/safety.md`; DM cap is the lowest, DMs are the
+  riskiest action. Max 2/hour once the gate lifts.
+- Run `./target/release/pitch-cli circuit-breaker` (stop if exit 1) and
+  `./target/release/pitch-cli budget` first.
+- Confirm the logged-in account is @adnanspitch in the real browser
+  (`agent-webbridge`, `"profile":"Testing"`).
+- Never DM a `new`, `do-not-contact`, or `lost` prospect. Never re-DM `lost`.
+- Every DM is unique. No two outbound messages identical. Pull scaffolds from
+  `dm-templates.md` (in this skill directory), then rewrite for the person.
+- Log each DM to `.opencode/skills/x-growth/state/activity-log.jsonl` with
+  `segment` + `variant`, and advance the stage in
+  `.opencode/skills/x-growth/state/prospects.jsonl`.
 
 ## Inbound-first rule
 
@@ -42,9 +80,9 @@ tone low-pressure: "i can make one for you, or you can try it yourself here."
 ## DM sequence (max 3 messages, then stop)
 
 Personalize every message to their actual product/posts. Never send two
-identical DMs. Per-segment opening scaffolds live in
-[dm-templates.md](dm-templates.md), use them as starting points, then rewrite
-for the specific person.
+identical DMs. Per-segment opening scaffolds live in `dm-templates.md` (in this
+skill directory), use them as starting points, then rewrite for the specific
+person.
 
 **DM 1, open with value (no ask, or a tiny ask)**
 Reference something specific you genuinely engaged with, give the value (the
@@ -98,8 +136,9 @@ dashes, no AI words), and mention the product as @trypitchdotco.
 - **"i don't have time to learn a tool."** that's the whole point. you describe
   the demo in plain language and it builds the video. offer to make the first
   one for them.
-- **"is it expensive?"** don't quote numbers you don't have ([voice.md](voice.md)).
-  point to the free trial, and the cost of not shipping demos or paying an editor.
+- **"is it expensive?"** don't quote numbers you don't have
+  (`.opencode/skills/x-growth/voice.md`). point to the free trial, and the cost
+  of not shipping demos or paying an editor.
 - **"can i try it myself?"** yes. send them to https://trypitch.co and mention
   there is a free way to try it. You can still offer to make the first demo for
   them if they want a quick reference output.
@@ -119,10 +158,14 @@ dashes, no AI words), and mention the product as @trypitchdotco.
 
 ## Logging & pipeline
 
-- Each DM/followup → append to `state/activity-log.jsonl`, increment `touches`,
-  set `last_touch` and `next_action_date`.
+- Each DM/followup → append to `.opencode/skills/x-growth/state/activity-log.jsonl`,
+  increment `touches`, set `last_touch` and `next_action_date`.
 - Stage transitions: `warming` → `contacted` (DM1 sent) → `in_convo` (they
   replied) → `trial` (clicked/started trial) → `customer`. Dead ends: `lost`
   (silent) or `do-not-contact` (declined).
 - Anything ambiguous, sensitive, or a big-fish lead worth a human touch → flag
   it in the session report instead of auto-sending.
+- Record outcomes (replied/positive/declined/trial/customer) with the `segment`
+  + `variant` used, so the learning loop in `x-growth` /
+  `.opencode/skills/x-growth/learn.md` can evolve
+  which openers win.

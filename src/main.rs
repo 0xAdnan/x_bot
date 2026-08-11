@@ -99,6 +99,13 @@ enum XApiCommands {
     Me,
     /// Force an OAuth2 token refresh
     Refresh,
+    /// Perform interactive PKCE OAuth2 authorization flow
+    Authorize {
+        #[arg(long, default_value = "18795")]
+        port: u16,
+        #[arg(long, default_value = "http://127.0.0.1:18795/callback")]
+        redirect_uri: String,
+    },
     /// Lookup user by username
     Lookup { username: String },
     /// Fetch recent mentions
@@ -204,6 +211,12 @@ async fn main() {
                 XApiCommands::Refresh => match x_client.refresh_token().await {
                     Ok(_) => println!("[OK] Token refreshed successfully"),
                     Err(e) => eprintln!("[X API Error]: {}", e),
+                },
+                XApiCommands::Authorize { port, redirect_uri } => {
+                    match x_client.authorize(port, &redirect_uri).await {
+                        Ok(_) => println!("[OK] Authorization completed successfully"),
+                        Err(e) => eprintln!("[X API Error]: {}", e),
+                    }
                 },
                 XApiCommands::Lookup { username } => match x_client.lookup_user(&username).await {
                     Ok(u) => println!("{}", serde_json::to_string_pretty(&u).unwrap()),

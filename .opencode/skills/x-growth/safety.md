@@ -13,12 +13,12 @@ that.** The controls below are enforced by `./target/release/pitch-cli budget` a
 
 ## Account & operator identity
 
-- The operator/engagement account is **@adnanspitch** (see `state/account.json`).
-  The product handle is **@trypitchdotco** (https://trypitch.co).
+- The operator & engagement account is **@trypitchdotco** (https://trypitch.co, see `state/account.json`).
 - **Verify before acting:** after login, confirm the logged-in profile is
-  `@adnanspitch` (check the profile URL / navigation bar). If it is a different
-  account, or you cannot confirm it, STOP and report. Do not act on a wrong
-  account.
+  `@trypitchdotco` (check the profile URL / navigation bar). If logged out,
+  read credentials from `.env` (`X_USERNAME`, `X_PASSWORD`) or
+  `state/account.json` (`username`, `password`) to re-authenticate. If a different
+  account is logged in, STOP and report. Do not act on a wrong account.
 - The old account was told *"you won't be able to create new accounts"*, so the
   device/IP may still be flagged. If you see any warning, CAPTCHA, or unusual
   activity prompt, stop immediately and surface it (see kill-switch below).
@@ -27,8 +27,9 @@ that.** The controls below are enforced by `./target/release/pitch-cli budget` a
 
 ## Daily caps (hard limits, never exceed)
 
-`scripts/budget.sh` reads `state/account.json` and applies the **cold-start
-25% caps automatically until 2026-08-30**. These are hard, not suggestions.
+`./target/release/pitch-cli budget` reads `state/account.json` and applies the
+**cold-start 25% caps automatically until 2026-08-30**. These are hard, not
+suggestions.
 
 | Action | Normal/day | Cold ramp/day | Notes |
 |---|---|---|---|
@@ -39,7 +40,7 @@ that.** The controls below are enforced by `./target/release/pitch-cli budget` a
 | Posts (original) | 4 | 1 | At least 2-3h apart, not in bursts |
 | Quote tweets | 4 | 1 | Each one personalized, not just for reach |
 | New prospects discovered | 40 | 10 | Scoring + dedupe, not blind adds |
-| **Sessions per day** | **3** | **3** | Enforced by runner.sh; min 2h between sessions |
+| **Sessions per day** | **3** | **3** | Opening a session counts check `pitch-cli budget`; min 2h between sessions |
 
 Before each action, run `./target/release/pitch-cli budget` to see
 today's remaining budget (it auto-applies the ramp). If a cap is hit, skip that
@@ -51,7 +52,7 @@ Back-to-back identical actions are a bot fingerprint. The old account did 4 DMs
 in 5 minutes and 10+ likes in a row. Never do that.
 
 - **Rolling-hour cap:** at most **10 ok actions total per rolling 60 minutes**
-  (`budget.sh` reports `actions in the last 60 min`). If it warns, pause.
+  (`pitch-cli budget` reports `actions in the last 60 min`). If it warns, pause.
 - **No 3+ consecutive identical actions** (e.g. like-like-like-follow-follow).
   Mix actions: like, scroll, read, reply, like.
 - **Read before you act.** Actually load and parse a post before replying;
@@ -68,13 +69,12 @@ in 5 minutes and 10+ likes in a row. Never do that.
 
 - **Randomize delays** between actions: roughly 60s-6min, never a fixed
   interval. No bursts of identical actions back-to-back.
-- **Short sessions, not 24/7.** Max 3 sessions/day, at least 2h apart
-  (enforced by `runner.sh` with a 2-4h randomized gap). Idle gaps are normal
-  and good.
+- **Short sessions, not 24/7.** Max 3 sessions/day, at least 2h apart. Idle
+  gaps are normal and good.
 - **Vary the pattern.** Mix likes, reads, replies, scrolling. Don't do 20 likes
   then 20 follows then 20 DMs in blocks.
 - **Don't operate at robotic hours only.** Keep activity within plausible waking
-  hours for the account's timezone (`runner.sh` defaults: 8:00-23:00 local).
+  hours for the account's timezone (aim for 8:00-23:00 local).
 - **Work within one session, then stop.** Never re-open a session just because
   budget remains. The session cap exists on purpose.
 
@@ -92,7 +92,7 @@ in 5 minutes and 10+ likes in a row. Never do that.
 ## Spam-avoidance (also a brand rule)
 
 - Never send two identical or near-identical messages. Personalize every one.
-- Never DM someone you haven't warmed up ([engagement.md](engagement.md)).
+- Never DM someone you haven't warmed up (see the `x-engage` skill).
 - Never DM a `do-not-contact` / `lost` prospect.
 - Max 2 DM touches to a silent prospect, ever.
 - Public community help still counts as outbound activity. Keep it specific,
@@ -123,9 +123,10 @@ Before any session, run `./target/release/pitch-cli circuit-breaker`; if it exit
 X changes its UI and selectors break, expect it. Adapt, don't crash, don't
 guess.
 
-- **Re-observe before acting.** If a click/type fails or an element isn't found,
-  take a screenshot + read the DOM and locate the control by its visible
-  text/role (e.g. the "Post" / "Send" button), not a brittle saved selector.
+- **Re-observe before acting.** If a webbridge action fails or an element isn't
+  found, take a screenshot + `snapshot` (read the DOM) and locate the control by
+  its visible text/role (e.g. the "Post" / "Send" button), not a brittle saved
+  selector.
 - **Retry once, then stop.** Retry a failed action a single time after re-observing.
   If it still fails, log it `failed` and move on to the next prospect, never
   loop-retry (that's a ban signal and burns budget).
@@ -135,7 +136,7 @@ guess.
   look.
 - **Distinguish failure types in the report:** UI/selector drift (needs the
   flow updated) vs. account warning (needs to back off) vs. empty results (needs
-  better targeting in `prospecting.md`). Don't lump them together.
+  better targeting in the `x-prospect` skill). Don't lump them together.
 - **Never fake success.** If you can't verify a like/reply/DM landed, it didn't.
   Log `failed`, don't update the prospect as contacted.
 - **Honesty over hustle.** A stopped session that surfaces a real problem is a

@@ -84,7 +84,7 @@ To keep LLM context tiny (~1,200 tokens) and execution fast, proactive outbound 
 
 ### Pass 3: Content & Trend Post (Run 1x daily at 11am)
 * **Trigger Command:** `opencode run --agent x-growth "publish founder commentary"`
-* **Action:** Reads `content.md` + `voice.md`, runs draft through `humanizer` skill, and posts 1 original product update, founder take, or trend quote-tweet (`./target/release/pitch-cli x-api post --text "..."`).
+* **Action:** Read the `x-content` skill + `.opencode/skills/x-growth/voice.md`, run draft through `humanizer` skill, and post 1 original product update, founder take, or trend quote-tweet (`./target/release/pitch-cli x-api post --text "..."`).
 
 ---
 
@@ -145,6 +145,6 @@ Binary Location: `./target/release/pitch-cli`
 3. Leave one personalized reply or DM (if warm-up bar met). Apply `humanizer` skill before posting!
 
 ### If prompt is "publish founder commentary":
-1. Compose 1 tweet using `content.md` + `voice.md`.
+1. Compose 1 tweet using the `x-content` skill + `.opencode/skills/x-growth/voice.md`.
 2. Run text through `humanizer` skill.
 3. Post via `./target/release/pitch-cli x-api post --text "..."`.

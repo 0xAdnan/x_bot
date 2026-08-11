@@ -1,9 +1,45 @@
+---
+name: x-community
+version: 1.0.0
+description: >-
+  Build the PITCH founder community on X (trypitch.co) around @trypitchdotco
+  and the @adnanspitch founder personality. Use when scanning for tech/founder
+  conversations, answering builder asks in public, running the help-first loop,
+  posting community invitations, product bridges, participating in "drop your
+  link" / "rate my landing page" threads, or growing the @trypitchdotco orbit
+  without turning every interaction into a pitch.
+license: MIT
+compatibility: claude-code opencode
+allowed-tools:
+  - read
+  - write
+  - edit
+  - bash
+  - webfetch
+---
+
 # Community building, founder personality & help loops
 
 The account should feel like a useful tech founder people want around, not a
 demo-video vending machine. Community building means showing up in the places
 builders already talk, helping in public, and making @trypitchdotco part of the
 builder orbit through trust.
+
+## Guardrails before any community action
+
+- Read `.opencode/skills/x-growth/safety.md` first; community help counts as
+  outbound activity (replies/quote budget) and there are hard limits on
+  self-promo thread replies (max 2/day).
+- Run `./target/release/pitch-cli circuit-breaker` (stop if exit 1) and
+  `./target/release/pitch-cli budget` first.
+- All public help happens in real Chrome (`agent-webbridge`,
+  `"profile":"Testing"`), confirmed as @adnanspitch.
+- Run every reply through the `humanizer` skill and
+  `.opencode/skills/x-growth/voice.md` before posting. No antisocial takes, no
+  financial advice, no dogpiling.
+- Log replies as `reply` / invitations as `post` / quotes as `quote` in
+  `.opencode/skills/x-growth/state/activity-log.jsonl`; prefix `detail` with
+  `community help:` or `community invite:`.
 
 ## Personality spine
 
@@ -101,8 +137,9 @@ When someone asks for help:
    @trypitchdotco as a tool that can help. Otherwise do not mention it.
 4. If they respond positively or ask for deeper help, continue the thread or ask
    if they want to DM. Do not move to DM by default.
-5. If they have a real product and fit the ICP, add them to `prospects.jsonl`
-   with segment `community` or the best-fit buyer segment. Record why they fit.
+5. If they have a real product and fit the ICP, add them to
+   `.opencode/skills/x-growth/state/prospects.jsonl` with segment `community`
+   or the best-fit buyer segment. Record why they fit.
 
 If someone has already replied to you or messaged you, treat that as the first
 thing to handle before adding your own agenda. Answer what they said like a
@@ -175,7 +212,7 @@ retros can identify which actions built trust.
 "drop your link" / "what are you building" threads are the fastest way to look
 like a bot. The old account replied to 8+ of these in an hour with the same
 "building @trypitchdotco..." line and got permanently banned that week. Hard
-limits, enforced per day by [safety.md](safety.md):
+limits, enforced per day by `.opencode/skills/x-growth/safety.md`:
 
 - **Max 2 self-promo thread replies per day** (replies that mention
   @trypitchdotco). Prefer helping without mentioning the product at all.
