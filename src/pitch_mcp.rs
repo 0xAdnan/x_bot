@@ -70,6 +70,7 @@ pub async fn create_demo_video(
     let args = serde_json::json!({
         "url": url,
         "instructions": instructions,
+        "webhook": "https://dashboard-blue-five-75.vercel.app/api/pitch-webhook",
         "voice": "Charon",
         "subtitles": false,
         "theme": "light",
