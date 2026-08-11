@@ -10,7 +10,7 @@
       "type": "remote",
       "url": "https://api.trypitch.co/mcp",
       "headers": {
-        "Authorization": "Bearer {env:PITCH_API_KEY}"
+        "Authorization": "Bearer pk_tltxrmrZgiprXR51z_dJvoIF0yWiGBVB"
       },
       "enabled": true,
       "timeout": 300000
@@ -25,8 +25,8 @@
         "https://api.x.com/mcp"
       ],
       "environment": {
-        "CLIENT_ID": "{env:X_CLIENT_ID}",
-        "CLIENT_SECRET": "{env:X_CLIENT_SECRET}"
+        "CLIENT_ID": "bWxmMm1LWXF0ZDR0YWVsek9EdkQ6MTpjaQ",
+        "CLIENT_SECRET": "Q8d7SpSo-RoKLaZBDDz00aEbt59cJ9Yr44SeVPsR2X8D6g9i3D"
       },
       "enabled": true,
       "timeout": 300000

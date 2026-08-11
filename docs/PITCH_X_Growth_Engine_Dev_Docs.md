@@ -343,7 +343,7 @@ X_CLIENT_SECRET=your_x_client_secret
 X_OPERATOR_HANDLE=@trypitchdotco
 X_USERNAME=your_x_username
 X_PASSWORD=your_x_password
-PITCH_API_KEY=your_pitch_api_key
+PITCH_API_KEY=your_pitch_api_key        # hardcoded in opencode.jsonc
 PITCH_WEBHOOK_URL=https://<public-url>/api/webhook/pitch   # optional
 SQLITE_DB_PATH=./data/pitch_bot.db      # optional override
 PORT=8790                               # optional override
@@ -352,8 +352,7 @@ X_WEBHOOK_ID=                           # optional: registered webhook id
 ```
 
 - `PITCH_API_KEY` is consumed by the `pitch` MCP server in `opencode.jsonc`
-  (`{env:PITCH_API_KEY}`); opencode resolves it from the process env, so export
-  it before launching opencode (`set -a; source .env; set +a`).
+  (hardcoded `Authorization` header).
 - `X_CLIENT_ID` / `X_CLIENT_SECRET` feed the `xmcp` `xurl` bridge OAuth2 login.
 - Legacy keys (`X_API_KEY`, `X_API_SECRET`, `X_BEARER_TOKEN`, `X_USER_*`) are
   unused by the code.
