@@ -158,6 +158,126 @@ and Pitch MCP completion posts to `https://<public-url>/api/webhook/pitch`
 | `GET` | `/api/webhook/health` | Liveness probe |
 | `GET` | `/api/webhook/stats` | DB pipeline counts |
 
+## Configuring webhooks
+
+All webhook traffic lands on **one** server (`pitch-cli server`), which must be
+reachable by X and by Pitch MCP over a **public HTTPS URL**. Set that up first,
+then register each webhook below.
+
+### 1. Expose the server publicly
+
+The server binds `0.0.0.0:8790` locally; give it a public URL with a tunnel or a
+reverse proxy:
+
+```bash
+# one-off tunnel (dev)
+ngrok http 8790        # → https://<random>.ngrok.app
+
+# or reverse-proxy in front of port 8790 (prod), e.g. nginx/Caddy/Cloudflare
+```
+
+Let `<public-url>` be that base (e.g. `https://pitch-bot.example.com`). All of
+the paths below are appended to it.
+
+### 2. X Account Activity webhook (mentions)
+
+This is the primary webhook: X calls it on every new `@trypitchdotco` mention,
+and the server dispatches an `x-mention` opencode session.
+
+**In the X Developer Portal** (app → Account Activity / Webhooks section):
+
+- Register the webhook URL: `https://<public-url>/api/webhook/x`.
+- Subscribe the app to the `tweet_create` / mention events for
+  `@trypitchdotco`.
+
+X validates the URL with a **CRC challenge** during registration:
+`GET https://<public-url>/api/webhook/x?crc_token=<token>`. The server answers
+with `{"response_token":"sha256=<HMAC-SHA256(crc_token, X_CLIENT_SECRET)>"}`
+(`handle_crc` in `src/server.rs`). This is why `X_CLIENT_SECRET` must be in
+`.env` before the server boots.
+
+After registration, X sends `POST /api/webhook/x` with a `tweet_create_events`
+payload on every mention. The handler replies `200` immediately and spawns
+`opencode run` (the session does the ack reply, video render, and delivery).
+
+Verify end-to-end locally before wiring X:
+
+```bash
+./target/release/pitch-cli server --port 8790 &
+curl "http://localhost:8790/api/webhook/x?crc_token=test"     # sha256=...
+curl -X POST http://localhost:8790/api/webhook/x \
+  -H 'Content-Type: application/json' \
+  -d '{"tweet_create_events":[{"id":"1","user":{"id":"2","screen_name":"someone"},"text":"@trypitchdotco make me a demo of https://example.com"}]}'
+# → {"status":"ok","message":"Mention event received; opencode session dispatched",...}
+```
+
+### 3. Pitch MCP completion webhook (render finished)
+
+Optional belt-and-suspenders: Pitch MCP calls `POST /api/webhook/pitch` when a
+render completes, prompting an immediate delivery pass. Dispatched sessions also
+poll `get_job` themselves, so this is not required.
+
+- Set `PITCH_WEBHOOK_URL=https://<public-url>/api/webhook/pitch` in `.env`.
+- When a session calls the `pitch` MCP `create_demo_video` tool, it passes this
+  URL as the `webhook` param so Pitch MCP knows where to report completion.
+
+Pitch MCP posts a JSON body with the job id/status, e.g.
+`{"jobId":"...","status":"COMPLETED"}`. The handler dispatches an opencode
+session to look up the matching mention job and post the S3 video link in-thread.
+
+Test it:
+
+```bash
+curl -X POST http://localhost:8790/api/webhook/pitch \
+  -H 'Content-Type: application/json' \
+  -d '{"jobId":"job_123","status":"COMPLETED"}'
+# → {"status":"ok","job_id":"job_123","dispatched":true}
+```
+
+### 4. Manual trigger webhook (on-demand passes)
+
+`POST /api/webhook/trigger` dispatches an opencode session on demand. Useful as a
+recovery net from cron, or from any scheduler/chat bot. Optional JSON body picks
+the action (default `mentions`):
+
+| Body | Dispatched skill | Use case |
+|---|---|---|
+| `{"action":"mentions"}` (default) | `x-mention` | Re-check recent mentions, recover dropped webhook events, deliver finished renders |
+| `{"action":"growth"}` or `{"action":"session"}` | `x-growth` | Run the full session loop (prospect / engage / outreach / content) |
+| `{"action":"discover"}` | `x-prospect` | Search X for new ICP prospects and log them |
+
+```bash
+curl -X POST http://localhost:8790/api/webhook/trigger \
+  -H 'Content-Type: application/json' -d '{"action":"mentions"}'
+```
+
+Hook it into cron for the recovery net:
+
+```cron
+*/5 * * * * curl -s -X POST http://127.0.0.1:8790/api/webhook/trigger -H 'Content-Type: application/json' -d '{"action":"mentions"}' >> /var/log/pitch/trigger.log 2>&1
+```
+
+### 5. Health & stats (observability)
+
+Not configured anywhere — they're passive checks for you and your monitoring:
+
+- `GET /api/webhook/health` → `200 {"status":"ok",...}` (liveness).
+- `GET /api/webhook/stats` → mention-job and prospect counts (metrics).
+
+```bash
+curl http://localhost:8790/api/webhook/health
+curl http://localhost:8790/api/webhook/stats
+```
+
+### Webhook configuration checklist
+
+1. `pitch-cli server` always running on `0.0.0.0:8790`.
+2. Public URL resolves to it (`curl https://<public-url>/api/webhook/health`).
+3. `X_CLIENT_SECRET` set (CRC signing); X webhook URL registered to
+   `/api/webhook/x` and passing the CRC challenge.
+4. Optional `PITCH_WEBHOOK_URL` set and `/api/webhook/pitch` verified.
+5. Optional cron curling `/api/webhook/trigger` `{"action":"mentions"}`.
+
 ## Job state machine
 
 `mention_jobs` table (one row per tweet):
@@ -311,9 +431,11 @@ on first use (or run `xurl auth oauth2`).
 
 ### 4. Wire the webhook in X
 
-Register `https://<public-url>/api/webhook/x` as the Account Activity webhook
-URL in your X app. X will call `GET` (CRC) during registration and `POST` on
-every mention thereafter.
+Follow the **Configuring webhooks** section above: register
+`https://<public-url>/api/webhook/x` as the Account Activity webhook URL in your
+X app. X will call `GET` (CRC) during registration and `POST` on every mention
+thereafter. `PITCH_WEBHOOK_URL` and the `/api/webhook/trigger` recovery cron are
+optional.
 
 ## Automation checklist (end to end)
 
