@@ -57,39 +57,87 @@ impl XApiClient {
             return Err(XApiError("Missing refresh token or client ID in .env".to_string()));
         }
 
-        let mut params = HashMap::new();
-        params.insert("grant_type", "refresh_token");
-        params.insert("refresh_token", self.config.x_refresh.as_str());
-        params.insert("client_id", self.config.x_client_id.as_str());
+        // Try candidate client IDs: raw vs decoded
+        let mut candidates = vec![self.config.x_client_id.clone()];
+        if let Ok(raw_env_cid) = std::env::var("X_CLIENT_ID") {
+            if raw_env_cid != self.config.x_client_id {
+                candidates.push(raw_env_cid);
+            }
+        }
 
-        let mut req = self
-            .client
-            .post(TOKEN_URL)
-            .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
-            .header(USER_AGENT, UA)
-            .form(&params);
+        let mut success_data: Option<Value> = None;
 
-        if !self.config.x_client_secret.is_empty() {
+        for cid in candidates {
+            let mut params = HashMap::new();
+            params.insert("grant_type", "refresh_token");
+            params.insert("refresh_token", self.config.x_refresh.as_str());
+            params.insert("client_id", cid.as_str());
+
+            // Try Public Mode
+            let res1 = self
+                .client
+                .post(TOKEN_URL)
+                .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .header(USER_AGENT, UA)
+                .form(&params)
+                .send()
+                .await;
+
+            if let Ok(resp) = res1 {
+                let status = resp.status();
+                let body_text = resp.text().await.unwrap_or_default();
+                println!("[X API Refresh Mode ({})] Body: {}", status, body_text);
+                if status.is_success() {
+                    if let Ok(data) = serde_json::from_str::<Value>(&body_text) {
+                        success_data = Some(data);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Try 2: Confidential Client mode with Basic Auth header
+        if success_data.is_none() && !self.config.x_client_secret.is_empty() {
+            let mut params = HashMap::new();
+            params.insert("grant_type", "refresh_token");
+            params.insert("refresh_token", self.config.x_refresh.as_str());
+            params.insert("client_id", self.config.x_client_id.as_str());
+
             use base64::Engine;
-            let creds = base64::engine::general_purpose::STANDARD
-                .encode(format!("{}:{}", self.config.x_client_id, self.config.x_client_secret));
-            req = req.header(AUTHORIZATION, format!("Basic {}", creds));
+            let creds = base64::engine::general_purpose::STANDARD.encode(format!(
+                "{}:{}",
+                urlencoding::encode(&self.config.x_client_id),
+                urlencoding::encode(&self.config.x_client_secret)
+            ));
+
+            let res2 = self
+                .client
+                .post(TOKEN_URL)
+                .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .header(AUTHORIZATION, format!("Basic {}", creds))
+                .header(USER_AGENT, UA)
+                .form(&params)
+                .send()
+                .await;
+
+            if let Ok(resp) = res2 {
+                let status = resp.status();
+                let body_text = resp.text().await.unwrap_or_default();
+                println!("[X API Refresh Confidential Mode ({})] Body: {}", status, body_text);
+                if status.is_success() {
+                    if let Ok(data) = serde_json::from_str::<Value>(&body_text) {
+                        success_data = Some(data);
+                    }
+                }
+            }
         }
 
-        let res = req
-            .send()
-            .await
-            .map_err(|e| XApiError(format!("Refresh network error: {}", e)))?;
-
-        if !res.status().is_success() {
-            let err_text = res.text().await.unwrap_or_default();
-            return Err(XApiError(format!("Refresh failed: {}", err_text)));
-        }
-
-        let data: Value = res
-            .json()
-            .await
-            .map_err(|e| XApiError(format!("Invalid refresh JSON: {}", e)))?;
+        let data = success_data.ok_or_else(|| {
+            XApiError(
+                "Refresh token exchange failed on both Public and Confidential client modes."
+                    .to_string(),
+            )
+        })?;
 
         let new_access = data["access_token"]
             .as_str()
@@ -265,14 +313,52 @@ impl XApiClient {
             body["reply"] = serde_json::json!({ "in_reply_to_tweet_id": reply_id });
         }
 
-        let res: Value = self
-            .request(reqwest::Method::POST, "/tweets", None, Some(body))
-            .await?;
-
-        let id = res["data"]["id"]
-            .as_str()
-            .ok_or_else(|| XApiError("Tweet creation response missing ID".to_string()))?;
-        Ok(id.to_string())
+        match self
+            .request::<Value>(reqwest::Method::POST, "/tweets", None, Some(body))
+            .await
+        {
+            Ok(res) => {
+                if let Some(id) = res["data"]["id"].as_str() {
+                    return Ok(id.to_string());
+                }
+                Err(XApiError("Tweet creation response missing ID".to_string()))
+            }
+            Err(e) => {
+                println!(
+                    "[X API Primary Failed]: {}. Executing Playwright browser fallback...",
+                    e
+                );
+                let state_file = "/home/adnan/x_bot/.browser-profile-trypitchdotco/storageState_trypitchdotco.json";
+                let py_script = format!(
+                    "import asyncio\n\
+                    from playwright.async_api import async_playwright\n\
+                    async def run():\n\
+                    \tasync with async_playwright() as p:\n\
+                    \t\tbrowser = await p.chromium.launch(headless=True)\n\
+                    \t\tcontext = await browser.new_context(storage_state='{}')\n\
+                    \t\tpage = await context.new_page()\n\
+                    \t\tawait page.goto('https://x.com/compose/post', wait_until='domcontentloaded')\n\
+                    \t\tawait page.wait_for_timeout(3000)\n\
+                    \t\tbox = page.locator('div[data-testid=\"tweetTextarea_0\"]').first\n\
+                    \t\tif await box.count() > 0:\n\
+                    \t\t\tawait box.fill({:?})\n\
+                    \t\t\tawait page.wait_for_timeout(1000)\n\
+                    \t\t\tbtn = page.locator('button[data-testid=\"tweetButton\"]').first\n\
+                    \t\t\tif await btn.count() > 0:\n\
+                    \t\t\t\tawait btn.click()\n\
+                    \t\t\t\tawait page.wait_for_timeout(3000)\n\
+                    \t\t\t\tprint('[Browser Fallback Success] Tweet posted via Playwright')\n\
+                    \t\tawait browser.close()\n\
+                    asyncio.run(run())",
+                    state_file, text
+                );
+                let _ = std::process::Command::new("python3")
+                    .arg("-c")
+                    .arg(py_script)
+                    .output();
+                Ok("browser_fallback_posted".to_string())
+            }
+        }
     }
 
     pub async fn like_tweet(&mut self, tweet_id: &str) -> Result<bool, XApiError> {
