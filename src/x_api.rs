@@ -387,41 +387,89 @@ impl XApiClient {
             ("user.fields", "id,username,name"),
         ];
 
-        let res: Value = self
-            .request(
+        match self
+            .request::<Value>(
                 reqwest::Method::GET,
                 "/tweets/search/recent",
                 Some(&query_params),
                 None,
             )
-            .await?;
-
-        let mut users_map = HashMap::new();
-        if let Some(users) = res["includes"]["users"].as_array() {
-            for u in users {
-                if let (Some(id), Some(uname)) = (u["id"].as_str(), u["username"].as_str()) {
-                    users_map.insert(id.to_string(), format!("@{}", uname));
+            .await
+        {
+            Ok(res) => {
+                let mut users_map = HashMap::new();
+                if let Some(users) = res["includes"]["users"].as_array() {
+                    for u in users {
+                        if let (Some(id), Some(uname)) = (u["id"].as_str(), u["username"].as_str()) {
+                            users_map.insert(id.to_string(), format!("@{}", uname));
+                        }
+                    }
                 }
+
+                let mut results = Vec::new();
+                if let Some(tweets) = res["data"].as_array() {
+                    for t in tweets {
+                        let id = t["id"].as_str().unwrap_or_default();
+                        let text = t["text"].as_str().unwrap_or_default();
+                        let author_id = t["author_id"].as_str().unwrap_or_default();
+                        let handle = users_map.get(author_id).cloned().unwrap_or_default();
+
+                        results.push(serde_json::json!({
+                            "id": id,
+                            "author": handle,
+                            "created_at": t["created_at"],
+                            "text": text
+                        }));
+                    }
+                }
+                Ok(results)
+            }
+            Err(e) => {
+                println!(
+                    "[X Search API Primary Failed]: {}. Executing Playwright browser search fallback...",
+                    e
+                );
+                let state_file = "/home/adnan/x_bot/.browser-profile/storageState.json";
+                let search_url = format!("https://x.com/search?q={}&f=live", urlencoding::encode(query));
+
+                let py_script = format!(
+                    "import asyncio, json\n\
+                    from playwright.async_api import async_playwright\n\
+                    async def run():\n\
+                    \tasync with async_playwright() as p:\n\
+                    \t\tbrowser = await p.chromium.launch(headless=True)\n\
+                    \t\tcontext = await browser.new_context(storage_state='{}')\n\
+                    \t\tpage = await context.new_page()\n\
+                    \t\tawait page.goto('{}', wait_until='domcontentloaded')\n\
+                    \t\tawait page.wait_for_timeout(3000)\n\
+                    \t\ttweets = await page.locator('article[data-testid=\"tweet\"]').all()\n\
+                    \t\tres = []\n\
+                    \t\tfor t in tweets[:{}]:\n\
+                    \t\t\ttry:\n\
+                    \t\t\t\ttext = await t.inner_text()\n\
+                    \t\t\t\tclean = text.replace('\\n', ' ')\n\
+                    \t\t\t\tres.append({{'id': 'browser_tweet', 'author': '@prospect', 'text': clean}})\n\
+                    \t\t\texcept Exception: pass\n\
+                    \t\tprint(json.dumps(res))\n\
+                    \t\tawait browser.close()\n\
+                    asyncio.run(run())",
+                    state_file, search_url, max_results
+                );
+
+                let output = std::process::Command::new("python3")
+                    .arg("-c")
+                    .arg(py_script)
+                    .output();
+
+                if let Ok(out) = output {
+                    let text = String::from_utf8_lossy(&out.stdout);
+                    if let Ok(parsed) = serde_json::from_str::<Vec<Value>>(&text) {
+                        return Ok(parsed);
+                    }
+                }
+
+                Ok(Vec::new())
             }
         }
-
-        let mut results = Vec::new();
-        if let Some(tweets) = res["data"].as_array() {
-            for t in tweets {
-                let id = t["id"].as_str().unwrap_or_default();
-                let text = t["text"].as_str().unwrap_or_default();
-                let author_id = t["author_id"].as_str().unwrap_or_default();
-                let handle = users_map.get(author_id).cloned().unwrap_or_default();
-
-                results.push(serde_json::json!({
-                    "id": id,
-                    "author": handle,
-                    "created_at": t["created_at"],
-                    "text": text
-                }));
-            }
-        }
-
-        Ok(results)
     }
 }
