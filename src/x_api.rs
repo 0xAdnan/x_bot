@@ -329,6 +329,10 @@ impl XApiClient {
                     e
                 );
                 let state_file = "/home/adnan/x_bot/.browser-profile-trypitchdotco/storageState_trypitchdotco.json";
+                let target_url = match reply_to_tweet_id {
+                    Some(tid) => format!("https://x.com/i/status/{}", tid),
+                    None => "https://x.com/compose/post".to_string(),
+                };
                 let py_script = format!(
                     "import asyncio\n\
                     from playwright.async_api import async_playwright\n\
@@ -337,20 +341,25 @@ impl XApiClient {
                     \t\tbrowser = await p.chromium.launch(headless=True)\n\
                     \t\tcontext = await browser.new_context(storage_state='{}')\n\
                     \t\tpage = await context.new_page()\n\
-                    \t\tawait page.goto('https://x.com/compose/post', wait_until='domcontentloaded')\n\
+                    \t\tawait page.goto('{}', wait_until='domcontentloaded')\n\
                     \t\tawait page.wait_for_timeout(3000)\n\
+                    \t\treply_icon = page.locator('button[data-testid=\"reply\"]').first\n\
+                    \t\tif await reply_icon.count() > 0:\n\
+                    \t\t\tawait reply_icon.click()\n\
+                    \t\t\tawait page.wait_for_timeout(1000)\n\
                     \t\tbox = page.locator('div[data-testid=\"tweetTextarea_0\"]').first\n\
                     \t\tif await box.count() > 0:\n\
+                    \t\t\tawait box.click()\n\
                     \t\t\tawait box.fill({:?})\n\
                     \t\t\tawait page.wait_for_timeout(1000)\n\
-                    \t\t\tbtn = page.locator('button[data-testid=\"tweetButton\"]').first\n\
+                    \t\t\tbtn = page.locator('button[data-testid=\"tweetButton\"], button[data-testid=\"tweetButtonInline\"]').first\n\
                     \t\t\tif await btn.count() > 0:\n\
                     \t\t\t\tawait btn.click()\n\
                     \t\t\t\tawait page.wait_for_timeout(3000)\n\
                     \t\t\t\tprint('[Browser Fallback Success] Tweet posted via Playwright')\n\
                     \t\tawait browser.close()\n\
                     asyncio.run(run())",
-                    state_file, text
+                    state_file, target_url, text
                 );
                 let _ = std::process::Command::new("python3")
                     .arg("-c")
