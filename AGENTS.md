@@ -9,7 +9,8 @@ real browser and the X API v2 (via the `xmcp` MCP server).
 
 - **`src/`** — `pitch-cli` (Rust, Cargo workspace bin `pitch-cli`). Modules: `server` (Axum
   webhook dispatcher, port 8790/`PORT` — receives X mention events + Pitch MCP completions
-  and **spawns an `opencode run` session** per event), `discover` (ICP prospect search),
+  and **dispatches an OpenCode session per event via the `opencode_rs` SDK** against the
+  always-on `opencode serve` HTTP server), `discover` (ICP prospect search),
   `x_api` (internal X API v2 client, legacy/heavy path — prefer `xmcp`), `safety` (daily
   budget + circuit breaker), `db` (SQLite), `config` (env loading). The old `inbox`,
   `worker`, and `pitch_mcp` modules were deleted: the webhook dispatcher hands each event
@@ -45,7 +46,10 @@ real browser and the X API v2 (via the `xmcp` MCP server).
 - Server: `pitch-cli server` (unified webhook base `/api/webhook`: X CRC +
   mentions at `/x`, Pitch MCP completion at `/pitch`, `trigger`, `health`,
   `stats`; `--port 8790` for local runs). Each incoming event dispatches an
-  `opencode run` session that executes the matching skill.
+  OpenCode session (via the `opencode_rs` SDK → always-on `opencode serve`
+  HTTP server, default `http://127.0.0.1:4096`, override `OPENCODE_URL`) that
+  executes the matching skill. Start `opencode serve --port 4096` before
+  `pitch-cli server`; the dispatcher health-checks it at boot.
 - Safety: `pitch-cli budget` (daily caps + burst), `pitch-cli circuit-breaker` (status),
   `--trip "reason"` (pause), `--reset` (resume). Always check budget + breaker BEFORE any
   X write.
@@ -86,7 +90,9 @@ skill/tool availability.
 Required vars (see `src/config.rs`): `X_CLIENT_ID`, `X_CLIENT_SECRET`,
 `X_OPERATOR_HANDLE`, `X_USERNAME`, `X_PASSWORD`, `PITCH_API_KEY`, optional
 `SQLITE_DB_PATH`, `PITCH_WEBHOOK_URL` (public URL of `/api/webhook/pitch` on the
-webhook server), `X_WEBHOOK_ID`, `MAX_OPENCODE_SESSIONS` (default 3). Legacy
+webhook server), `X_WEBHOOK_ID`, `MAX_OPENCODE_SESSIONS` (default 3), optional
+`OPENCODE_URL` (OpenCode server base URL, default `http://127.0.0.1:4096`).
+Legacy
 keys `X_API_KEY`/`X_API_SECRET`/`X_BEARER_TOKEN` and the OAuth2 `X_USER_*`
 tokens are unused by the code (the internal `x_api` client is off-limits).
 `X_CLIENT_ID`/`X_CLIENT_SECRET` feed the `xmcp` xurl bridge OAuth2 login.

@@ -22,9 +22,10 @@ Everything runs from one compiled Rust binary (`pitch-cli`), a local SQLite
 database, and an **opencode session dispatcher**:
 
 - **`pitch-cli server`** — an Axum webhook dispatcher listening on
-  `0.0.0.0:8790` (`PORT`). Every incoming event **spawns a fresh `opencode run`
-  session** (capped by `MAX_OPENCODE_SESSIONS`, default 3) that executes the
-  matching skill. There is no in-Rust mention pipeline anymore: the old `inbox`,
+  `0.0.0.0:8790` (`PORT`). Every incoming event **dispatches an OpenCode session
+  via the `opencode_rs` SDK** against the always-on `opencode serve` HTTP server
+  (capped by `MAX_OPENCODE_SESSIONS`, default 3) that executes the matching
+  skill. There is no in-Rust mention pipeline anymore: the old `inbox`,
   `worker`, and `pitch_mcp` modules were deleted.
 - **Skills** (`.opencode/skills/x-*`) — each flow is a skill the dispatched
   session loads: `x-growth` (orchestrator), `x-prospect`, `x-engage`,
@@ -40,8 +41,9 @@ database, and an **opencode session dispatcher**:
 Two ways work gets triggered:
 
 1. **Real-time webhook** — X calls `POST /api/webhook/x` when someone mentions
-   `@trypitchdotco`. The server hands the mention to a fresh `opencode run`
-   session running the `x-mention` skill and returns `200` immediately.
+   `@trypitchdotco`. The server hands the mention to a fresh OpenCode session
+   (created via `opencode_rs` against `opencode serve`) running the `x-mention`
+   skill and returns `200` immediately.
 2. **Manual / cron** — `pitch-cli server` also exposes `/api/webhook/trigger`
    (curl on demand), and the `discover` CLI polls X for ICP leads.
 
@@ -72,8 +74,8 @@ agent-webbridge. Pitch video jobs go through the `pitch` MCP server tools.
 # Webhook Endpoints → Skill Mapping → Business Accomplishments
 
 All webhook routes are exposed under the single unified base **`/api/webhook`**
-(`src/server.rs`). Every incoming event dispatches a fresh `opencode run` session
-that executes the mapped skill.
+(`src/server.rs`). Every incoming event dispatches a fresh OpenCode session that
+executes the mapped skill.
 
 | Endpoint | Triggered Skill | Pipeline Execution | Business Accomplishment (ROI) |
 |---|---|---|---|
@@ -81,8 +83,8 @@ that executes the mapped skill.
 | **`POST /api/webhook/pitch`** | `x-mention` | 1. Dispatch opencode session on completion<br>2. Session polls `get_job`, posts S3 delivery reply | **Fast Delivery:** a render completion can prompt an immediate delivery pass instead of waiting for the next poll. |
 | **`POST /api/webhook/trigger`** `{"action":"growth"}` | `x-growth` | 1. Dispatch opencode session running the x-growth session loop<br>2. Prospect/search, engage, outreach as appropriate<br>3. Upsert CRM (`state/prospects.jsonl` + SQLite) | **High-Intent Lead Pipeline:** builds a pipeline of SaaS founders who need video walkthroughs. |
 | **`POST /api/webhook/trigger`** `{"action":"mentions"}` | `x-mention` | 1. Dispatch opencode session to check recent mentions<br>2. Handle any unprocessed `@trypitchdotco` mentions | **Inbound Recovery Net:** recovers mentions even if an X webhook callback fails or drops. |
-| **Scheduled Agent Pass** `(opencode run --agent x-growth)` | `x-engage` `x-outreach` | 1. Like/reply to warm leads (`stage: warming`)<br>2. Custom DM with user's URL walkthrough<br>3. Update CRM (`stage: contacted / in_convo`) | **Paid Subscriber Conversion:** nurtures SaaS founders in public, then converts them in DMs into paid PITCH subscribers. |
-| **Daily Scheduled Pass** `(opencode run --agent x-growth)` | `x-content` `x-community` | 1. Post product updates & tech takes<br>2. Help indie hackers in public threads<br>3. Drive organic profile impressions | **Brand Authority & Awareness:** builds trust, follower growth, and organic inbound traffic for `@trypitchdotco`. |
+| **Scheduled Agent Pass** `(/api/webhook/trigger {"action":"growth"})` | `x-engage` `x-outreach` | 1. Like/reply to warm leads (`stage: warming`)<br>2. Custom DM with user's URL walkthrough<br>3. Update CRM (`stage: contacted / in_convo`) | **Paid Subscriber Conversion:** nurtures SaaS founders in public, then converts them in DMs into paid PITCH subscribers. |
+| **Daily Scheduled Pass** `(/api/webhook/trigger {"action":"growth"})` | `x-content` `x-community` | 1. Post product updates & tech takes<br>2. Help indie hackers in public threads<br>3. Drive organic profile impressions | **Brand Authority & Awareness:** builds trust, follower growth, and organic inbound traffic for `@trypitchdotco`. |
 | **`GET /api/webhook/x`** | System Utility | HMAC-SHA256 CRC token verification challenge | **X API Compliance:** required by X Account Activity API to register webhooks. |
 | **`GET /api/webhook/health`** | System Utility | Liveness probe returning HTTP 200 OK | **Deployment Health:** ensures the server is operational. |
 | **`GET /api/webhook/stats`** | System Utility | Pipeline metrics query from SQLite | **Observability:** monitors total jobs, renders, and CRM prospects. |
@@ -102,10 +104,14 @@ Endpoints: `GET /api/webhook/x` (CRC handshake) and `POST /api/webhook/x`
 of `@trypitchdotco` from another account, builds a task prompt, and returns
 `200 {"status":"ok","dispatched":true}` immediately.
 
-**Session dispatch** (`spawn_opencode_session`, `src/server.rs`): spawns
-`opencode run "<task>"` in the repo root (so it picks up `opencode.jsonc`, the
-skills, and the `x-growth` agent), caps concurrency via `MAX_OPENCODE_SESSIONS`
-(default 3), and writes the session's stdout to `data/sessions/<timestamp>.log`.
+**Session dispatch** (`dispatch_opencode_session`, `src/server.rs`): uses the
+`opencode_rs` SDK to talk to an always-on `opencode serve` HTTP server (default
+`http://127.0.0.1:4096`, override `OPENCODE_URL`). It creates a session in the
+repo root (so it picks up `opencode.jsonc`, the skills, and the `x-growth`
+agent), sends the task via `prompt_async`, subscribes to the session's SSE
+stream, caps concurrency via `MAX_OPENCODE_SESSIONS` (default 3), and writes the
+streamed text deltas to `data/sessions/<timestamp>.log`. The session is deleted
+once it goes idle (or errors/aborts).
 
 Inside the session, the `x-mention` skill does:
 
@@ -219,8 +225,9 @@ dates), `prospects.jsonl`, `activity-log.jsonl`, `insights.md`.
 # Schedules & Cron
 
 The binary has **no internal scheduler**. Automation = the always-on webhook
-server, which dispatches an `opencode run` session per event. Directory used in
-examples: `/opt/pitch-xbot` (repo root).
+server, which dispatches an OpenCode session per event against the always-on
+`opencode serve` HTTP server. Directory used in examples: `/opt/pitch-xbot`
+(repo root).
 
 ## The recovery net (why you still need cron)
 
@@ -234,16 +241,21 @@ on demand — e.g. a cron line:
 
 ## Server (always-on)
 
+Start the headless OpenCode server the dispatcher talks to, then the webhook
+dispatcher:
+
 ```bash
+opencode serve --port 4096 &              # keep this running alongside pitch-cli
 ./target/release/pitch-cli server          # binds 0.0.0.0:8790
 # or: PORT=9000 ./target/release/pitch-cli server
 ```
 
-Run under a process manager (launchd on macOS, systemd on Linux; or nohup, tmux,
-pm2). It must be reachable by X on a public URL (e.g. ngrok tunnel or reverse
-proxy) for webhooks to arrive. Each event spawns `opencode run` (concurrency
-capped by `MAX_OPENCODE_SESSIONS`, logs under `data/sessions/`), so the host also
-needs the opencode CLI and the model provider authed.
+Run both under a process manager (launchd on macOS, systemd on Linux; or nohup,
+tmux, pm2). It must be reachable by X on a public URL (e.g. ngrok tunnel or
+reverse proxy) for webhooks to arrive. Each event dispatches an OpenCode session
+(concurrency capped by `MAX_OPENCODE_SESSIONS`, logs under `data/sessions/`), so
+the host also needs the opencode CLI, an `opencode serve` instance, and the
+model provider authed.
 
 ## Outbound prospecting (cron)
 

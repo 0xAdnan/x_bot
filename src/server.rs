@@ -8,11 +8,20 @@ use axum::{
 };
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use hmac::{Hmac, Mac};
+use opencode_rs::types::event::Event;
+use opencode_rs::types::message::{Part, PromptPart, PromptRequest};
+use opencode_rs::types::session::CreateSessionRequest;
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
-use std::{net::SocketAddr, process::Stdio, sync::atomic::{AtomicUsize, Ordering}, sync::Arc};
+use std::{
+    net::SocketAddr,
+    sync::atomic::{AtomicUsize, Ordering},
+    sync::Arc,
+    time::Duration,
+};
+use tokio::io::AsyncWriteExt;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -63,6 +72,8 @@ pub async fn run_server(port_override: Option<u16>) {
 
     let state = Arc::new(AppState { client_secret });
 
+    tokio::spawn(check_opencode_server_health());
+
     let webhook_routes = Router::new()
         .route("/x", get(handle_crc).post(handle_x_webhook))
         .route("/pitch", post(handle_pitch_webhook))
@@ -77,8 +88,9 @@ pub async fn run_server(port_override: Option<u16>) {
         .layer(TraceLayer::new_for_http());
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
-    info!("🚀 Pitch webhook dispatcher (spawns opencode sessions) listening on http://{}", addr);
+    info!("🚀 Pitch webhook dispatcher (opencode_rs SDK → opencode serve) listening on http://{}", addr);
     info!("📌 Unified webhook base: /api/webhook (x, pitch, trigger, health, stats)");
+    info!("📡 Dispatching to opencode server at {}", opencode_base_url());
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
@@ -136,7 +148,11 @@ fn max_sessions() -> usize {
         .unwrap_or(3)
 }
 
-fn spawn_opencode_session(task: &str) -> Result<(), String> {
+fn opencode_base_url() -> String {
+    std::env::var("OPENCODE_URL").unwrap_or_else(|_| "http://127.0.0.1:4096".to_string())
+}
+
+async fn dispatch_opencode_session(task: &str) -> Result<(), String> {
     if ACTIVE_SESSIONS.load(Ordering::Relaxed) >= max_sessions() {
         return Err(format!("at session cap ({})", max_sessions()));
     }
@@ -149,7 +165,9 @@ fn spawn_opencode_session(task: &str) -> Result<(), String> {
 
     let ts = chrono::Utc::now().format("%Y%m%d_%H%M%S_%3f");
     let log_path = sessions_dir.join(format!("{}.log", ts));
-    let log = std::fs::File::create(&log_path).map_err(|e| format!("log file: {}", e))?;
+    let log = tokio::fs::File::create(&log_path)
+        .await
+        .map_err(|e| format!("log file: {}", e))?;
 
     let prompt = format!(
         "You are handling an event dispatched by the PITCH webhook server. Load the x-mention skill \
@@ -157,37 +175,148 @@ fn spawn_opencode_session(task: &str) -> Result<(), String> {
         task
     );
 
-    info!("[Dispatcher] spawning opencode session (log: {})", log_path.display());
+    let client = opencode_rs::ClientBuilder::new()
+        .base_url(opencode_base_url())
+        .directory(cfg.repo_root.to_string_lossy().to_string())
+        .build()
+        .map_err(|e| format!("opencode client build: {}", e))?;
+
+    info!("[Dispatcher] dispatching opencode session via SDK (log: {})", log_path.display());
     ACTIVE_SESSIONS.fetch_add(1, Ordering::Relaxed);
 
-    let pid_path = log_path.clone();
+    let session = match client
+        .sessions()
+        .create(&CreateSessionRequest {
+            title: Some(format!("pitch-webhook-{}", ts)),
+            ..CreateSessionRequest::default()
+        })
+        .await
+    {
+        Ok(s) => s,
+        Err(e) => {
+            ACTIVE_SESSIONS.fetch_sub(1, Ordering::Relaxed);
+            return Err(format!("session create: {}", e));
+        }
+    };
+
+    let mut sub = match client.subscribe_session(&session.id) {
+        Ok(s) => s,
+        Err(e) => {
+            let _ = client.sessions().delete(&session.id).await;
+            ACTIVE_SESSIONS.fetch_sub(1, Ordering::Relaxed);
+            return Err(format!("session subscribe: {}", e));
+        }
+    };
+
+    if let Err(e) = client
+        .messages()
+        .prompt_async(
+            &session.id,
+            &PromptRequest {
+                parts: vec![PromptPart::Text {
+                    text: prompt.clone(),
+                    synthetic: None,
+                    ignored: None,
+                    metadata: None,
+                }],
+                message_id: None,
+                model: None,
+                agent: None,
+                no_reply: None,
+                system: None,
+                variant: None,
+            },
+        )
+        .await
+    {
+        let _ = client.sessions().delete(&session.id).await;
+        ACTIVE_SESSIONS.fetch_sub(1, Ordering::Relaxed);
+        return Err(format!("prompt send: {}", e));
+    }
+
     let task_owned = task.to_string();
-    std::thread::spawn(move || {
-        match std::process::Command::new("opencode")
-            .arg("run")
-            .arg(&prompt)
-            .current_dir(&cfg.repo_root)
-            .stdin(Stdio::null())
-            .stdout(Stdio::from(log.try_clone().unwrap_or_else(|_| {
-                std::fs::File::create(&pid_path).unwrap_or_else(|_| {
-                    std::fs::OpenOptions::new().append(true).open("/dev/null").unwrap()
-                })
-            })))
-            .stderr(Stdio::null())
-            .spawn()
-        {
-            Ok(mut child) => {
-                let _ = child.wait();
-                info!("[Dispatcher] opencode session finished: {}", task_owned);
-            }
-            Err(e) => {
-                error!("[Dispatcher] failed to spawn opencode session: {}", e);
+    let session_id = session.id.clone();
+    tokio::spawn(async move {
+        let mut log = log;
+        let mut finished = false;
+        let _ = log.write_all(format!("[prompt]\n{}\n", prompt).as_bytes()).await;
+        let deadline = tokio::time::Instant::now() + Duration::from_secs(2 * 60 * 60);
+
+        loop {
+            let recv = tokio::time::timeout(Duration::from_secs(30 * 60), sub.recv()).await;
+            match recv {
+                Ok(Some(ev)) => {
+                    if let Some(line) = event_log_line(&ev) {
+                        let _ = log.write_all(line.as_bytes()).await;
+                    }
+                    match &ev {
+                        Event::SessionIdle { properties }
+                            if properties.session_id == session_id =>
+                        {
+                            finished = true;
+                            break;
+                        }
+                        Event::SessionError { .. } => break,
+                        _ => {}
+                    }
+                    if tokio::time::Instant::now() > deadline {
+                        break;
+                    }
+                }
+                Ok(None) => break,
+                Err(_) => break,
             }
         }
+
+        let _ = client.sessions().delete(&session.id).await;
         ACTIVE_SESSIONS.fetch_sub(1, Ordering::Relaxed);
+        info!(
+            "[Dispatcher] opencode session {} finished (idle={}): {}",
+            session.id, finished, task_owned
+        );
     });
 
     Ok(())
+}
+
+fn event_log_line(ev: &Event) -> Option<String> {
+    match ev {
+        Event::MessagePartDelta { properties } => properties.delta.clone(),
+        Event::MessagePartUpdated { properties } => match &properties.part {
+            Some(Part::Text { text, .. }) => Some(text.clone()),
+            _ => None,
+        },
+        Event::SessionIdle { .. } => Some("[session.idle]".to_string()),
+        Event::SessionError { .. } => Some("[session.error]".to_string()),
+        _ => None,
+    }
+}
+
+async fn check_opencode_server_health() {
+    let base_url = opencode_base_url();
+    let client = opencode_rs::ClientBuilder::new()
+        .base_url(base_url.clone())
+        .build()
+        .ok();
+    let Some(client) = client else {
+        warn!("[Dispatcher] opencode client failed to build for {}", base_url);
+        return;
+    };
+    match client.global().health().await {
+        Ok(h) if h.healthy => {
+            info!(
+                "[Dispatcher] opencode server healthy at {} (v{})",
+                base_url,
+                h.version.as_deref().unwrap_or("unknown")
+            );
+        }
+        Ok(_) | Err(_) => {
+            warn!(
+                "[Dispatcher] opencode server unreachable at {} — start `opencode serve --port 4096`. Incoming webhook events will be rejected with a dispatch error.",
+                base_url
+            );
+        }
+    }
 }
 
 async fn handle_x_webhook(Json(body): Json<serde_json::Value>) -> impl IntoResponse {
@@ -216,7 +345,7 @@ async fn handle_x_webhook(Json(body): Json<serde_json::Value>) -> impl IntoRespo
     };
 
     tokio::spawn(async move {
-        if let Err(e) = spawn_opencode_session(&task) {
+        if let Err(e) = dispatch_opencode_session(&task).await {
             error!("[Dispatcher] {} — task skipped: {}", e, task);
         }
     });
@@ -248,7 +377,7 @@ async fn handle_pitch_webhook(Json(body): Json<serde_json::Value>) -> impl IntoR
     );
 
     tokio::spawn(async move {
-        if let Err(e) = spawn_opencode_session(&task) {
+        if let Err(e) = dispatch_opencode_session(&task).await {
             error!("[Dispatcher] {} — task skipped: {}", e, task);
         }
     });
@@ -288,7 +417,7 @@ async fn handle_manual_trigger(payload: Option<Json<TriggerPayload>>) -> impl In
     };
 
     tokio::spawn(async move {
-        if let Err(e) = spawn_opencode_session(&task) {
+        if let Err(e) = dispatch_opencode_session(&task).await {
             error!("[Dispatcher] {} — task skipped: {}", e, task);
         }
     });
