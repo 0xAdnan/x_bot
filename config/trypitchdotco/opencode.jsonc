@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx", "@playwright/mcp@latest",
+        "--storage-state=/home/adnan/x_bot/.browser-profile/storageState_trypitchdotco.json"
+      ],
+      "enabled": true
+    }
+  },
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
+  }
+}

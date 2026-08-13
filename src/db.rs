@@ -216,6 +216,19 @@ impl Database {
         Ok(rows)
     }
 
+    pub fn count_jobs_by_user(&self, user_handle: &str) -> SqlResult<usize> {
+        let clean_handle = if user_handle.starts_with('@') {
+            user_handle.to_string()
+        } else {
+            format!("@{}", user_handle)
+        };
+        let mut stmt = self.conn.prepare(
+            "SELECT COUNT(*) FROM mention_jobs WHERE LOWER(user_handle) = LOWER(?1) AND status != 'cancelled' AND status != 'failed'"
+        )?;
+        let count: usize = stmt.query_row([clean_handle], |row| row.get(0))?;
+        Ok(count)
+    }
+
     pub fn upsert_prospect(&self, p: &Prospect) -> SqlResult<()> {
         self.conn.execute(
             "
@@ -377,6 +390,45 @@ impl Database {
         });
 
         Ok(())
+    }
+
+    pub fn get_activities(&self, limit: usize) -> SqlResult<Vec<Activity>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT id, ts, action, handle, segment, variant, detail, result FROM activities ORDER BY id DESC LIMIT ?1"
+        )?;
+        let rows = stmt.query_map([limit], |row| {
+            Ok(Activity {
+                id: row.get(0)?,
+                ts: row.get(1)?,
+                action: row.get(2)?,
+                handle: row.get(3)?,
+                segment: row.get(4)?,
+                variant: row.get(5)?,
+                detail: row.get(6)?,
+                result: row.get(7)?,
+            })
+        })?
+        .collect::<SqlResult<Vec<_>>>()?;
+
+        Ok(rows)
+    }
+
+    pub fn delete_item(&self, item_type: &str, id: &str) -> SqlResult<bool> {
+        let table = match item_type {
+            "prospect" => "prospects",
+            "mention_job" => "mention_jobs",
+            "activity" => "activities",
+            _ => return Ok(false),
+        };
+        if let Ok(num_id) = id.parse::<i64>() {
+            let query = format!("DELETE FROM {} WHERE id = ?1", table);
+            self.conn.execute(&query, [num_id])?;
+        } else {
+            let col = if item_type == "prospect" { "handle" } else { "tweet_id" };
+            let query = format!("DELETE FROM {} WHERE {} = ?1", table, col);
+            self.conn.execute(&query, [id])?;
+        }
+        Ok(true)
     }
 
     pub fn get_insights(&self) -> SqlResult<String> {

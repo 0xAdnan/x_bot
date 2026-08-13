@@ -142,8 +142,25 @@ enum McpCommands {
     /// Trigger AI video generation for a URL
     Create {
         url: String,
+        #[arg(short, long)]
         instructions: Option<String>,
+        #[arg(short, long)]
+        voice: Option<String>,
+        #[arg(short, long)]
+        background: Option<String>,
+        #[arg(long)]
+        browser_header: Option<String>,
+        #[arg(short, long)]
+        theme: Option<String>,
     },
+    /// Create an AI Launch Video project
+    CreateLaunch {
+        name: String,
+        #[arg(short, long)]
+        prompt: String,
+    },
+    /// Query launch video project status
+    LaunchStatus { name: String },
     /// Query job rendering status
     Status { job_id: String },
     /// Check account credit balance
@@ -256,8 +273,27 @@ async fn main() {
         }
 
         Commands::Mcp { cmd } => match cmd {
-            McpCommands::Create { url, instructions } => {
-                match pitch_mcp::create_demo_video(&url, instructions.as_deref()).await {
+            McpCommands::Create { url, instructions, voice, background, browser_header, theme } => {
+                match pitch_mcp::create_demo_video(
+                    &url,
+                    instructions.as_deref(),
+                    voice.as_deref(),
+                    background.as_deref(),
+                    browser_header.as_deref(),
+                    theme.as_deref(),
+                ).await {
+                    Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
+                    Err(e) => eprintln!("[Pitch MCP Error]: {}", e),
+                }
+            }
+            McpCommands::CreateLaunch { name, prompt } => {
+                match pitch_mcp::create_launch_video(&name, &prompt, None).await {
+                    Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
+                    Err(e) => eprintln!("[Pitch MCP Error]: {}", e),
+                }
+            }
+            McpCommands::LaunchStatus { name } => {
+                match pitch_mcp::get_launch_video_status(&name).await {
                     Ok(res) => println!("{}", serde_json::to_string_pretty(&res).unwrap()),
                     Err(e) => eprintln!("[Pitch MCP Error]: {}", e),
                 }

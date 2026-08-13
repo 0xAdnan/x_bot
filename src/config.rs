@@ -4,6 +4,29 @@ use std::{
     path::PathBuf,
 };
 
+pub fn try_b64decode(s: &str) -> String {
+    if s.is_empty() {
+        return String::new();
+    }
+    use base64::Engine;
+    for pad in ["", "=", "==", "==="] {
+        let padded = format!("{}{}", s, pad);
+        if let Ok(decoded_bytes) = base64::engine::general_purpose::STANDARD.decode(&padded) {
+            if let Ok(decoded_str) = String::from_utf8(decoded_bytes) {
+                if !decoded_str.is_empty()
+                    && decoded_str
+                        .chars()
+                        .all(|c| c.is_ascii_graphic() || c.is_ascii_whitespace())
+                    && decoded_str != s
+                {
+                    return decoded_str;
+                }
+            }
+        }
+    }
+    s.to_string()
+}
+
 pub struct Config {
     pub repo_root: PathBuf,
     pub env_path: PathBuf,
@@ -32,13 +55,18 @@ impl Config {
             .map(PathBuf::from)
             .unwrap_or_else(|_| repo_root.join("data").join("pitch_bot.db"));
 
+        let x_access_raw = env::var("X_USER_ACCESS_TOKEN").unwrap_or_default();
+        let x_refresh_raw = env::var("X_USER_REFRESH_TOKEN").unwrap_or_default();
+        let x_client_id_raw = env::var("X_CLIENT_ID").unwrap_or_default();
+        let x_client_secret_raw = env::var("X_CLIENT_SECRET").unwrap_or_default();
+
         Config {
             repo_root: repo_root.clone(),
             env_path,
-            x_access: env::var("X_USER_ACCESS_TOKEN").unwrap_or_default(),
-            x_refresh: env::var("X_USER_REFRESH_TOKEN").unwrap_or_default(),
-            x_client_id: env::var("X_CLIENT_ID").unwrap_or_default(),
-            x_client_secret: env::var("X_CLIENT_SECRET").unwrap_or_default(),
+            x_access: try_b64decode(&x_access_raw),
+            x_refresh: try_b64decode(&x_refresh_raw),
+            x_client_id: try_b64decode(&x_client_id_raw),
+            x_client_secret: try_b64decode(&x_client_secret_raw),
             x_user_id: env::var("X_USER_ID").unwrap_or_default(),
             _x_operator_handle: env::var("X_OPERATOR_HANDLE")
                 .unwrap_or_else(|_| "@trypitchdotco".to_string()),

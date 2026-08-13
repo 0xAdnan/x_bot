@@ -18,7 +18,7 @@
       "type": "local",
       "command": [
         "npx", "@playwright/mcp@latest",
-        "--user-data-dir=./.browser-profile"
+        "--storage-state=./.browser-profile/storageState_trypitchdotco.json"
       ],
       "enabled": true
     }

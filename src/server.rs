@@ -68,17 +68,41 @@ pub async fn run_server(port_override: Option<u16>) {
 
     let state = Arc::new(AppState { client_secret });
 
-    let webhook_routes = Router::new()
+    let app = Router::new()
         .route("/x", get(handle_crc).post(handle_x_webhook))
         .route("/x-webhook", get(handle_crc).post(handle_x_webhook))
         .route("/trigger", post(handle_manual_trigger))
         .route("/health", get(handle_health))
         .route("/stats", get(handle_stats))
-        .with_state(state);
-
-    let app = Router::new()
-        .nest("/api/webhook", webhook_routes.clone())
-        .nest("/webhook", webhook_routes)
+        .route("/crm", get(handle_crm))
+        .route("/mentions", get(handle_mentions))
+        .route("/insights", get(handle_insights))
+        .route("/activity", get(handle_activity))
+        .route("/research", get(handle_research))
+        .route("/delete", post(handle_delete))
+        .route("/api/x", get(handle_crc).post(handle_x_webhook))
+        .route("/api/x-webhook", get(handle_crc).post(handle_x_webhook))
+        .route("/api/trigger", post(handle_manual_trigger))
+        .route("/api/health", get(handle_health))
+        .route("/api/stats", get(handle_stats))
+        .route("/api/crm", get(handle_crm))
+        .route("/api/mentions", get(handle_mentions))
+        .route("/api/insights", get(handle_insights))
+        .route("/api/activity", get(handle_activity))
+        .route("/api/research", get(handle_research))
+        .route("/api/delete", post(handle_delete))
+        .route("/api/webhook/x", get(handle_crc).post(handle_x_webhook))
+        .route("/api/webhook/x-webhook", get(handle_crc).post(handle_x_webhook))
+        .route("/api/webhook/trigger", post(handle_manual_trigger))
+        .route("/api/webhook/health", get(handle_health))
+        .route("/api/webhook/stats", get(handle_stats))
+        .route("/api/webhook/crm", get(handle_crm))
+        .route("/api/webhook/mentions", get(handle_mentions))
+        .route("/api/webhook/insights", get(handle_insights))
+        .route("/api/webhook/activity", get(handle_activity))
+        .route("/api/webhook/research", get(handle_research))
+        .route("/api/webhook/delete", post(handle_delete))
+        .with_state(state)
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());
 
@@ -215,4 +239,149 @@ async fn handle_stats() -> impl IntoResponse {
             Json(serde_json::json!({ "status": "error", "message": "Failed to open SQLite database" })),
         )
     }
+}
+
+async fn handle_crm() -> impl IntoResponse {
+    if let Ok(db) = Database::open() {
+        let prospects = db.get_all_prospects(None).unwrap_or_default();
+        let new_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("new")).cloned().collect();
+        let warming_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("warming")).cloned().collect();
+        let contacted_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("contacted")).cloned().collect();
+        let in_convo_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("in_convo")).cloned().collect();
+        let trial_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("trial")).cloned().collect();
+        let customer_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("customer")).cloned().collect();
+        let dnc_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("do-not-contact")).cloned().collect();
+        let lost_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("lost")).cloned().collect();
+
+        (
+            StatusCode::OK,
+            Json(serde_json::json!({
+                "prospects": prospects,
+                "total": prospects.len(),
+                "stages": {
+                    "new": new_list,
+                    "warming": warming_list,
+                    "contacted": contacted_list,
+                    "in_convo": in_convo_list,
+                    "trial": trial_list,
+                    "customer": customer_list,
+                    "do-not-contact": dnc_list,
+                    "lost": lost_list
+                }
+            })),
+        )
+    } else {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "Database error" })),
+        )
+    }
+}
+
+async fn handle_mentions() -> impl IntoResponse {
+    if let Ok(db) = Database::open() {
+        let jobs = db.get_mention_jobs_by_status(None, 100).unwrap_or_default();
+        (
+            StatusCode::OK,
+            Json(serde_json::json!({
+                "jobs": jobs,
+                "total": jobs.len()
+            })),
+        )
+    } else {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "Database error" })),
+        )
+    }
+}
+
+async fn handle_insights() -> impl IntoResponse {
+    if let Ok(db) = Database::open() {
+        let content = db.get_insights().unwrap_or_default();
+        (
+            StatusCode::OK,
+            Json(serde_json::json!({
+                "content": content
+            })),
+        )
+    } else {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "Database error" })),
+        )
+    }
+}
+
+async fn handle_activity() -> impl IntoResponse {
+    if let Ok(db) = Database::open() {
+        let acts = db.get_activities(100).unwrap_or_default();
+        (
+            StatusCode::OK,
+            Json(serde_json::json!({
+                "activities": acts,
+                "total": acts.len()
+            })),
+        )
+    } else {
+        (
+            StatusCode::OK,
+            Json(serde_json::json!({ "activities": [], "total": 0 })),
+        )
+    }
+}
+
+async fn handle_research() -> impl IntoResponse {
+    let queries = serde_json::json!([
+        { "query": "\"loom alternative\" OR \"tella.tv alternative\"", "category": "Competitor Mentions", "priority": "High" },
+        { "query": "\"need a demo video\" OR \"how to make a product demo\"", "category": "High Intent", "priority": "High" },
+        { "query": "YC W26 OR \"launching on product hunt\"", "category": "SaaS Launches", "priority": "Medium" }
+    ]);
+    let scoring_rules = serde_json::json!([
+        { "rule": "Founder / CEO / CTO in bio", "description": "Target ICP decision maker", "points": "+3" },
+        { "rule": "Explicit demo video request", "description": "Immediate high intent", "points": "+4" },
+        { "rule": "Has live product URL", "description": "Can generate automated video", "points": "+3" }
+    ]);
+
+    let mut queue = Vec::new();
+    if let Ok(db) = Database::open() {
+        let prospects = db.get_all_prospects(Some("new")).unwrap_or_default();
+        for p in prospects.iter().take(10) {
+            queue.push(serde_json::json!({
+                "account": "@trypitchdotco",
+                "status": "ready",
+                "type": "Demo Outreach Hook",
+                "hook": p.why.clone().unwrap_or_else(|| format!("Created custom pitch hook for {}", p.handle)),
+                "preset": "Charon | Light | Ocean"
+            }));
+        }
+    }
+
+    (
+        StatusCode::OK,
+        Json(serde_json::json!({
+            "queries": queries,
+            "scoringRules": scoring_rules,
+            "contentQueue": queue
+        })),
+    )
+}
+
+#[derive(serde::Deserialize)]
+struct DeletePayload {
+    #[serde(rename = "type")]
+    item_type: Option<String>,
+    id: Option<String>,
+}
+
+async fn handle_delete(Json(payload): Json<DeletePayload>) -> impl IntoResponse {
+    if let (Some(item_type), Some(id)) = (payload.item_type, payload.id) {
+        if let Ok(db) = Database::open() {
+            let _ = db.delete_item(&item_type, &id);
+        }
+    }
+    (
+        StatusCode::OK,
+        Json(serde_json::json!({ "status": "ok", "deleted": true })),
+    )
 }

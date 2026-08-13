@@ -43,13 +43,77 @@ impl XApiClient {
 
     fn headers(&self) -> HeaderMap {
         let mut headers = HeaderMap::new();
-        headers.insert(
-            AUTHORIZATION,
-            HeaderValue::from_str(&format!("Bearer {}", self.config.x_access)).unwrap(),
-        );
         headers.insert(USER_AGENT, HeaderValue::from_static(UA));
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
         headers
+    }
+
+    fn oauth1_header(&self, method: &str, path: &str, query: Option<&[(&str, &str)]>) -> String {
+        let api_key = std::env::var("X_API_KEY").unwrap_or_default();
+        let api_secret = std::env::var("X_API_SECRET").unwrap_or_default();
+        let user_token = std::env::var("X_USER_ACCESS_TOKEN").unwrap_or_default();
+        let user_secret = std::env::var("X_USER_ACCESS_SECRET").unwrap_or_default();
+
+        let api_key = crate::config::try_b64decode(&api_key);
+        let api_secret = crate::config::try_b64decode(&api_secret);
+        let user_token = crate::config::try_b64decode(&user_token);
+        let user_secret = crate::config::try_b64decode(&user_secret);
+
+        let url_str = format!("{}{}", API_BASE, path);
+        let nonce = format!("{:x}", chrono::Utc::now().timestamp_nanos_opt().unwrap_or(123456789));
+        let timestamp = chrono::Utc::now().timestamp().to_string();
+
+        let mut all_params = std::collections::BTreeMap::new();
+        all_params.insert("oauth_consumer_key", api_key.as_str());
+        all_params.insert("oauth_nonce", nonce.as_str());
+        all_params.insert("oauth_signature_method", "HMAC-SHA1");
+        all_params.insert("oauth_timestamp", timestamp.as_str());
+        all_params.insert("oauth_token", user_token.as_str());
+        all_params.insert("oauth_version", "1.0");
+
+        if let Some(qp) = query {
+            for (k, v) in qp {
+                all_params.insert(*k, *v);
+            }
+        }
+
+        let sorted_params = all_params
+            .iter()
+            .map(|(k, v)| format!("{}={}", urlencoding::encode(k), urlencoding::encode(v)))
+            .collect::<Vec<_>>()
+            .join("&");
+
+        let base_string = format!(
+            "{}&{}&{}",
+            method,
+            urlencoding::encode(&url_str),
+            urlencoding::encode(&sorted_params)
+        );
+
+        let signing_key = format!(
+            "{}&{}",
+            urlencoding::encode(&api_secret),
+            urlencoding::encode(&user_secret)
+        );
+
+        use hmac::{Hmac, Mac};
+        use sha1::Sha1;
+        type HmacSha1 = Hmac<Sha1>;
+
+        let mut mac = HmacSha1::new_from_slice(signing_key.as_bytes()).unwrap();
+        mac.update(base_string.as_bytes());
+        let result = mac.finalize();
+        use base64::Engine;
+        let signature = base64::engine::general_purpose::STANDARD.encode(result.into_bytes());
+
+        format!(
+            "OAuth oauth_consumer_key=\"{}\", oauth_nonce=\"{}\", oauth_signature=\"{}\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"{}\", oauth_token=\"{}\", oauth_version=\"1.0\"",
+            urlencoding::encode(&api_key),
+            urlencoding::encode(&nonce),
+            urlencoding::encode(&signature),
+            urlencoding::encode(&timestamp),
+            urlencoding::encode(&user_token)
+        )
     }
 
     pub async fn refresh_token(&mut self) -> Result<(), XApiError> {
@@ -177,7 +241,12 @@ impl XApiClient {
                 url = format!("{}?{}", url, query_str);
             }
 
-            let mut req = self.client.request(method.clone(), &url).headers(self.headers());
+            let auth_header = self.oauth1_header(method.as_str(), path, query);
+            let mut req = self
+                .client
+                .request(method.clone(), &url)
+                .headers(self.headers())
+                .header(AUTHORIZATION, auth_header);
 
             if let Some(b) = body.clone() {
                 req = req.json(&b);
@@ -328,13 +397,13 @@ impl XApiClient {
                     "[X API Primary Failed]: {}. Executing Playwright browser fallback...",
                     e
                 );
-                let state_file = "/home/adnan/x_bot/.browser-profile-trypitchdotco/storageState_trypitchdotco.json";
+                let state_file = "/home/adnan/x_bot/.browser-profile/storageState_trypitchdotco.json";
                 let target_url = match reply_to_tweet_id {
                     Some(tid) => format!("https://x.com/i/status/{}", tid),
                     None => "https://x.com/compose/post".to_string(),
                 };
                 let py_script = format!(
-                    "import asyncio\n\
+                    "import asyncio, re, urllib.request, os\n\
                     from playwright.async_api import async_playwright\n\
                     async def run():\n\
                     \tasync with async_playwright() as p:\n\
@@ -347,16 +416,32 @@ impl XApiClient {
                     \t\tif await reply_icon.count() > 0:\n\
                     \t\t\tawait reply_icon.click()\n\
                     \t\t\tawait page.wait_for_timeout(1000)\n\
+                    \t\ttext_val = {:?}\n\
+                    \t\tm = re.search(r'https://[^\\s]+\\.mp4', text_val)\n\
+                    \t\tif m:\n\
+                    \t\t\ttry:\n\
+                    \t\t\t\tvideo_url = m.group(0)\n\
+                    \t\t\t\treq = urllib.request.Request(video_url, headers={{'User-Agent': 'Mozilla/5.0'}})\n\
+                    \t\t\t\twith urllib.request.urlopen(req) as resp, open('/tmp/upload_video.mp4', 'wb') as f:\n\
+                    \t\t\t\t\tf.write(resp.read())\n\
+                    \t\t\t\tfile_inp = page.locator('input[data-testid=\"fileInput\"]').first\n\
+                    \t\t\t\tif await file_inp.count() > 0:\n\
+                    \t\t\t\t\tawait file_inp.set_input_files('/tmp/upload_video.mp4')\n\
+                    \t\t\t\t\tawait page.wait_for_timeout(12000)\n\
+                    \t\t\texcept Exception as ve: print('[Video Attach Warning]:', ve)\n\
                     \t\tbox = page.locator('div[data-testid=\"tweetTextarea_0\"]').first\n\
                     \t\tif await box.count() > 0:\n\
                     \t\t\tawait box.click()\n\
-                    \t\t\tawait box.fill({:?})\n\
+                    \t\t\tawait box.fill(text_val)\n\
                     \t\t\tawait page.wait_for_timeout(1000)\n\
                     \t\t\tbtn = page.locator('button[data-testid=\"tweetButton\"], button[data-testid=\"tweetButtonInline\"]').first\n\
                     \t\t\tif await btn.count() > 0:\n\
                     \t\t\t\tawait btn.click()\n\
-                    \t\t\t\tawait page.wait_for_timeout(3000)\n\
-                    \t\t\t\tprint('[Browser Fallback Success] Tweet posted via Playwright')\n\
+                    \t\t\t\tawait page.wait_for_timeout(5000)\n\
+                    \t\t\t\tprint('[Browser Fallback Success] Native Video Tweet posted via Playwright')\n\
+                    \t\tif os.path.exists('/tmp/upload_video.mp4'):\n\
+                    \t\t\ttry: os.remove('/tmp/upload_video.mp4')\n\
+                    \t\t\texcept: pass\n\
                     \t\tawait browser.close()\n\
                     asyncio.run(run())",
                     state_file, target_url, text
@@ -387,98 +472,48 @@ impl XApiClient {
         query: &str,
         max_results: usize,
     ) -> Result<Vec<Value>, XApiError> {
-        let max_str = max_results.min(20).to_string();
-        let query_params = [
-            ("query", query),
-            ("max_results", max_str.as_str()),
-            ("expansions", "author_id"),
-            ("tweet.fields", "created_at,text,author_id"),
-            ("user.fields", "id,username,name"),
-        ];
+        println!("[Silent Browser Read]: Searching X for '{}' via Playwright Chromium (@adnanspitch)...", query);
+        let state_file = "/home/adnan/x_bot/.browser-profile/storageState.json";
+        let search_url = format!("https://x.com/search?q={}&f=live", urlencoding::encode(query));
 
-        match self
-            .request::<Value>(
-                reqwest::Method::GET,
-                "/tweets/search/recent",
-                Some(&query_params),
-                None,
-            )
-            .await
-        {
-            Ok(res) => {
-                let mut users_map = HashMap::new();
-                if let Some(users) = res["includes"]["users"].as_array() {
-                    for u in users {
-                        if let (Some(id), Some(uname)) = (u["id"].as_str(), u["username"].as_str()) {
-                            users_map.insert(id.to_string(), format!("@{}", uname));
-                        }
-                    }
-                }
+        let py_script = format!(
+            "import asyncio, json, re\n\
+            from playwright.async_api import async_playwright\n\
+            async def run():\n\
+            \tasync with async_playwright() as p:\n\
+            \t\tbrowser = await p.chromium.launch(headless=True)\n\
+            \t\tcontext = await browser.new_context(storage_state='{}')\n\
+            \t\tpage = await context.new_page()\n\
+            \t\tawait page.goto('{}', wait_until='domcontentloaded')\n\
+            \t\tawait page.wait_for_timeout(4000)\n\
+            \t\ttweets = await page.locator('article[data-testid=\"tweet\"]').all()\n\
+            \t\tres = []\n\
+            \t\tfor t in tweets[:{}]:\n\
+            \t\t\ttry:\n\
+            \t\t\t\ttext = await t.inner_text()\n\
+            \t\t\t\tclean = text.replace('\\n', ' ')\n\
+            \t\t\t\thandle_m = re.search(r'@(\\w+)', clean)\n\
+            \t\t\t\thandle = '@' + handle_m.group(1) if handle_m else '@prospect'\n\
+            \t\t\t\tres.append({{'id': 'browser_tweet', 'author': handle, 'text': clean}})\n\
+            \t\t\texcept Exception: pass\n\
+            \t\tprint(json.dumps(res))\n\
+            \t\tawait browser.close()\n\
+            asyncio.run(run())",
+            state_file, search_url, max_results
+        );
 
-                let mut results = Vec::new();
-                if let Some(tweets) = res["data"].as_array() {
-                    for t in tweets {
-                        let id = t["id"].as_str().unwrap_or_default();
-                        let text = t["text"].as_str().unwrap_or_default();
-                        let author_id = t["author_id"].as_str().unwrap_or_default();
-                        let handle = users_map.get(author_id).cloned().unwrap_or_default();
+        let output = std::process::Command::new("python3")
+            .arg("-c")
+            .arg(py_script)
+            .output();
 
-                        results.push(serde_json::json!({
-                            "id": id,
-                            "author": handle,
-                            "created_at": t["created_at"],
-                            "text": text
-                        }));
-                    }
-                }
-                Ok(results)
-            }
-            Err(e) => {
-                println!(
-                    "[X Search API Primary Failed]: {}. Executing Playwright browser search fallback...",
-                    e
-                );
-                let state_file = "/home/adnan/x_bot/.browser-profile/storageState.json";
-                let search_url = format!("https://x.com/search?q={}&f=live", urlencoding::encode(query));
-
-                let py_script = format!(
-                    "import asyncio, json\n\
-                    from playwright.async_api import async_playwright\n\
-                    async def run():\n\
-                    \tasync with async_playwright() as p:\n\
-                    \t\tbrowser = await p.chromium.launch(headless=True)\n\
-                    \t\tcontext = await browser.new_context(storage_state='{}')\n\
-                    \t\tpage = await context.new_page()\n\
-                    \t\tawait page.goto('{}', wait_until='domcontentloaded')\n\
-                    \t\tawait page.wait_for_timeout(3000)\n\
-                    \t\ttweets = await page.locator('article[data-testid=\"tweet\"]').all()\n\
-                    \t\tres = []\n\
-                    \t\tfor t in tweets[:{}]:\n\
-                    \t\t\ttry:\n\
-                    \t\t\t\ttext = await t.inner_text()\n\
-                    \t\t\t\tclean = text.replace('\\n', ' ')\n\
-                    \t\t\t\tres.append({{'id': 'browser_tweet', 'author': '@prospect', 'text': clean}})\n\
-                    \t\t\texcept Exception: pass\n\
-                    \t\tprint(json.dumps(res))\n\
-                    \t\tawait browser.close()\n\
-                    asyncio.run(run())",
-                    state_file, search_url, max_results
-                );
-
-                let output = std::process::Command::new("python3")
-                    .arg("-c")
-                    .arg(py_script)
-                    .output();
-
-                if let Ok(out) = output {
-                    let text = String::from_utf8_lossy(&out.stdout);
-                    if let Ok(parsed) = serde_json::from_str::<Vec<Value>>(&text) {
-                        return Ok(parsed);
-                    }
-                }
-
-                Ok(Vec::new())
+        if let Ok(out) = output {
+            let text = String::from_utf8_lossy(&out.stdout);
+            if let Ok(parsed) = serde_json::from_str::<Vec<Value>>(&text) {
+                return Ok(parsed);
             }
         }
+
+        Ok(Vec::new())
     }
 }

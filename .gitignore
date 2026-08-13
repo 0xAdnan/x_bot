@@ -35,6 +35,12 @@ view_*.py
 verify_*.py
 submit_*.py
 decode_*.py
+expand_*.py
+extract_*.py
+fetch_*.py
+deliver_*.py
+discover_*.py
+*_output*.json
 candidates.json
 scanned_mentions.json
 *.png

@@ -48,6 +48,8 @@ pub async fn call_mcp_tool(tool_name: &str, args: Value) -> Result<Value, String
                         if let Some(txt) = content[0]["text"].as_str() {
                             if let Ok(json_obj) = serde_json::from_str::<Value>(txt) {
                                 return Ok(json_obj);
+                            } else {
+                                return Ok(serde_json::json!({ "message": txt, "raw": txt }));
                             }
                         }
                     }
@@ -62,22 +64,34 @@ pub async fn call_mcp_tool(tool_name: &str, args: Value) -> Result<Value, String
 pub async fn create_demo_video(
     url: &str,
     custom_instructions: Option<&str>,
+    voice_opt: Option<&str>,
+    bg_opt: Option<&str>,
+    header_opt: Option<&str>,
+    theme_opt: Option<&str>,
 ) -> Result<Value, String> {
-    let instructions = custom_instructions.unwrap_or_else(|| {
+    let base_instructions = custom_instructions.unwrap_or_else(|| {
         "Create a cinematic, polished product demo of this product. Highlight key features, value proposition, and user experience."
     });
 
+    let voice = voice_opt.unwrap_or("Charon");
+    let bg = bg_opt.unwrap_or("ocean");
+    let header = header_opt.unwrap_or("light");
+    let theme = theme_opt.unwrap_or("light");
+
+    let full_instructions = format!(
+        "{} Style guidelines: Use {} background, {} voice narration, {} browser header, {} theme, rounded container shape.",
+        base_instructions, bg, voice, header, theme
+    );
+
     let args = serde_json::json!({
         "url": url,
-        "instructions": instructions,
-        "webhook": "https://dashboard-blue-five-75.vercel.app/api/pitch-webhook",
-        "voice": "Charon",
-        "subtitles": false,
-        "theme": "light",
-        "background": "ocean",
+        "instructions": full_instructions,
+        "voice": voice,
+        "background": bg,
+        "browserHeader": header,
+        "theme": theme,
         "shape": "rounded",
-        "inset": "0.75",
-        "browserHeader": "light"
+        "inset": "0.75"
     });
 
     call_mcp_tool("create_demo_video", args).await
@@ -91,32 +105,69 @@ pub async fn get_credits() -> Result<Value, String> {
     call_mcp_tool("get_credits", serde_json::json!({})).await
 }
 
+pub async fn create_launch_video(
+    project_name: &str,
+    prompt: &str,
+    music: Option<&str>,
+) -> Result<Value, String> {
+    let mut args = serde_json::json!({
+        "name": project_name,
+        "prompt": prompt
+    });
+    if let Some(m) = music {
+        args["music"] = serde_json::json!(m);
+    }
+
+    call_mcp_tool("create_launch_video", args).await
+}
+
+pub async fn get_launch_video_status(project_name: &str) -> Result<Value, String> {
+    call_mcp_tool("get_launch_video", serde_json::json!({ "name": project_name })).await
+}
+
 pub fn extract_s3_url(status_result: &Value) -> String {
+    let check_and_prefix = |val: Option<&str>| -> Option<String> {
+        if let Some(url) = val {
+            if !url.is_empty() {
+                if url.starts_with("https://s3.trypitch.co/") || url.starts_with("http") {
+                    return Some(url.to_string());
+                }
+                if url.starts_with('/' ) {
+                    return Some(format!("https://api.trypitch.co{}", url));
+                }
+                return Some(url.to_string());
+            }
+        }
+        None
+    };
+
+    if let Some(url) = check_and_prefix(status_result["s3Url"].as_str()) {
+        return url;
+    }
+    if let Some(url) = check_and_prefix(status_result["s3_url"].as_str()) {
+        return url;
+    }
+    if let Some(url) = check_and_prefix(status_result["videoUrl"].as_str()) {
+        return url;
+    }
+    if let Some(url) = check_and_prefix(status_result["video_url"].as_str()) {
+        return url;
+    }
     let artifacts = &status_result["artifacts"];
-    if let Some(url) = artifacts["final_with_cards"].as_str() {
-        if !url.is_empty() {
-            return url.to_string();
-        }
+    if let Some(url) = check_and_prefix(artifacts["final_with_cards"].as_str()) {
+        return url;
     }
-    if let Some(url) = artifacts["video"].as_str() {
-        if !url.is_empty() {
-            return url.to_string();
-        }
+    if let Some(url) = check_and_prefix(artifacts["video"].as_str()) {
+        return url;
     }
-    if let Some(url) = artifacts["mp4"].as_str() {
-        if !url.is_empty() {
-            return url.to_string();
-        }
+    if let Some(url) = check_and_prefix(artifacts["mp4"].as_str()) {
+        return url;
     }
-    if let Some(url) = status_result["s3_url"].as_str() {
-        if !url.is_empty() {
-            return url.to_string();
-        }
+    if let Some(url) = check_and_prefix(status_result["s3_url"].as_str()) {
+        return url;
     }
-    if let Some(url) = status_result["video"].as_str() {
-        if !url.is_empty() {
-            return url.to_string();
-        }
+    if let Some(url) = check_and_prefix(status_result["video"].as_str()) {
+        return url;
     }
     String::new()
 }
