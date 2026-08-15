@@ -613,7 +613,7 @@
               </div>
 
               <div id="preview-image-container" class="hidden overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
-                <img id="preview-image-el" src="" alt="Meme Preview" class="w-full max-h-48 object-contain">
+                <img id="preview-image-el" src="" alt="Meme Preview" referrerpolicy="no-referrer" class="w-full max-h-48 object-contain">
               </div>
 
               <div class="flex justify-between text-slate-500 pt-1 text-xs border-t border-slate-900 font-mono">
@@ -1871,7 +1871,7 @@
           if (m.imageUrl) {
             visualDetail = `
               <div class="relative group overflow-hidden rounded-xl border border-pink-200/80 bg-slate-900 shadow-inner">
-                <img src="${m.imageUrl}" alt="${m.title || 'Tech Meme'}" class="w-full h-44 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
+                <img src="${m.imageUrl}" alt="${m.title || 'Tech Meme'}" referrerpolicy="no-referrer" class="w-full h-44 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
               </div>
             `;
           } else if (m.stages) {
