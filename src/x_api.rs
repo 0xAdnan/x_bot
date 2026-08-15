@@ -324,7 +324,7 @@ impl XApiClient {
         let mut query_params = vec![
             ("max_results", max_str.as_str()),
             ("expansions", "author_id,referenced_tweets.id"),
-            ("tweet.fields", "created_at,text,author_id,id"),
+            ("tweet.fields", "created_at,text,author_id,id,entities"),
             ("user.fields", "id,name,username"),
         ];
 
@@ -354,7 +354,16 @@ impl XApiClient {
         if let Some(tweets) = res["data"].as_array() {
             for t in tweets {
                 let id = t["id"].as_str().unwrap_or_default().to_string();
-                let text = t["text"].as_str().unwrap_or_default().to_string();
+                let mut text = t["text"].as_str().unwrap_or_default().to_string();
+
+                if let Some(urls) = t["entities"]["urls"].as_array() {
+                    for u in urls {
+                        if let (Some(short_u), Some(exp_u)) = (u["url"].as_str(), u["expanded_url"].as_str()) {
+                            text = text.replace(short_u, exp_u);
+                        }
+                    }
+                }
+
                 let author_id = t["author_id"].as_str().map(|s| s.to_string());
                 let author_handle = author_id.as_ref().and_then(|aid| users_map.get(aid).cloned());
                 let created_at = t["created_at"].as_str().map(|s| s.to_string());

@@ -26,12 +26,52 @@ pub enum MentionIntent {
     LaunchVideo(String),         // Explicit launch video request + valid product URL
     DemoVideo(String),           // Explicit demo / walkthrough request + valid product URL
     ConversationWithUrl(String), // Mention contains a link, but user is NOT asking for a video
-    Conversation,                // General chat, praise, question, or discussion
+    MissingUrlRequest,           // User asked for a demo/video or how to trigger one, but NO URL was provided
+    TechQuestion,                // User is asking technical questions about architecture/stack
+    PraiseOrGreeting,            // User is saying thanks, good job, congrats, or hi
+    Conversation,                // General chat
 }
 
-pub fn classify_mention_intent(text: &str) -> MentionIntent {
+pub async fn resolve_url(text: &str) -> String {
+    let raw_url = extract_url(text);
+    if raw_url == "N/A" {
+        return raw_url;
+    }
+    if raw_url.contains("t.co/") {
+        let client = reqwest::Client::builder()
+            .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            .redirect(reqwest::redirect::Policy::limited(5))
+            .timeout(std::time::Duration::from_secs(5))
+            .build();
+        if let Ok(c) = client {
+            if let Ok(resp) = c.get(&raw_url).send().await {
+                let final_u = resp.url().as_str().to_string();
+                if !final_u.is_empty() && !final_u.contains("t.co/") {
+                    return final_u;
+                }
+                if let Ok(body) = resp.text().await {
+                    let re_meta = Regex::new(r#"(?i)URL=(https?://[^\s"'>]+)"#).unwrap();
+                    if let Some(caps) = re_meta.captures(&body) {
+                        if let Some(m) = caps.get(1) {
+                            return m.as_str().to_string();
+                        }
+                    }
+                    let re_title = Regex::new(r#"(?i)<title>(https?://[^\s"'>]+)</title>"#).unwrap();
+                    if let Some(caps) = re_title.captures(&body) {
+                        if let Some(m) = caps.get(1) {
+                            return m.as_str().to_string();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    raw_url
+}
+
+pub async fn classify_mention_intent(text: &str) -> MentionIntent {
     let lower = text.to_lowercase();
-    let url = extract_url(text);
+    let url = resolve_url(text).await;
 
     let is_valid_product_url = url != "N/A"
         && !url.contains("trypitch.co")
@@ -42,21 +82,12 @@ pub fn classify_mention_intent(text: &str) -> MentionIntent {
         && !url.contains("loca.lt")
         && !url.contains("vercel.app");
 
-    if !is_valid_product_url {
-        return MentionIntent::Conversation;
-    }
-
-    // 1. Explicit Launch Video intent
     let launch_triggers = [
         "launch video", "launch demo", "product hunt launch", "for launch",
         "make a launch", "create a launch", "generate a launch",
         "build a launch", "launch walkthrough", "launch clip", "launching"
     ];
-    if launch_triggers.iter().any(|t| lower.contains(t)) {
-        return MentionIntent::LaunchVideo(url);
-    }
 
-    // 2. Explicit Demo Video intent
     let demo_triggers = [
         "make a demo", "create a demo", "generate a demo", "record a demo",
         "make a video", "create a video", "generate a video", "record a video",
@@ -64,14 +95,67 @@ pub fn classify_mention_intent(text: &str) -> MentionIntent {
         "walkthrough for", "walkthrough of", "can you make", "can you create",
         "can you demo", "can you record", "make me a", "generate me a",
         "cook a demo", "cook a video", "video for", "demo this",
-        "video demo", "make demo", "generate demo", "give me a demo", "give me a video"
+        "video demo", "make demo", "generate demo", "give me a demo", "give me a video",
+        "demo video", "walkthrough", "product demo"
     ];
-    if demo_triggers.iter().any(|t| lower.contains(t)) {
-        return MentionIntent::DemoVideo(url);
+
+    if is_valid_product_url {
+        if launch_triggers.iter().any(|t| lower.contains(t)) {
+            return MentionIntent::LaunchVideo(url);
+        }
+        if demo_triggers.iter().any(|t| lower.contains(t)) {
+            return MentionIntent::DemoVideo(url);
+        }
+        return MentionIntent::ConversationWithUrl(url);
     }
 
-    // 3. User included a URL, but did not ask to make a video
-    MentionIntent::ConversationWithUrl(url)
+    // NO URL PROVIDED:
+    // 1. User asked for a video / demo or how to use the bot without providing a URL
+    if demo_triggers.iter().any(|t| lower.contains(t))
+        || launch_triggers.iter().any(|t| lower.contains(t))
+        || lower.contains("how to use")
+        || lower.contains("how do i use")
+        || lower.contains("how to get a video")
+        || (lower.contains("how does it work") && (lower.contains("try") || lower.contains("demo")))
+    {
+        return MentionIntent::MissingUrlRequest;
+    }
+
+    // 2. Technical question
+    if lower.contains("stack")
+        || lower.contains("tech")
+        || lower.contains("how does this work")
+        || lower.contains("how it works")
+        || lower.contains("under the hood")
+        || lower.contains("architecture")
+        || lower.contains("playwright")
+        || lower.contains("model")
+        || lower.contains("agent")
+    {
+        return MentionIntent::TechQuestion;
+    }
+
+    // 3. Praise or Greeting
+    if lower.contains("thank")
+        || lower.contains("nice")
+        || lower.contains("cool")
+        || lower.contains("awesome")
+        || lower.contains("fire")
+        || lower.contains("love")
+        || lower.contains("congrat")
+        || lower.contains("congrats")
+        || lower.contains("great job")
+        || lower.contains("insane")
+        || lower.contains("sick")
+        || lower.contains("gm")
+        || lower.contains("hello")
+        || (lower.contains("yo") && lower.len() < 20)
+    {
+        return MentionIntent::PraiseOrGreeting;
+    }
+
+    // 4. General conversation
+    MentionIntent::Conversation
 }
 
 pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize, usize), String> {
@@ -107,7 +191,7 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
         }
 
         new_count += 1;
-        let intent = classify_mention_intent(&text);
+        let intent = classify_mention_intent(&text).await;
 
         println!("\n--------------------------------------------------");
         println!("[NEW MENTION DETECTED] Tweet ID: {}", tweet_id);
@@ -272,7 +356,7 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                 let clean_user = author_handle.replace('@', "").to_lowercase();
                 let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("your app").to_string();
                 let reply_msg = format!(
-                    "checked out {} @{}, looks super clean. if you ever need a quick 60s video walkthrough or launch demo for it, just tag @trypitchdotco anytime and we got you",
+                    "checked out {} @{}, looks super clean. let us know if you ever want a 60s narrated video walkthrough or launch demo for it",
                     clean_domain, clean_user
                 );
                 if !dry_run {
@@ -296,19 +380,101 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                 });
             }
 
+            MentionIntent::MissingUrlRequest => {
+                println!("[INTENT: MISSING URL REQUEST] User: {} asked for video/instructions without URL", author_handle);
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+                let reply_msg = format!(
+                    "hey @{}, drop your product link in the mention (like @trypitchdotco make a demo for example.com) and we'll render a 60s narrated walkthrough for you",
+                    clean_user
+                );
+                if !dry_run {
+                    match x_client.post_tweet(&reply_msg, Some(&tweet_id)).await {
+                        Ok(rid) => println!("[Missing URL Reply Sent] Reply Tweet ID: {}", rid),
+                        Err(e) => println!("[Missing URL Reply Warning]: {}", e),
+                    }
+                }
+                let _ = db.upsert_mention_job(&MentionJob {
+                    id: None,
+                    tweet_id: tweet_id.clone(),
+                    user_handle: author_handle.clone(),
+                    target_url: "N/A".to_string(),
+                    editor_job_id: None,
+                    status: "conversation".to_string(),
+                    s3_video_url: None,
+                    x_reply_id: None,
+                    tweet_text: Some(text.clone()),
+                    created_at: None,
+                    updated_at: None,
+                });
+            }
+
+            MentionIntent::TechQuestion => {
+                println!("[INTENT: TECH QUESTION] User: {} asking about architecture/stack", author_handle);
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+                let reply_msg = format!(
+                    "hey @{}, we use automated browser recording + vision models to script the flow, synthetic narration for voiceover, and a motion engine to render the 1080p mp4 in ~60s",
+                    clean_user
+                );
+                if !dry_run {
+                    match x_client.post_tweet(&reply_msg, Some(&tweet_id)).await {
+                        Ok(rid) => println!("[Tech Question Reply Sent] Reply Tweet ID: {}", rid),
+                        Err(e) => println!("[Tech Question Reply Warning]: {}", e),
+                    }
+                }
+                let _ = db.upsert_mention_job(&MentionJob {
+                    id: None,
+                    tweet_id: tweet_id.clone(),
+                    user_handle: author_handle.clone(),
+                    target_url: "N/A".to_string(),
+                    editor_job_id: None,
+                    status: "conversation".to_string(),
+                    s3_video_url: None,
+                    x_reply_id: None,
+                    tweet_text: Some(text.clone()),
+                    created_at: None,
+                    updated_at: None,
+                });
+            }
+
+            MentionIntent::PraiseOrGreeting => {
+                println!("[INTENT: PRAISE OR GREETING] User: {}", author_handle);
+                let lower_text = text.to_lowercase();
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+                let reply_msg = if lower_text.contains("thank") || lower_text.contains("nice") || lower_text.contains("cool") || lower_text.contains("awesome") || lower_text.contains("fire") || lower_text.contains("love") || lower_text.contains("congrat") || lower_text.contains("congrats") || lower_text.contains("great") || lower_text.contains("sick") || lower_text.contains("insane") {
+                    format!("appreciate the love @{}! let us know anytime if you want a walkthrough for anything you're shipping", clean_user)
+                } else {
+                    format!("hey @{}, good to see you on the timeline! hope building is going well", clean_user)
+                };
+                if !dry_run {
+                    match x_client.post_tweet(&reply_msg, Some(&tweet_id)).await {
+                        Ok(rid) => println!("[Praise/Greeting Reply Sent] Reply Tweet ID: {}", rid),
+                        Err(e) => println!("[Praise/Greeting Reply Warning]: {}", e),
+                    }
+                }
+                let _ = db.upsert_mention_job(&MentionJob {
+                    id: None,
+                    tweet_id: tweet_id.clone(),
+                    user_handle: author_handle.clone(),
+                    target_url: "N/A".to_string(),
+                    editor_job_id: None,
+                    status: "conversation".to_string(),
+                    s3_video_url: None,
+                    x_reply_id: None,
+                    tweet_text: Some(text.clone()),
+                    created_at: None,
+                    updated_at: None,
+                });
+            }
+
             MentionIntent::Conversation => {
                 println!("[INTENT: CONVERSATIONAL CHAT] User: {} (No video requested - DO NOT call Pitch MCP)", author_handle);
                 let lower_text = text.to_lowercase();
                 let clean_user = author_handle.replace('@', "").to_lowercase();
 
                 let reply_msg = if lower_text.contains("connect") || lower_text.contains("dm") || lower_text.contains("chat") {
-                    format!("sounds good @{}, shoot a dm anytime or drop your project link here if u want us to check it out", clean_user)
-                } else if lower_text.contains("thank") || lower_text.contains("nice") || lower_text.contains("cool") || lower_text.contains("awesome") || lower_text.contains("fire") || lower_text.contains("love") {
-                    format!("appreciate the love @{}. let us know anytime if you want a quick walkthrough for anything you're shipping", clean_user)
-                } else if lower_text.contains("how") || lower_text.contains("what") || lower_text.contains("stack") || lower_text.contains("tech") {
-                    format!("hey @{}, we turn written walkthroughs into 1080p narrated video demos using automated browser recording + voiceover. just mention @trypitchdotco make a demo for example.com to try it out", clean_user)
+                    format!("sounds good @{}, dms are open anytime", clean_user)
                 } else {
-                    format!("hey @{}, good to see you on the timeline. whenever you need a demo or launch video, just mention @trypitchdotco make a demo for example.com and we got you", clean_user)
+                    format!("hey @{}, good to see you on the timeline. let us know anytime if you want a quick product walkthrough", clean_user)
                 };
 
                 if !dry_run {
