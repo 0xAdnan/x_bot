@@ -117,12 +117,15 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
 
         match intent {
             MentionIntent::LaunchVideo(target_url) => {
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+                let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("your app").to_string();
+
                 let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
                 if previous_user_jobs >= 1 {
                     println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
                     let follow_gate_msg = format!(
-                        "Hey {}! Glad you enjoyed your first demo! 🎬 To generate additional free product demos & launch videos, please follow @trypitchdotco first, then mention us again with your URL! 🚀",
-                        author_handle
+                        "glad you liked the first one @{}. we just ask for a quick follow on @trypitchdotco for extra free demos and launch videos, drop your link again right after and we got you",
+                        clean_user
                     );
                     if !dry_run {
                         match x_client.post_tweet(&follow_gate_msg, Some(&tweet_id)).await {
@@ -148,8 +151,8 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
 
                 if !no_ack && !dry_run {
                     let ack_text = format!(
-                        "Cool {}, we're on it! 🚀 Generating your cinematic launch video for {} now, we'll get back to you with the video link right here soon!",
-                        author_handle, target_url
+                        "on it @{}. cooking up a launch video for {} right now, will drop the video right here when it's done",
+                        clean_user, clean_domain
                     );
                     match x_client.post_tweet(&ack_text, Some(&tweet_id)).await {
                         Ok(reply_id) => println!("[X Receipt Reply Sent] Reply Tweet ID: {}", reply_id),
@@ -163,7 +166,6 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                 }
 
                 println!("Triggering Pitch MCP create_launch_video for {}...", target_url);
-                let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("app").to_string();
                 let project_name = format!("{}-launch-{}", clean_domain, tweet_id.replace('-', "_"));
                 let prompt_text = format!("Create a cinematic 45-second product launch video for {}. Target startup founders and product marketers. Emphasize AI-generated product demos, polished motion graphics, and fast sharing. Use an energetic premium style with concise narration.", target_url);
                 match create_launch_video(&project_name, &prompt_text, Some("optional-library-track.mp3")).await {
@@ -191,12 +193,15 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
             }
 
             MentionIntent::DemoVideo(target_url) => {
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+                let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("your app").to_string();
+
                 let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
                 if previous_user_jobs >= 1 {
                     println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
                     let follow_gate_msg = format!(
-                        "Hey {}! Glad you enjoyed your first demo! 🎬 To generate additional free product demos & launch videos, please follow @trypitchdotco first, then mention us again with your URL! 🚀",
-                        author_handle
+                        "glad you liked the first one @{}. we just ask for a quick follow on @trypitchdotco for extra free demos and launch videos, drop your link again right after and we got you",
+                        clean_user
                     );
                     if !dry_run {
                         match x_client.post_tweet(&follow_gate_msg, Some(&tweet_id)).await {
@@ -222,8 +227,8 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
 
                 if !no_ack && !dry_run {
                     let ack_text = format!(
-                        "Cool {}, we're on it! 🚀 Generating your cinematic demo for {} now, we'll get back to you with the video link right here soon!",
-                        author_handle, target_url
+                        "on it @{}. generating a walkthrough for {} now, will post the video link here in a minute",
+                        clean_user, clean_domain
                     );
                     match x_client.post_tweet(&ack_text, Some(&tweet_id)).await {
                         Ok(reply_id) => println!("[X Receipt Reply Sent] Reply Tweet ID: {}", reply_id),
@@ -264,9 +269,11 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
 
             MentionIntent::ConversationWithUrl(target_url) => {
                 println!("[INTENT: CONVERSATION WITH URL] User: {} | URL: {} (No video requested - DO NOT call Pitch MCP)", author_handle, target_url);
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+                let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("your app").to_string();
                 let reply_msg = format!(
-                    "Appreciate you sharing! If you ever want a quick 60s automated video walkthrough or launch demo for your project, just tag us with 'make a demo for {}' and we'll render one! 🎬",
-                    target_url
+                    "checked out {} @{}, looks super clean. if you ever need a quick 60s video walkthrough or launch demo for it, just tag @trypitchdotco anytime and we got you",
+                    clean_domain, clean_user
                 );
                 if !dry_run {
                     match x_client.post_tweet(&reply_msg, Some(&tweet_id)).await {
@@ -292,12 +299,16 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
             MentionIntent::Conversation => {
                 println!("[INTENT: CONVERSATIONAL CHAT] User: {} (No video requested - DO NOT call Pitch MCP)", author_handle);
                 let lower_text = text.to_lowercase();
-                let reply_msg = if lower_text.contains("thank") || lower_text.contains("nice") || lower_text.contains("cool") || lower_text.contains("awesome") {
-                    format!("Glad you like it {}! Let us know anytime if you want a 60s demo or launch video for any project you're building! 🎬", author_handle)
-                } else if lower_text.contains("how") || lower_text.contains("what") {
-                    format!("Hey {}! We turn text walkthroughs into 1080p narrated video demos via automated browser recording + AI narration. Mention us with any URL to try it! 🚀", author_handle)
+                let clean_user = author_handle.replace('@', "").to_lowercase();
+
+                let reply_msg = if lower_text.contains("connect") || lower_text.contains("dm") || lower_text.contains("chat") {
+                    format!("sounds good @{}, shoot a dm anytime or drop your project link here if u want us to check it out", clean_user)
+                } else if lower_text.contains("thank") || lower_text.contains("nice") || lower_text.contains("cool") || lower_text.contains("awesome") || lower_text.contains("fire") || lower_text.contains("love") {
+                    format!("appreciate the love @{}. let us know anytime if you want a quick walkthrough for anything you're shipping", clean_user)
+                } else if lower_text.contains("how") || lower_text.contains("what") || lower_text.contains("stack") || lower_text.contains("tech") {
+                    format!("hey @{}, we turn written walkthroughs into 1080p narrated video demos using automated browser recording + voiceover. test it out on trypitch.co anytime", clean_user)
                 } else {
-                    format!("Hey {}! Thanks for the shoutout. Mention us anytime with a product URL (e.g. '@trypitchdotco make a demo for yoursite.com') to get an automated 60s demo! 🎬", author_handle)
+                    format!("hey @{}, good to see you on the timeline. let us know if you ever need a video demo for something you're building", clean_user)
                 };
 
                 if !dry_run {

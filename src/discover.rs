@@ -5,6 +5,8 @@ use crate::{
 use regex::Regex;
 
 const DEFAULT_QUERIES: &[&str] = &[
+    "(@ProductHunt OR \"Product Hunt\") (launching OR \"launching soon\" OR \"live today\" OR \"product of the day\")",
+    "(\"launching on product hunt\" OR \"launching next week\" OR \"launch day\") (SaaS OR AI OR devtool)",
     "tella.tv",
     "screen.studio",
     "loom.com alternative",
@@ -41,6 +43,12 @@ fn calculate_lead_score(text: &str, _handle: &str, url: &str) -> i32 {
     {
         score += 2;
     }
+    if ["product hunt", "producthunt", "ph launch", "launching soon", "launching today"]
+        .iter()
+        .any(|k| lower.contains(k))
+    {
+        score += 3;
+    }
     if ["need", "looking for", "alternative", "how to", "launched", "building"]
         .iter()
         .any(|k| lower.contains(k))
@@ -56,7 +64,12 @@ fn generate_pitch_hook(handle: &str, url: &str, text_context: &str) -> String {
     let clean_url = url.replace("https://", "").replace("http://", "").replace("www.", "");
     let domain_clean = clean_url.split('/').next().unwrap_or("your app");
 
-    if lower_context.contains("screen studio") || lower_context.contains("quiro") {
+    if lower_context.contains("product hunt") || lower_context.contains("producthunt") {
+        format!(
+            "congrats on the product hunt launch @{}. if you need a quick 45s launch video walkthrough for {}, tag @trypitchdotco with your link and we'll render one for you",
+            clean_handle, domain_clean
+        )
+    } else if lower_context.contains("screen studio") || lower_context.contains("quiro") {
         format!(
             "yo @{}, saw your post on screen recording. threw together a quick 60s walkthrough on @trypitchdotco to test the pacing, thought it looked super clean",
             clean_handle
@@ -68,7 +81,7 @@ fn generate_pitch_hook(handle: &str, url: &str, text_context: &str) -> String {
         )
     } else if lower_context.contains("launch") || lower_context.contains("yc") {
         format!(
-            "congrats on shipping @{}! cooked up a 45s launch video walkthrough of {} using @trypitchdotco, thought you might like it for your docs/feed",
+            "congrats on shipping @{}. cooked up a 45s launch video walkthrough of {} using @trypitchdotco, thought you might like it for your docs/feed",
             clean_handle, domain_clean
         )
     } else if url != "N/A" && !url.is_empty() {
