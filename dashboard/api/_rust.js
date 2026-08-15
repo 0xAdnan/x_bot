@@ -1,7 +1,7 @@
 export async function fetchRust(path, options = {}) {
   const candidates = [
     process.env.LOCAL_RUST_SERVER_URL,
-    "https://spicy-emu-18.loca.lt",
+    "https://pitch-bot-adnan.loca.lt",
     "https://heavy-cougar-57.loca.lt",
     "https://perfect-termite-69.loca.lt",
     "https://pitch-bot-adnan.loca.lt"

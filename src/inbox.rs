@@ -204,9 +204,9 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                 let clean_user = author_handle.replace('@', "").to_lowercase();
                 let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("your app").to_string();
 
-                let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
-                if previous_user_jobs >= 1 {
-                    println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
+                let previous_video_jobs = db.count_video_jobs_by_user(&author_handle).unwrap_or(0);
+                if previous_video_jobs >= 1 {
+                    println!("[Inbox FOLLOWER GATE] User {} has {} previous video jobs (conversations excluded). Enforcing follow gate...", author_handle, previous_video_jobs);
                     let follow_gate_msg = format!(
                         "glad you liked the first one @{}. we just ask for a quick follow on @trypitchdotco for extra free demos and launch videos, drop your link again right after and we got you",
                         clean_user
@@ -280,9 +280,9 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                 let clean_user = author_handle.replace('@', "").to_lowercase();
                 let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("your app").to_string();
 
-                let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
-                if previous_user_jobs >= 1 {
-                    println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
+                let previous_video_jobs = db.count_video_jobs_by_user(&author_handle).unwrap_or(0);
+                if previous_video_jobs >= 1 {
+                    println!("[Inbox FOLLOWER GATE] User {} has {} previous video jobs (conversations excluded). Enforcing follow gate...", author_handle, previous_video_jobs);
                     let follow_gate_msg = format!(
                         "glad you liked the first one @{}. we just ask for a quick follow on @trypitchdotco for extra free demos and launch videos, drop your link again right after and we got you",
                         clean_user

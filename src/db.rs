@@ -225,14 +225,20 @@ impl Database {
         Ok(rows)
     }
 
-    pub fn count_jobs_by_user(&self, user_handle: &str) -> SqlResult<usize> {
+    pub fn count_video_jobs_by_user(&self, user_handle: &str) -> SqlResult<usize> {
         let clean_handle = if user_handle.starts_with('@') {
             user_handle.to_string()
         } else {
             format!("@{}", user_handle)
         };
         let mut stmt = self.conn.prepare(
-            "SELECT COUNT(*) FROM mention_jobs WHERE LOWER(user_handle) = LOWER(?1) AND status != 'cancelled' AND status != 'failed'"
+            "SELECT COUNT(*) FROM mention_jobs \
+             WHERE LOWER(user_handle) = LOWER(?1) \
+               AND status != 'conversation' \
+               AND status != 'cancelled' \
+               AND status != 'failed' \
+               AND target_url != 'N/A' \
+               AND target_url != ''"
         )?;
         let count: usize = stmt.query_row([clean_handle], |row| row.get(0))?;
         Ok(count)
