@@ -326,7 +326,7 @@
         <div class="flex flex-wrap items-center gap-3">
           <div class="relative">
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
-            <input id="search-prospects" oninput="renderFilteredData()" type="text" placeholder="Search by handle, name, notes, product..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-600 w-64 md:w-80 transition font-medium">
+            <input id="search-prospects" oninput="renderFilteredData()" type="text" placeholder="Search by handle, name, notes, product..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-600 w-60 md:w-72 transition font-medium">
           </div>
 
           <div class="flex items-center gap-1.5 text-xs">
@@ -338,80 +338,96 @@
               <option value="low">🌱 Low Fit (&lt; 7)</option>
             </select>
           </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Per Column:</span>
+            <select id="select-page-size" onchange="changePageSize(this.value)" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="15" selected>15 Leads</option>
+              <option value="30">30 Leads</option>
+              <option value="50">50 Leads</option>
+              <option value="9999">Show All</option>
+            </select>
+          </div>
         </div>
 
-        <div class="text-xs text-slate-500 font-mono">
-          Showing <strong id="cnt-filtered-prospects" class="text-slate-900">0</strong> prospects
+        <div class="text-xs text-slate-500 font-mono flex items-center gap-2">
+          <span>Showing <strong id="cnt-filtered-prospects" class="text-slate-900">0</strong> matching leads</span>
         </div>
       </div>
 
-      <!-- Kanban Columns Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3.5 overflow-x-auto pb-2">
+      <!-- Horizontal Contained Kanban Board with Independent Column Scrolling -->
+      <div class="flex gap-4 overflow-x-auto pb-3 h-[calc(100vh-270px)] min-h-[620px] max-h-[850px] items-stretch">
         
         <!-- Column 1: New -->
-        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-slate-200">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-2.5 flex-shrink-0">
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-slate-100/90 border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-slate-200 bg-white/80 backdrop-blur-sm flex-shrink-0">
             <span class="text-[11px] font-extrabold text-slate-700 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-slate-400"></span> New Leads
             </span>
-            <span id="cnt-new" class="text-xs font-mono font-bold bg-white text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 shadow-sm">0</span>
+            <span id="cnt-new" class="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200">0</span>
           </div>
-          <div id="col-new" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+          <div id="col-new" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-new" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-slate-200 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
         <!-- Column 2: Warming -->
-        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-amber-200/80 bg-amber-50/20">
-          <div class="flex justify-between items-center pb-2 border-b border-amber-200/80 mb-2.5 flex-shrink-0">
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-amber-50/20 border border-amber-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-amber-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-amber-500">
             <span class="text-[11px] font-extrabold text-amber-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Warming
             </span>
-            <span id="cnt-warming" class="text-xs font-mono font-bold bg-amber-100/80 text-amber-800 px-2.5 py-0.5 rounded-full border border-amber-300 shadow-sm">0</span>
+            <span id="cnt-warming" class="text-xs font-mono font-bold bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-full border border-amber-300">0</span>
           </div>
-          <div id="col-warming" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+          <div id="col-warming" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-warming" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-amber-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
         <!-- Column 3: Contacted -->
-        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-blue-200/80 bg-blue-50/20">
-          <div class="flex justify-between items-center pb-2 border-b border-blue-200/80 mb-2.5 flex-shrink-0">
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-blue-50/20 border border-blue-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-blue-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-blue-600">
             <span class="text-[11px] font-extrabold text-blue-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-blue-600"></span> Contacted
             </span>
-            <span id="cnt-contacted" class="text-xs font-mono font-bold bg-blue-100/80 text-blue-800 px-2.5 py-0.5 rounded-full border border-blue-300 shadow-sm">0</span>
+            <span id="cnt-contacted" class="text-xs font-mono font-bold bg-blue-50 text-blue-800 px-2.5 py-0.5 rounded-full border border-blue-300">0</span>
           </div>
-          <div id="col-contacted" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+          <div id="col-contacted" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-contacted" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-blue-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
         <!-- Column 4: In Convo -->
-        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-purple-200/80 bg-purple-50/20">
-          <div class="flex justify-between items-center pb-2 border-b border-purple-200/80 mb-2.5 flex-shrink-0">
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-purple-50/20 border border-purple-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-purple-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-purple-600">
             <span class="text-[11px] font-extrabold text-purple-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-purple-600"></span> In Convo
             </span>
-            <span id="cnt-in_convo" class="text-xs font-mono font-bold bg-purple-100/80 text-purple-800 px-2.5 py-0.5 rounded-full border border-purple-300 shadow-sm">0</span>
+            <span id="cnt-in_convo" class="text-xs font-mono font-bold bg-purple-50 text-purple-800 px-2.5 py-0.5 rounded-full border border-purple-300">0</span>
           </div>
-          <div id="col-in_convo" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+          <div id="col-in_convo" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-in_convo" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-purple-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
         <!-- Column 5: Customer -->
-        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-emerald-200/80 bg-emerald-50/20">
-          <div class="flex justify-between items-center pb-2 border-b border-emerald-200/80 mb-2.5 flex-shrink-0">
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-emerald-50/20 border border-emerald-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-emerald-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-emerald-600">
             <span class="text-[11px] font-extrabold text-emerald-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Customer
             </span>
-            <span id="cnt-customer" class="text-xs font-mono font-bold bg-emerald-100/80 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-300 shadow-sm">0</span>
+            <span id="cnt-customer" class="text-xs font-mono font-bold bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-300">0</span>
           </div>
-          <div id="col-customer" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+          <div id="col-customer" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-customer" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-emerald-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
         <!-- Column 6: Do Not Contact -->
-        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-red-200/80 bg-red-50/20">
-          <div class="flex justify-between items-center pb-2 border-b border-red-200/80 mb-2.5 flex-shrink-0">
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-red-50/20 border border-red-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-red-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-red-500">
             <span class="text-[11px] font-extrabold text-red-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-red-500"></span> DNC / Lost
             </span>
-            <span id="cnt-dnc" class="text-xs font-mono font-bold bg-red-100/80 text-red-800 px-2.5 py-0.5 rounded-full border border-red-300 shadow-sm">0</span>
+            <span id="cnt-dnc" class="text-xs font-mono font-bold bg-red-50 text-red-800 px-2.5 py-0.5 rounded-full border border-red-300">0</span>
           </div>
-          <div id="col-dnc" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+          <div id="col-dnc" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-dnc" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-red-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
       </div>
@@ -859,31 +875,54 @@
       setInterval(update, 1000);
     }
 
-    // CORE DATA FETCHING
+    let lastKanbanHash = '';
+    let lastMentionsHash = '';
+    let lastActivityHash = '';
+    let lastResearchHash = '';
+
+    // CORE DATA FETCHING (STALE-WHILE-REVALIDATE WITH ZERO FLASHING)
     async function fetchData() {
       const spinIcon = document.querySelector('#btn-refresh i');
       if (spinIcon) spinIcon.classList.add('animate-spin');
 
       try {
         const [resAct, resCrm, resIns, resStats, resMentions, resResearch] = await Promise.all([
-          fetch('/api/activity').then(r => r.json()).catch(() => ({ activities: [] })),
-          fetch('/api/crm').then(r => r.json()).catch(() => ({ prospects: [], stages: {} })),
-          fetch('/api/insights').then(r => r.json()).catch(() => ({ content: '' })),
-          fetch('/api/stats').then(r => r.json()).catch(() => ({})),
-          fetch('/api/mentions').then(r => r.json()).catch(() => ({ jobs: [] })),
-          fetch('/api/research').then(r => r.json()).catch(() => ({}))
+          fetch('/api/activity').then(r => r.json()).catch(() => null),
+          fetch('/api/crm').then(r => r.json()).catch(() => null),
+          fetch('/api/insights').then(r => r.json()).catch(() => null),
+          fetch('/api/stats').then(r => r.json()).catch(() => null),
+          fetch('/api/mentions').then(r => r.json()).catch(() => null),
+          fetch('/api/research').then(r => r.json()).catch(() => null)
         ]);
 
-        rawActivities = resAct.activities || [];
-        rawProspects = resCrm.prospects || [];
-        rawMentionJobs = resMentions.jobs || [];
-        rawResearchData = resResearch || {};
+        // Retain cached data if response is null or failed to prevent flashing 0s
+        if (resAct && Array.isArray(resAct.activities) && resAct.activities.length > 0) {
+          rawActivities = resAct.activities;
+        } else if (resAct && Array.isArray(resAct.activities) && rawActivities.length === 0) {
+          rawActivities = resAct.activities;
+        }
+
+        if (resCrm && Array.isArray(resCrm.prospects) && resCrm.prospects.length > 0) {
+          rawProspects = resCrm.prospects;
+        } else if (resCrm && Array.isArray(resCrm.prospects) && rawProspects.length === 0) {
+          rawProspects = resCrm.prospects;
+        }
+
+        if (resMentions && Array.isArray(resMentions.jobs) && resMentions.jobs.length > 0) {
+          rawMentionJobs = resMentions.jobs;
+        } else if (resMentions && Array.isArray(resMentions.jobs) && rawMentionJobs.length === 0) {
+          rawMentionJobs = resMentions.jobs;
+        }
+
+        if (resResearch && resResearch.queries && resResearch.queries.length > 0) {
+          rawResearchData = resResearch;
+        }
 
         if (resIns && resIns.content) {
           setElText('insights-content', resIns.content);
         }
 
-        if (resStats && resStats.agents) {
+        if (resStats && resStats.agents && resStats.agents.length > 0) {
           renderAgents(resStats.agents);
         }
 
@@ -970,7 +1009,7 @@
         }
       }
 
-      // Update KPI Counter Cards directly from live datasets
+      // Update KPI Counter Cards directly from live datasets without flashing
       setElText('stat-total-prospects', rawProspects.length);
       setElText('stat-warming', rawProspects.filter(p => p.stage === 'warming').length);
       setElText('stat-contacted', rawProspects.filter(p => p.stage === 'contacted' || p.stage === 'in_convo').length);
@@ -998,8 +1037,36 @@
       renderActivity(filteredActivities);
     }
 
+    let columnPages = {
+      'new': 1,
+      'warming': 1,
+      'contacted': 1,
+      'in_convo': 1,
+      'customer': 1,
+      'do-not-contact': 1
+    };
+    let pageSize = 15;
+
+    function changeColPage(stageKey, delta) {
+      const current = columnPages[stageKey] || 1;
+      columnPages[stageKey] = Math.max(1, current + delta);
+      lastKanbanHash = '';
+      renderFilteredData();
+    }
+
+    function changePageSize(val) {
+      pageSize = parseInt(val) || 15;
+      Object.keys(columnPages).forEach(k => columnPages[k] = 1);
+      lastKanbanHash = '';
+      renderFilteredData();
+    }
+
     // RENDER KANBAN
     function renderKanban(stages) {
+      const currentHash = JSON.stringify(stages) + JSON.stringify(columnPages) + '_' + pageSize;
+      if (currentHash === lastKanbanHash) return;
+      lastKanbanHash = currentHash;
+
       const stageMap = {
         'new': 'col-new',
         'warming': 'col-warming',
@@ -1009,16 +1076,52 @@
         'do-not-contact': 'col-dnc'
       };
 
+      const footMap = {
+        'new': 'foot-new',
+        'warming': 'foot-warming',
+        'contacted': 'foot-contacted',
+        'in_convo': 'foot-in_convo',
+        'customer': 'foot-customer',
+        'do-not-contact': 'foot-dnc'
+      };
+
       Object.keys(stageMap).forEach(key => {
         const el = document.getElementById(stageMap[key]);
+        const foot = document.getElementById(footMap[key]);
         const cnt = document.getElementById('cnt-' + (key === 'do-not-contact' ? 'dnc' : key));
         const list = stages[key] || [];
-        if (cnt) cnt.innerText = list.length;
+        const total = list.length;
+        if (cnt) cnt.innerText = total;
+
+        const maxPage = Math.max(1, Math.ceil(total / pageSize));
+        const page = Math.min(columnPages[key] || 1, maxPage);
+        columnPages[key] = page;
+
+        const startIdx = (page - 1) * pageSize;
+        const endIdx = Math.min(total, page * pageSize);
+        const pagedList = list.slice(startIdx, endIdx);
+
+        if (foot) {
+          if (total === 0) {
+            foot.innerHTML = '<span>0 leads</span><span>Page 1/1</span>';
+          } else {
+            foot.innerHTML = `
+              <span>${startIdx + 1}-${endIdx} of ${total}</span>
+              <div class="flex items-center gap-1">
+                <button onclick="changeColPage('${key}', -1)" ${page <= 1 ? 'disabled' : ''} class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:pointer-events-none transition font-bold">‹</button>
+                <span class="px-1 font-bold text-slate-700">${page}/${maxPage}</span>
+                <button onclick="changeColPage('${key}', 1)" ${page >= maxPage ? 'disabled' : ''} class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:pointer-events-none transition font-bold">›</button>
+              </div>
+            `;
+          }
+        }
+
         if (el) {
-          if (list.length === 0) {
+          const prevScroll = el.scrollTop;
+          if (pagedList.length === 0) {
             el.innerHTML = '<div class="text-xs text-slate-400 italic text-center py-12 font-medium">No prospects in this stage</div>';
           } else {
-            el.innerHTML = list.map(p => {
+            el.innerHTML = pagedList.map(p => {
               const cleanHandle = (p.handle || '').replace('@','');
               const tweetUrl = p.url && p.url.includes('/status/') ? p.url : `https://x.com/${cleanHandle}`;
               const firstName = (p.name && !p.name.startsWith('@')) ? p.name.split(' ')[0] : `@${cleanHandle}`;
@@ -1084,6 +1187,7 @@
             `;
             }).join('');
           }
+          el.scrollTop = prevScroll;
         }
       });
       if (window.lucide) lucide.createIcons();
@@ -1091,6 +1195,10 @@
 
     // RENDER MENTION JOBS TABLE
     function renderMentionJobs(jobs) {
+      const currentHash = JSON.stringify(jobs);
+      if (currentHash === lastMentionsHash) return;
+      lastMentionsHash = currentHash;
+
       const tbody = document.getElementById('mention-jobs-table-body');
       if (!tbody) return;
       if (!jobs || jobs.length === 0) {
@@ -1207,6 +1315,10 @@
 
     // RENDER ACTIVITY LOG
     function renderActivity(activities) {
+      const currentHash = JSON.stringify(activities);
+      if (currentHash === lastActivityHash) return;
+      lastActivityHash = currentHash;
+
       const tbody = document.getElementById('activity-table-body');
       if (!tbody) return;
       if (!activities || activities.length === 0) {
