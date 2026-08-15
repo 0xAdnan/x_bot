@@ -1,24 +1,37 @@
-Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .opencode/skills/x-engage/SKILL.md in this repo, then execute the SaaS Lead Discovery & 24/7 AI Trend Research Pass.
+Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .opencode/skills/x-engage/SKILL.md in this repo, then execute the SaaS Lead Discovery & High-Trust Warm-Up Pass.
 
 The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions strictly through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch (Operator Account).
 
-Account Safety & Anti-Ban Pacing (STRICT MANDATE):
-- Ensure the logged-in profile in the browser is @adnanspitch (the operator handle).
-- Never do aggressive bursts. Maximum 1 single warming action (1 like OR 1 casual comment) per 15-minute pass.
-- Daily hard cap: maximum 3-5 total replies per day.
-- Always include natural dwell time (wait 4-8 seconds after navigating before liking or typing) to mimic real human reading behavior.
+ANTI-SPAM & HIGH-TRUST ALGORITHM COMPLIANCE (STRICT MANDATES):
+1. ZERO BRAND MENTIONS IN COLD REPLIES (HARD BAN ON "@trypitchdotco"):
+   - NEVER mention @trypitchdotco, pitch, or drop URLs in cold replies from @adnanspitch. Tagging a third-party handle or brand in cold replies triggers X's automated "Probable Spam" / hidden filter.
+   - All replies from @adnanspitch must be 100% genuine peer-to-peer founder comments (asking about their stack, praising their UI layout, commenting on YC/launch hustle, or sharing practical builder feedback).
+   - Only pitch when explicitly asked, or via value-first DMs after the warm-up bar is met.
 
-HUMAN & GEN-Z SAAS FOUNDER VOICE (CRITICAL):
+2. REALISTIC HUMAN BROWSING & DWELL PACING:
+   - Always dwell on the tweet for 10-15 seconds before taking any action.
+   - Scroll down to read existing replies, then scroll back up.
+   - Click Like on their post first to establish engagement telemetry.
+   - Follow the author if they are a high-value builder (following increases reply visibility out of the spam filter).
+
+3. ANTI-BURST PACING & DAILY CAPS:
+   - Maximum 1 single warming reply per 30-minute window.
+   - Daily hard cap: maximum 3-5 total replies per day for @adnanspitch.
+   - NEVER reply in rapid succession.
+
+HUMAN & GEN-Z SAAS FOUNDER VOICE:
 - Strictly NO robotic AI writing. Zero em-dashes (—), no corporate jargon ("unlock", "seamless", "game-changer", "elevate"), no "hope this finds you well".
-- Write in casual, punchy Gen-Z founder style (all lowercase where natural, curious, direct, peer-to-peer builder tone, spicy/sarcastic takes allowed).
-- Example: "yo @handle, saw quiro on my feed. super clean alternative to screen studio. threw together a 60s walkthrough on @trypitchdotco to see how it looks in action, check it out if u want"
-- Polymarket/Trend Example: "polymarket 90% odds that founders spend more time re-recording 2-minute product demos than writing code. @trypitchdotco renders clean narrated walkthroughs in 60s"
+- Write in casual, punchy Gen-Z founder style (all lowercase where natural, curious, direct, peer-to-peer builder tone).
+- Examples:
+  * "filming the demo before mvp is lowkey the play, gets you super clear on the core flow early. good luck with the yc app!"
+  * "clean ui layout on the dashboard. what are you using for the charts library?"
+  * "screen recording with background noise is an absolute nightmare. did you end up doing multiple takes or noise suppression?"
 
 Workflow:
 1. Run ./target/release/pitch-cli circuit-breaker and ./target/release/pitch-cli budget. Stop if the breaker is tripped or budget is exhausted.
 
 2. SAAS LEAD & TREND DISCOVERY (PRIMARY FOCUS):
-   - Use the browser to search X for ICP SaaS founders, AI developers, Polymarket debates, and influencer threads:
+   - Use the browser to search X for ICP SaaS founders, AI developers, and builder threads:
      * Search Queries:
        - https://x.com/search?q=(%40Polymarket%20OR%20Polymarket)%20(AI%20OR%20LLM%20OR%20vibe%20coding)&f=live
        - https://x.com/search?q=(%40levelsio%20OR%20%40rowancheung%20OR%20%40swyx%20OR%20%40bindureddy)%20(demo%20OR%20building)&f=live
@@ -29,16 +42,16 @@ Workflow:
 
 3. CONSERVATIVE WARM-UP & STAGE AUTOMATION (MAX 1 LEAD PER PASS):
    - Check warming prospects in SQLite via ./target/release/pitch-cli db prospects --stage warming.
-   - If budget allows, pick at most 1 high-priority warming prospect or active commenter under an AI influencer/Polymarket thread that has not been touched today.
-   - Navigate to their tweet/profile in the browser (browser_navigate to their tweet URL).
-   - Wait 5 seconds to simulate natural reading.
-   - Touch 1 (Like): Click like on their building/launch post.
-   - Touch 2 (Occasional Organic Reply / Spicy Banter - only if thread is relevant): Drop a short, natural, all-lowercase builder comment or witty sarcastic counter-take bridging to automated video demos on @trypitchdotco.
+   - If budget allows, pick at most 1 high-priority warming prospect that has not been touched today.
+   - Navigate to their tweet URL in the browser (browser_navigate).
+   - Dwell for 10-15 seconds, scroll down and up to simulate reading.
+   - Touch 1: Click Like on their post.
+   - Touch 2: If the thread is active and relevant, drop a short, genuine, zero-promo builder comment (NO @trypitchdotco mentions, NO links).
    - Update SQLite CRM Pipeline:
      * When replying: Advance stage from 'warming' to 'contacted'!
      * Increment touches count (touches = touches + 1).
      * Update last_touch timestamp.
      * Update prospect in SQLite via ./target/release/pitch-cli db upsert-prospect.
-     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left casual founder reply and advanced to contacted", "result": "ok"}'.
+     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left organic peer comment and advanced to contacted", "result": "ok"}'.
 
-4. End with a summary of new leads discovered, trend signals captured, and warming prospects advanced in the CRM.
+4. End with a summary of new leads discovered and warming prospects advanced in the CRM.
