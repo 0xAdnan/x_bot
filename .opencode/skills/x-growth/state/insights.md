@@ -22,11 +22,10 @@ automation-volume spam, 6 days after the account started. The entire old pipelin
 
 ## The guardrails now in place (see safety.md + scripts)
 
-- `./target/release/pitch-cli budget` reads `account.json`: until `ramp_until`
-  (2026-08-30) it applies **25% cold-start caps automatically**.
+- `budget.sh` reads `account.json`: until `ramp_until` (2026-08-30) it applies
+  **25% cold-start caps automatically**.
 - **No outbound DMs before 2026-08-23** (first 2 weeks = likes/replies only).
-- **Max 3 sessions/day**, min 2-3h between sessions (enforced manually by the
-  account; you may run up to 3 sessions per day).
+- **Max 3 sessions/day**, min 2-3h between sessions, enforced by `runner.sh`.
 - **Per-hour burst caps**: no more than ~10 total actions/hour, max 2 DMs/hour
   (later), no back-to-back identical actions.
 - **Circuit breaker**: after 3 consecutive kill-switch/failed sessions,

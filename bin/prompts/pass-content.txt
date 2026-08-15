@@ -1,0 +1,17 @@
+Read the skill at .opencode/skills/twitter-algorithm-optimizer/SKILL.md in this repo, then execute the Content & Strategy Pass.
+
+Operating Account:
+- Operating account is @trypitchdotco (the official brand handle).
+- Use official X API v2 (OAuth 1.0a User Context) via ./target/release/pitch-cli x-api post --text "..." to publish tweets.
+
+HUMAN VOICE REQUIREMENT (CRITICAL):
+- Strictly NO LLM tropes or robotic AI writing. Zero em-dashes (—), no rule-of-three lists, no corporate fluff, no "in today's landscape".
+- Write like a practical, curious tech founder building in public: opinionated, crisp, lowercase-casual where natural, authentic builder tone that resonates on Tech Twitter.
+
+Workflow:
+1. Run ./target/release/pitch-cli circuit-breaker and ./target/release/pitch-cli budget. Stop if the breaker is tripped or the post/quote caps are exhausted.
+2. Read .opencode/skills/x-growth/content.md and voice.md for the PITCH content playbook and brand voice.
+3. Draft 1 founder tweet about PITCH (an AI video editor that turns task descriptions into studio-quality narrated demo MP4s) using the twitter-algorithm-optimizer strategies (engagement signals, SimClusters niche focus, reply triggers, no AI-sounding text).
+4. Run the draft through the humanizer skill if available.
+5. Post the tweet on X via ./target/release/pitch-cli x-api post --text "...".
+6. Log the post and summarize what was published and why.

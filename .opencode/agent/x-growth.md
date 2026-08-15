@@ -43,10 +43,10 @@ To prevent context bloat and token waste, the system is strictly split into two 
              │  (pitch-cli server - Port 8790)  │                 │   (opencode run --agent x-growth)│
              └────────────────┬─────────────────┘                 └────────────────┬─────────────────┘
                               │                                                    │
-┌──────────────────────┴──────────────────────┐        ┌────────────────────┴────────────────────┐
-        ▼                                             ▼        ▼                                         ▼
+       ┌──────────────────────┴──────────────────────┐        ┌────────────────────┴────────────────────┐
+       ▼                                             ▼        ▼                                         ▼
 ┌──────────────┐                             ┌──────────────┐ │ Prospect Discovery                      │ Warm-Up & DMs
-│ Mention Ack  │                             │ Video Render │ │ (discover via pitch-cli / X MCP search) │ (X MCP like/reply + webbridge DMs)
+│ Mention Ack  │                             │ Video Render │ │ (pitch-cli discover)                    │ (pitch-cli x-api)
 │ & Pitch MCP  │                             │ Delivery     │ └─────────────────────────────────────────┴───────────────────┘
 └──────────────┘                             └──────────────┘
 ```
@@ -80,11 +80,11 @@ To keep LLM context tiny (~1,200 tokens) and execution fast, proactive outbound 
 
 ### Pass 2: Warm-Up & DM Outreach (Run 3x daily at 9am, 2pm, 7pm)
 * **Trigger Command:** `opencode run --agent x-growth "engage warm prospects"`
-* **Action:** Reads warm prospects from SQLite (`./target/release/pitch-cli db prospects --stage warming`), likes recent tweets (X MCP `like`), leaves helpful replies, and sends value-first DMs within safety caps.
+* **Action:** Reads warm prospects from SQLite (`./target/release/pitch-cli db prospects --stage warming`), likes recent tweets (`./target/release/pitch-cli x-api like <id>`), leaves helpful replies, and sends value-first DMs within safety caps.
 
 ### Pass 3: Content & Trend Post (Run 1x daily at 11am)
 * **Trigger Command:** `opencode run --agent x-growth "publish founder commentary"`
-* **Action:** Read the `x-content` skill + `.opencode/skills/x-growth/voice.md`, run draft through `humanizer` skill, and post 1 original product update, founder take, or trend quote-tweet (X MCP `post`).
+* **Action:** Reads `content.md` + `voice.md`, runs draft through `humanizer` skill, and posts 1 original product update, founder take, or trend quote-tweet (`./target/release/pitch-cli x-api post --text "..."`).
 
 ---
 
@@ -109,17 +109,15 @@ Binary Location: `./target/release/pitch-cli`
 ./target/release/pitch-cli db insights            # Read adaptive memory
 ```
 
-### 3. X Operations — via MCP + Browser
-X API reads/writes go through the **`xmcp` MCP server** (official X MCP via the
-`xurl` bridge; hosted `https://api.x.com/mcp`) and pitch video jobs through the
-**`pitch` MCP server** (`https://api.trypitch.co/mcp`). Call them as tools in
-this session — not via a CLI wrapper:
-```text
-X MCP tools (xmcp):  me, lookup_user, search, mentions, post, reply, like
-Pitch MCP tools (pitch):  create_demo_video, get_job, get_credits
+### 3. X API v2 Operations
+```bash
+./target/release/pitch-cli x-api me               # Verify authenticated profile
+./target/release/pitch-cli x-api mentions         # Fetch recent mentions
+./target/release/pitch-cli x-api reply <tweet_id> --text "..."  # Reply
+./target/release/pitch-cli x-api post --text "..." # Post tweet
+./target/release/pitch-cli x-api like <tweet_id>   # Like tweet
+./target/release/pitch-cli x-api search "query"   # Search X
 ```
-Browser fallback: drive Chrome's "Testing" profile via `agent-webbridge` for
-anything MCP doesn't cover (DMs, follows, UI-only actions).
 
 ### 4. Safety & Budget Enforcers (Native Rust)
 ```bash
@@ -135,7 +133,7 @@ anything MCP doesn't cover (DMs, follows, UI-only actions).
 ### Boot & Safety Checks (Run First)
 1. `./target/release/pitch-cli circuit-breaker` (stop if exit 1).
 2. `./target/release/pitch-cli budget` (confirm remaining caps).
-3. X MCP `me` tool (confirm identity; see `x-growth` skill guardrails).
+3. `./target/release/pitch-cli x-api me` (confirm identity).
 
 ### If prompt is "discover prospects":
 1. Run `./target/release/pitch-cli discover`.
@@ -143,10 +141,10 @@ anything MCP doesn't cover (DMs, follows, UI-only actions).
 
 ### If prompt is "engage warm prospects":
 1. Query prospects: `./target/release/pitch-cli db prospects --stage warming`.
-2. Like 1-2 recent tweets per prospect: X MCP `like` tool.
+2. Like 1-2 recent tweets per prospect: `./target/release/pitch-cli x-api like <tweet_id>`.
 3. Leave one personalized reply or DM (if warm-up bar met). Apply `humanizer` skill before posting!
 
 ### If prompt is "publish founder commentary":
-1. Compose 1 tweet using the `x-content` skill + `.opencode/skills/x-growth/voice.md`.
+1. Compose 1 tweet using `content.md` + `voice.md`.
 2. Run text through `humanizer` skill.
-3. Post via X MCP `post` tool.
+3. Post via `./target/release/pitch-cli x-api post --text "..."`.

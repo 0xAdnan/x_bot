@@ -1,35 +1,26 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "skills": {
-    "paths": [
-      ".opencode/skills"
-    ]
-  },
+
+  // Browser MCP the x-growth agent drives X through.
+  // Playwright MCP exposes navigate/click/type/screenshot/read-DOM tools.
+  // Run `opencode` from this directory so this project config + the
+  // .opencode/agent/x-growth.md agent is picked up.
+  //
+  // Setup: HEADED (visible window, default) + a PERSISTENT profile so the
+  // logged-in X session is reused. Do this once:
+  //   1. Run `opencode` here and have the agent open x.com (or open it yourself).
+  //   2. Log into your DEDICATED X account MANUALLY in that window.
+  //   3. Cookies persist in ./.browser-profile — future runs are already logged
+  //      in. The agent never sees or stores your password.
+  // Don't add --headless: X flags headless browsers more aggressively.
   "mcp": {
-    "pitch": {
-      "type": "remote",
-      "url": "https://api.trypitch.co/mcp",
-      "headers": {
-        "Authorization": "Bearer pk_tltxrmrZgiprXR51z_dJvoIF0yWiGBVB"
-      },
-      "enabled": true,
-      "timeout": 300000
-    },
-    "xmcp": {
+    "playwright": {
       "type": "local",
       "command": [
-        "npx",
-        "-y",
-        "@xdevplatform/xurl",
-        "mcp",
-        "https://api.x.com/mcp"
+        "npx", "@playwright/mcp@latest",
+        "--storage-state=./.browser-profile/storageState_trypitchdotco.json"
       ],
-      "environment": {
-        "CLIENT_ID": "bWxmMm1LWXF0ZDR0YWVsek9EdkQ6MTpjaQ",
-        "CLIENT_SECRET": "Q8d7SpSo-RoKLaZBDDz00aEbt59cJ9Yr44SeVPsR2X8D6g9i3D"
-      },
-      "enabled": true,
-      "timeout": 300000
+      "enabled": true
     }
   },
   "compaction": {

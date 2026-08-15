@@ -19,8 +19,7 @@ The agent doesn't change its **hard rules** or brand voice. What it evolves is
 2. For each segment, identify the **best** and **worst** opener variant by
    `positive%` first, then `conv%` (reply% alone can be a vanity metric).
 3. Sanity-check against the log: is a "winner" real, or one lucky whale? Is a
-   "loser" failing on copy, or on bad targeting (check the `x-prospect` skill's
-   fit guidance)?
+   "loser" failing on copy, or on bad targeting (check `prospecting.md` fit)?
 4. Update `state/insights.md` (see its format): promote winners, retire/park
    losers, write down *why* and any new hypothesis to test.
 5. Note anything structural for a human (e.g. "free-demo only wins when we
@@ -43,8 +42,7 @@ works, sometimes explore.
 
 ## Guardrails on "evolving"
 
-- **Never** edit `voice.md` approved-claims, the hard rules in
-  `.opencode/skills/x-growth/SKILL.md`, or the
+- **Never** edit `voice.md` approved-claims, the hard rules in `SKILL.md`, or the
   caps in `safety.md` based on stats. Tactics evolve; rules don't.
 - Don't invent new claims or sketchy tactics to lift numbers. Compliance and
   anti-spam win over conversion, always.

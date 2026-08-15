@@ -1,0 +1,17 @@
+Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md in this repo, then execute the SaaS Lead Discovery Pass.
+
+The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch.
+
+Account Safety:
+- Ensure the logged-in profile in the browser is @adnanspitch (the operator handle).
+
+HUMAN VOICE REQUIREMENT (CRITICAL):
+- Never generate robotic LLM text. Zero em-dashes (—), no marketing jargon ("unlock", "seamless", "game-changer", "elevate"), no "hope this finds you well".
+- Write outreach notes and pitch hooks like a real SaaS founder talking to another builder: peer-to-peer, practical, grounded, concise.
+
+Workflow:
+1. Run ./target/release/pitch-cli circuit-breaker and ./target/release/pitch-cli budget. Stop if the breaker is tripped or budget is exhausted.
+2. Use the browser to search X for ICP SaaS founders and developers who need product demo videos: browser_navigate to https://x.com/search?q=...&f=live with queries for competitor mentions (tella, screen studio, loom alternative) and high-intent demo phrases.
+3. Extract qualifying prospects and save them into SQLite via ./target/release/pitch-cli db upsert-prospect or ./target/release/pitch-cli db log.
+4. Apply the developer-marketing playbook lens: identify builder/DevRel communities, documentation-driven leads, and high-intent SaaS demo phrases worth engaging.
+5. Log a summary of new prospects discovered and who is worth warming next.
