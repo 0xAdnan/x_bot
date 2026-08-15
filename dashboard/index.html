@@ -630,21 +630,102 @@
     <!-- ========================================== -->
     <!-- TAB 5: ADAPTIVE STRATEGY & INSIGHTS -->
     <!-- ========================================== -->
-    <section id="sec-insights" class="hidden space-y-4">
-      <div class="panel-card p-6 space-y-4 bg-white shadow-sm border-slate-200">
-        <div class="flex items-center gap-2.5 pb-3 border-b border-slate-200">
-          <div class="p-2 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-200">
-            <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+    <section id="sec-insights" class="hidden space-y-6">
+      
+      <!-- Top Live Intelligence Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="panel-card p-4.5 bg-gradient-to-br from-indigo-50/60 to-purple-50/40 border-indigo-200/80 space-y-1 shadow-sm">
+          <div class="flex justify-between items-center text-[10px] font-bold text-indigo-700 uppercase font-mono">
+            <span>Top Performing Segment</span>
+            <i data-lucide="award" class="w-4 h-4 text-indigo-600"></i>
           </div>
-          <div>
-            <h3 class="text-sm font-bold text-slate-900">Adaptive Intelligence Memory (`insights.md`)</h3>
-            <p class="text-xs text-slate-500">Autonomous learning loop analyzing conversion rates and messaging effectiveness</p>
+          <div id="ins-top-segment" class="text-base font-extrabold text-slate-900">Solo Builders & Founders</div>
+          <div class="text-[11px] text-slate-500 font-medium font-mono">Avg Fit Score: <strong id="ins-top-score" class="text-indigo-700">9.2 / 10</strong></div>
+        </div>
+
+        <div class="panel-card p-4.5 bg-gradient-to-br from-blue-50/60 to-cyan-50/40 border-blue-200/80 space-y-1 shadow-sm">
+          <div class="flex justify-between items-center text-[10px] font-bold text-blue-700 uppercase font-mono">
+            <span>Competitor Intent Leads</span>
+            <i data-lucide="target" class="w-4 h-4 text-blue-600"></i>
+          </div>
+          <div id="ins-competitor-count" class="text-2xl font-black text-slate-900 font-mono">0</div>
+          <div class="text-[11px] text-slate-500 font-medium">Loom / Screen Studio / Tella</div>
+        </div>
+
+        <div class="panel-card p-4.5 bg-gradient-to-br from-emerald-50/60 to-teal-50/40 border-emerald-200/80 space-y-1 shadow-sm">
+          <div class="flex justify-between items-center text-[10px] font-bold text-emerald-700 uppercase font-mono">
+            <span>Video Delivery Success</span>
+            <i data-lucide="video" class="w-4 h-4 text-emerald-600"></i>
+          </div>
+          <div id="ins-delivered-videos" class="text-2xl font-black text-slate-900 font-mono">0</div>
+          <div class="text-[11px] text-slate-500 font-medium">1080p MP4s Rendered & Delivered</div>
+        </div>
+
+        <div class="panel-card p-4.5 bg-gradient-to-br from-amber-50/60 to-orange-50/40 border-amber-200/80 space-y-1 shadow-sm">
+          <div class="flex justify-between items-center text-[10px] font-bold text-amber-700 uppercase font-mono">
+            <span>Follower Gate Conversion</span>
+            <i data-lucide="user-plus" class="w-4 h-4 text-amber-600"></i>
+          </div>
+          <div id="ins-follow-gates" class="text-2xl font-black text-slate-900 font-mono">0</div>
+          <div class="text-[11px] text-slate-500 font-medium">Repeat Requests Gated</div>
+        </div>
+
+      </div>
+
+      <!-- Segment Distribution Matrix & Strategic Recommendations -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Left: Segment Breakdown Matrix -->
+        <div class="panel-card p-5 space-y-3 bg-white shadow-sm border-slate-200">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+            <i data-lucide="pie-chart" class="text-indigo-600 w-5 h-5"></i>
+            <h3 class="text-sm font-bold text-slate-900">Lead Volume & Fit Score by Segment</h3>
+          </div>
+          <p class="text-xs text-slate-500">Autonomous classification calculated live across all pipeline prospects</p>
+          <div id="segments-breakdown-container" class="space-y-3 pt-1">
+            <!-- Dynamic progress bars via JS -->
           </div>
         </div>
-        <div id="insights-content" class="text-xs font-mono text-slate-800 bg-slate-50/80 p-5 rounded-2xl border border-slate-200 whitespace-pre-wrap leading-relaxed">
+
+        <!-- Right: Real-Time Strategic Playbooks -->
+        <div class="panel-card p-5 space-y-3 bg-white shadow-sm border-slate-200">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+            <i data-lucide="compass" class="text-purple-600 w-5 h-5"></i>
+            <h3 class="text-sm font-bold text-slate-900">Active Growth Playbooks & Rules</h3>
+          </div>
+          <div class="space-y-2.5 text-xs text-slate-700">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div class="font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-600"></span> 1. The Value-First Demo Offer</div>
+              <p class="text-[11px] text-slate-600">Never pitch text features in cold DMs. Always generate a ready-to-view 60s narrated video walkthrough of their exact website. Demonstrating value upfront converts 3x higher.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div class="font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> 2. Screen Studio UI-Change Angle</div>
+              <p class="text-[11px] text-slate-600">High-intent SaaS builders frequently complain that manual screen recording breaks whenever UI changes. PITCH solves this with text-driven autonomous re-generation.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <div class="font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> 3. 2-Day Organic Warming Cadence</div>
+              <p class="text-[11px] text-slate-600">Liking 1-2 tweets across 2 different days prior to outreach builds familiarity and prevents spam flags on X.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Raw Memory Markdown Log Sheet -->
+      <div class="panel-card p-6 space-y-3 bg-white shadow-sm border-slate-200">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i>
+            <h3 class="text-sm font-bold text-slate-900">Live Adaptive Memory (`insights.md`)</h3>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">Dynamically Updated</span>
+        </div>
+        <div id="insights-content" class="text-xs font-mono text-slate-800 bg-slate-50/90 p-4.5 rounded-xl border border-slate-200 whitespace-pre-wrap leading-relaxed">
           Loading adaptive intelligence insights...
         </div>
       </div>
+
     </section>
 
     <!-- ========================================== -->
@@ -1265,6 +1346,19 @@
       renderFilteredData();
     }
 
+    function toggleMentionDetail(rowId) {
+      const detailRow = document.getElementById('detail-' + rowId);
+      const chevron = document.getElementById('chevron-' + rowId);
+      if (!detailRow) return;
+      if (detailRow.classList.contains('hidden')) {
+        detailRow.classList.remove('hidden');
+        if (chevron) chevron.classList.add('rotate-180');
+      } else {
+        detailRow.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+      }
+    }
+
     // RENDER MENTION JOBS TABLE
     function renderMentionJobs(jobs) {
       const currentHash = JSON.stringify(jobs) + '_' + mentionsCurrentPage + '_' + mentionsPageSize;
@@ -1294,7 +1388,8 @@
         tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-slate-400 italic font-medium">No mention video jobs match your filter</td></tr>';
         return;
       }
-      tbody.innerHTML = pagedJobs.map(j => {
+      tbody.innerHTML = pagedJobs.map((j, idx) => {
+        const rowId = 'row-' + (j.id || idx);
         const cleanHandle = (j.user_handle || '').replace('@','');
         const cleanTweetId = (j.tweet_id || '').replace(/_\w+$/, '');
         const tweetUrl = j.tweet_url || (/^\d+$/.test(cleanTweetId) ? `https://x.com/i/status/${cleanTweetId}` : `https://x.com/${cleanHandle}`);
@@ -1306,6 +1401,11 @@
         }
 
         const isDelivered = j.status === 'delivered' || j.status === 'completed' || Boolean(j.s3_video_url);
+        const tweetDisplay = (j.tweet_text && j.tweet_text.trim()) 
+          ? j.tweet_text 
+          : (j.target_url && j.target_url !== 'N/A' 
+              ? `@trypitchdotco make a demo for ${j.target_url}` 
+              : `@trypitchdotco mention tweet`);
 
         return `
         <tr class="hover:bg-purple-50/40 transition">
@@ -1315,9 +1415,14 @@
             </a>
           </td>
           <td class="p-3.5">
-            <a href="${tweetUrl}" target="_blank" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold rounded-lg flex items-center gap-1.5 w-fit border border-purple-200/80 shadow-sm transition text-xs" title="Visit mentioning tweet on X">
-              <i data-lucide="twitter" class="w-3.5 h-3.5 text-purple-600"></i> View Tweet <i data-lucide="external-link" class="w-3 h-3 text-purple-400"></i>
-            </a>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button onclick="toggleMentionDetail('${rowId}')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-lg flex items-center gap-1 border border-purple-200 shadow-sm transition text-xs">
+                <i data-lucide="message-square" class="w-3 h-3 text-purple-600"></i> Read Tweet <i data-lucide="chevron-down" id="chevron-${rowId}" class="w-3 h-3 transition-transform duration-200"></i>
+              </button>
+              <a href="${tweetUrl}" target="_blank" class="p-1 text-slate-400 hover:text-purple-600 rounded transition" title="Open Tweet on X">
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
           </td>
           <td class="p-3.5 font-mono text-slate-700">
             ${j.target_url && j.target_url !== 'N/A' ? `<a href="${j.target_url}" target="_blank" class="hover:underline text-blue-600 font-semibold">${j.target_url}</a>` : '<span class="text-slate-400">No URL</span>'}
@@ -1349,6 +1454,23 @@
             <button onclick="deleteEntry('mention_job', '${j.id || cleanTweetId}')" title="Delete Entry" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg border border-transparent hover:border-red-200 transition">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
+          </td>
+        </tr>
+        <tr id="detail-${rowId}" class="hidden bg-purple-50/20 border-b border-purple-100">
+          <td colspan="8" class="p-3.5">
+            <div class="p-3 bg-white rounded-xl border border-purple-200/90 shadow-sm space-y-1.5">
+              <div class="flex justify-between items-center text-[10px] font-mono font-bold uppercase tracking-wider text-purple-700">
+                <span class="flex items-center gap-1.5"><i data-lucide="message-square" class="w-3 h-3"></i> Mention Content from ${j.user_handle || '@user'}</span>
+                <span class="text-slate-400 font-normal">Tweet ID: ${cleanTweetId}</span>
+              </div>
+              <p class="text-xs text-slate-800 leading-relaxed font-medium italic bg-slate-50/80 p-2.5 rounded-lg border border-slate-200/70">
+                "${tweetDisplay}"
+              </p>
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-500 pt-0.5">
+                <span>Target URL: <strong class="text-blue-600">${j.target_url || 'N/A'}</strong></span>
+                <span>Logged At: ${j.created_at || 'Recently'}</span>
+              </div>
+            </div>
           </td>
         </tr>
         `;

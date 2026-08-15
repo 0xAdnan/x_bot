@@ -13,6 +13,7 @@ pub struct MentionJob {
     pub status: String,
     pub s3_video_url: Option<String>,
     pub x_reply_id: Option<String>,
+    pub tweet_text: Option<String>,
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }
@@ -75,6 +76,7 @@ impl Database {
                 status TEXT NOT NULL DEFAULT 'pending',
                 s3_video_url TEXT DEFAULT '',
                 x_reply_id TEXT DEFAULT '',
+                tweet_text TEXT DEFAULT '',
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
@@ -118,6 +120,8 @@ impl Database {
             ",
         )?;
 
+        let _ = conn.execute_batch("ALTER TABLE mention_jobs ADD COLUMN tweet_text TEXT DEFAULT '';");
+
         Ok(Database {
             conn,
             repo_root: cfg.repo_root,
@@ -127,13 +131,14 @@ impl Database {
     pub fn upsert_mention_job(&self, job: &MentionJob) -> SqlResult<()> {
         self.conn.execute(
             "
-            INSERT INTO mention_jobs (tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, updated_at)
-            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, CURRENT_TIMESTAMP)
+            INSERT INTO mention_jobs (tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, tweet_text, updated_at)
+            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, CURRENT_TIMESTAMP)
             ON CONFLICT(tweet_id) DO UPDATE SET
               editor_job_id = COALESCE(NULLIF(excluded.editor_job_id, ''), mention_jobs.editor_job_id),
               status = excluded.status,
               s3_video_url = COALESCE(NULLIF(excluded.s3_video_url, ''), mention_jobs.s3_video_url),
               x_reply_id = COALESCE(NULLIF(excluded.x_reply_id, ''), mention_jobs.x_reply_id),
+              tweet_text = COALESCE(NULLIF(excluded.tweet_text, ''), mention_jobs.tweet_text),
               updated_at = CURRENT_TIMESTAMP
             ",
             params![
@@ -144,13 +149,14 @@ impl Database {
                 job.status,
                 job.s3_video_url.as_deref().unwrap_or(""),
                 job.x_reply_id.as_deref().unwrap_or(""),
+                job.tweet_text.as_deref().unwrap_or(""),
             ],
         )?;
         Ok(())
     }
 
     pub fn get_mention_job_by_tweet_id(&self, tweet_id: &str) -> SqlResult<Option<MentionJob>> {
-        let mut stmt = self.conn.prepare("SELECT id, tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, created_at, updated_at FROM mention_jobs WHERE tweet_id = ?1")?;
+        let mut stmt = self.conn.prepare("SELECT id, tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, created_at, updated_at, tweet_text FROM mention_jobs WHERE tweet_id = ?1")?;
         let mut rows = stmt.query([tweet_id])?;
 
         if let Some(row) = rows.next()? {
@@ -165,6 +171,7 @@ impl Database {
                 x_reply_id: row.get(7)?,
                 created_at: row.get(8)?,
                 updated_at: row.get(9)?,
+                tweet_text: row.get(10)?,
             }))
         } else {
             Ok(None)
@@ -173,9 +180,9 @@ impl Database {
 
     pub fn get_mention_jobs_by_status(&self, status: Option<&str>, limit: usize) -> SqlResult<Vec<MentionJob>> {
         let query = if status.is_some() {
-            "SELECT id, tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, created_at, updated_at FROM mention_jobs WHERE status = ?1 ORDER BY updated_at DESC LIMIT ?2"
+            "SELECT id, tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, created_at, updated_at, tweet_text FROM mention_jobs WHERE status = ?1 ORDER BY updated_at DESC LIMIT ?2"
         } else {
-            "SELECT id, tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, created_at, updated_at FROM mention_jobs ORDER BY updated_at DESC LIMIT ?1"
+            "SELECT id, tweet_id, user_handle, target_url, editor_job_id, status, s3_video_url, x_reply_id, created_at, updated_at, tweet_text FROM mention_jobs ORDER BY updated_at DESC LIMIT ?1"
         };
 
         let mut stmt = self.conn.prepare(query)?;
@@ -192,6 +199,7 @@ impl Database {
                     x_reply_id: row.get(7)?,
                     created_at: row.get(8)?,
                     updated_at: row.get(9)?,
+                    tweet_text: row.get(10)?,
                 })
             })?
             .collect::<SqlResult<Vec<_>>>()?
@@ -208,6 +216,7 @@ impl Database {
                     x_reply_id: row.get(7)?,
                     created_at: row.get(8)?,
                     updated_at: row.get(9)?,
+                    tweet_text: row.get(10)?,
                 })
             })?
             .collect::<SqlResult<Vec<_>>>()?
