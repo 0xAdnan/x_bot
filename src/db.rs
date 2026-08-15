@@ -300,6 +300,22 @@ impl Database {
         }
     }
 
+    pub fn update_prospect_stage(&self, id_or_handle: &str, new_stage: &str) -> SqlResult<bool> {
+        if let Ok(num_id) = id_or_handle.parse::<i64>() {
+            let count = self.conn.execute(
+                "UPDATE prospects SET stage = ?1, updated_at = CURRENT_TIMESTAMP WHERE id = ?2",
+                params![new_stage, num_id],
+            )?;
+            Ok(count > 0)
+        } else {
+            let count = self.conn.execute(
+                "UPDATE prospects SET stage = ?1, updated_at = CURRENT_TIMESTAMP WHERE LOWER(handle) = LOWER(?2)",
+                params![new_stage, id_or_handle],
+            )?;
+            Ok(count > 0)
+        }
+    }
+
     pub fn get_all_prospects(&self, stage: Option<&str>) -> SqlResult<Vec<Prospect>> {
         let query = if stage.is_some() {
             "SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, updated_at FROM prospects WHERE stage = ?1 ORDER BY updated_at DESC"

@@ -3,68 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PITCH — Dual Account X Growth & CRM Dashboard</title>
+  <title>PITCH — Autonomous X Growth Engine & CRM Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-light: #f8fafc;
+      --bg-main: #f8fafc;
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
     }
     body {
-      background-color: var(--bg-light);
+      background-color: var(--bg-main);
       color: #0f172a;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    .light-card {
+    .panel-card {
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 0.875rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      border-radius: 1rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
     }
-    .light-card:hover {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    .panel-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
       border-color: #cbd5e1;
     }
-    .kanban-col {
+    .kanban-column {
       background-color: #f1f5f9;
       border: 1px solid #e2e8f0;
-      border-radius: 0.875rem;
-      min-height: 520px;
+      border-radius: 1rem;
     }
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    /* Sleek Custom Scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 space-y-6 antialiased">
+<body class="min-h-screen p-3 md:p-6 lg:p-8 space-y-6 antialiased">
 
-  <!-- PASSWORD PROTECTION LOCK SCREEN OVERLAY (LIGHT MODE) -->
-  <div id="auth-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="light-card p-8 w-full max-w-md space-y-6 border-slate-200 shadow-2xl rounded-2xl bg-white">
+  <!-- PASSWORD PROTECTION LOCK OVERLAY -->
+  <div id="auth-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="panel-card p-8 w-full max-w-md space-y-6 border-slate-200 shadow-2xl rounded-2xl bg-white">
       <div class="text-center space-y-2">
         <div class="inline-flex p-3 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30 mb-1">
-          <i data-lucide="shield-lock" class="w-8 h-8"></i>
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
         </div>
-        <h2 class="text-2xl font-black text-slate-900 tracking-tight">PITCH Intelligence Dashboard</h2>
-        <p class="text-xs text-slate-500 font-medium">Restricted Access • Enter Password to Unlock</p>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight">PITCH Intelligence Control</h2>
+        <p class="text-xs text-slate-500 font-medium">Dual Account X Growth Engine • Restricted Access</p>
       </div>
 
       <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest font-mono mb-1.5">Password</label>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest font-mono mb-1.5">Enter Password</label>
           <div class="relative">
-            <i data-lucide="key-round" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input id="auth-password" type="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-900 focus:border-blue-600 focus:bg-white outline-none transition font-mono">
+            <i data-lucide="key-round" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+            <input id="auth-password" type="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 focus:border-blue-600 focus:bg-white outline-none transition font-mono">
           </div>
         </div>
 
@@ -73,244 +72,344 @@
         </div>
 
         <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
-          <i data-lucide="unlock" class="w-4 h-4"></i> Unlock Dashboard
+          <i data-lucide="unlock" class="w-4 h-4"></i> Unlock Control Center
         </button>
       </form>
     </div>
   </div>
 
-  <!-- MAIN DASHBOARD CONTENT (Locked until auth check) -->
-  <div id="dashboard-content" class="hidden space-y-6">
-
-    <!-- Header -->
-    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-6 border-b border-slate-200 gap-4">
-      <div class="space-y-1">
-        <div class="flex flex-wrap items-center gap-3">
-          <div class="p-2.5 rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/20">
-            <i data-lucide="zap" class="w-5 h-5"></i>
-          </div>
-          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            PITCH <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">X Growth & CRM</span>
-          </h1>
-          <span id="circuit-breaker-badge" class="px-3 py-0.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Circuit Breaker: Normal
-          </span>
+  <!-- VIDEO PLAYER MODAL -->
+  <div id="video-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-3xl w-full p-4 md:p-6 space-y-4 shadow-2xl text-white">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <i data-lucide="play-circle" class="w-5 h-5 text-purple-400"></i>
+          <span id="video-modal-title" class="text-sm font-bold truncate">PITCH Demo Video Player</span>
         </div>
-        <p class="text-xs text-slate-500 font-medium pl-1">Multi-Account Automation & Live Pipeline Intelligence Engine</p>
+        <button onclick="closeVideoModal()" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
+        <video id="video-modal-player" controls class="w-full h-full object-contain"></video>
+      </div>
+      <div class="flex justify-between items-center text-xs text-slate-400 pt-1">
+        <span id="video-modal-meta" class="font-mono">1080p MP4 Render</span>
+        <a id="video-modal-download" href="#" target="_blank" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg flex items-center gap-1.5 transition">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Download MP4
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD PROSPECT MODAL -->
+  <div id="add-prospect-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="panel-card p-6 w-full max-w-md space-y-4 bg-white shadow-2xl rounded-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="user-plus" class="text-blue-600 w-4 h-4"></i> Add Prospect Manually
+        </h3>
+        <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- Top Account Switcher & Countdown -->
-      <div class="flex flex-wrap items-center gap-3">
-        
-        <!-- Account Switcher Dropdown -->
-        <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-1.5 shadow-sm">
-          <i data-lucide="user-check" class="w-4 h-4 text-blue-600 ml-1.5"></i>
-          <span class="text-xs font-medium text-slate-500">View Account:</span>
-          <select id="top-account-selector" onchange="onAccountChange()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-3 py-1.5 outline-none cursor-pointer focus:border-blue-600 transition">
-            <option value="all">⚡ All Accounts Combined</option>
-            <option value="@adnanspitch">👤 @adnanspitch (Operator)</option>
-            <option value="@trypitchdotco">🚀 @trypitchdotco (Official Brand)</option>
-          </select>
+      <form onsubmit="handleAddProspectSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">X Handle *</label>
+          <input id="add-handle" type="text" required placeholder="@username" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-blue-600 outline-none">
         </div>
-
-        <!-- Live Countdown Card -->
-        <div class="light-card px-4 py-1.5 flex items-center gap-3 border-blue-200 bg-blue-50/50">
-          <div class="p-1.5 rounded-lg bg-blue-100 text-blue-700">
-            <i data-lucide="timer" class="w-4 h-4 animate-spin" style="animation-duration: 6s;"></i>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">Name</label>
+            <input id="add-name" type="text" placeholder="Alex" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-blue-600 outline-none">
           </div>
           <div>
-            <div class="text-[9px] uppercase font-mono font-bold tracking-wider text-blue-700">@adnanspitch Next Outreach Window</div>
-            <div id="countdown-ticker" class="text-xs font-mono font-bold text-slate-900">00h 01m 00s</div>
+            <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">Score (1-10)</label>
+            <input id="add-score" type="number" min="1" max="10" value="8" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-blue-600 outline-none font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">Product URL</label>
+          <input id="add-url" type="url" placeholder="https://example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-blue-600 outline-none font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">Notes / Pain Point</label>
+          <textarea id="add-notes" rows="2" placeholder="Looking for Loom alternative for SaaS onboarding..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-blue-600 outline-none"></textarea>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-600/20 transition flex items-center justify-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4"></i> Save to SQLite Pipeline
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <div id="dashboard-content" class="hidden space-y-6">
+
+    <!-- TOP HEADER BAR -->
+    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-5 border-b border-slate-200 gap-4">
+      <div class="space-y-1">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="p-2.5 rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/25">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+          </div>
+          <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            PITCH <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">X Growth Control</span>
+          </h1>
+          <span id="circuit-breaker-badge" class="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Circuit Breaker: Normal
+          </span>
+          <span id="db-sync-indicator" class="px-2.5 py-1 text-[11px] font-mono font-bold rounded-full bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> SQLite Local DB Live
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 font-medium pl-1">Multi-Account Automation • Viral Mention Engine • Live Pipeline Intelligence</p>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        
+        <!-- Live Countdown Window Card -->
+        <div class="panel-card px-3.5 py-1.5 flex items-center gap-2.5 border-blue-200 bg-blue-50/60 shadow-sm">
+          <div class="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+            <i data-lucide="timer" class="w-4 h-4 animate-spin" style="animation-duration: 8s;"></i>
+          </div>
+          <div>
+            <div class="text-[9px] uppercase font-mono font-bold tracking-wider text-blue-700">@adnanspitch Outreach Window</div>
+            <div id="countdown-ticker" class="text-xs font-mono font-black text-slate-900">00h 00m 00s</div>
           </div>
         </div>
 
-        <button onclick="fetchData()" class="px-3.5 py-2 text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl flex items-center gap-2 transition shadow-sm">
+        <button onclick="fetchData()" id="btn-refresh" class="px-3 py-2 text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl flex items-center gap-1.5 transition shadow-sm">
           <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
         </button>
-        <button onclick="openAddModal()" class="px-3.5 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl flex items-center gap-2 transition shadow-md shadow-blue-600/20">
+        <button onclick="openAddModal()" class="px-3.5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl flex items-center gap-1.5 transition shadow-md shadow-blue-600/20">
           <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add Prospect
         </button>
       </div>
     </header>
 
-    <!-- Live Account Status Cards -->
+    <!-- DUAL ACCOUNT ENGINE STATUS CARDS -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
       
-      <!-- @adnanspitch Status Card -->
-      <div id="card-adnanspitch" class="light-card p-4 flex items-center justify-between border-l-4 border-l-emerald-500 transition">
+      <!-- @adnanspitch (Operator) -->
+      <div id="card-adnanspitch" class="panel-card p-4.5 flex items-center justify-between border-l-4 border-l-emerald-500 bg-white shadow-sm">
         <div class="flex items-center gap-3.5">
-          <div class="p-3 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200">
-            <i data-lucide="user" class="w-5 h-5"></i>
+          <div class="p-3 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-200 flex-shrink-0">
+            <i data-lucide="user" class="w-6 h-6"></i>
           </div>
           <div class="space-y-0.5">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-slate-900">@adnanspitch</span>
-              <span class="px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Active & Logged In
+              <a href="https://x.com/adnanspitch" target="_blank" class="text-sm font-extrabold text-slate-900 hover:text-emerald-700 hover:underline flex items-center gap-1">
+                @adnanspitch <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+              </a>
+              <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
+                Operator Persona
               </span>
             </div>
-            <div class="text-xs text-slate-500 font-medium">Operator Persona • Lead Prospecting • Value-first Outreach</div>
+            <div class="text-xs text-slate-500 font-medium">Silent Browser Lead Search • ICP Lead Discovery • Value-first Outreach</div>
           </div>
         </div>
         <div class="text-right hidden sm:block">
-          <div class="text-[10px] uppercase font-mono tracking-widest text-slate-400 font-bold">Session Directory</div>
-          <div class="text-[11px] text-emerald-700 font-mono font-semibold">.browser-profile-adnanspitch</div>
+          <div class="text-[10px] uppercase font-mono tracking-widest text-slate-400 font-bold">Execution Engine</div>
+          <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Playwright Chromium</span>
         </div>
       </div>
 
-      <!-- @trypitchdotco Status Card -->
-      <div id="card-trypitchdotco" class="light-card p-4 flex items-center justify-between border-l-4 border-l-blue-600 transition">
+      <!-- @trypitchdotco (Official Brand) -->
+      <div id="card-trypitchdotco" class="panel-card p-4.5 flex items-center justify-between border-l-4 border-l-blue-600 bg-white shadow-sm">
         <div class="flex items-center gap-3.5">
-          <div class="p-3 bg-blue-50 text-blue-700 rounded-xl border border-blue-200">
-            <i data-lucide="badge-check" class="w-5 h-5"></i>
+          <div class="p-3 bg-blue-50 text-blue-700 rounded-2xl border border-blue-200 flex-shrink-0">
+            <i data-lucide="badge-check" class="w-6 h-6"></i>
           </div>
           <div class="space-y-0.5">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-slate-900">@trypitchdotco</span>
-              <span class="px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span> Active & Logged In
+              <a href="https://x.com/trypitchdotco" target="_blank" class="text-sm font-extrabold text-slate-900 hover:text-blue-700 hover:underline flex items-center gap-1">
+                @trypitchdotco <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+              </a>
+              <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono">
+                Official Brand
               </span>
             </div>
-            <div class="text-xs text-slate-500 font-medium">Official Brand • Official X API v2 Active • Pitch MCP Engine</div>
+            <div class="text-xs text-slate-500 font-medium">Real-Time Mention Bot • 1080p MP4 Demos • Official X API v2 Active</div>
           </div>
         </div>
         <div class="text-right hidden sm:block">
-          <div class="text-[10px] uppercase font-mono tracking-widest text-slate-400 font-bold">Session Directory</div>
-          <div class="text-[11px] text-blue-700 font-mono font-semibold">.browser-profile-trypitchdotco</div>
+          <div class="text-[10px] uppercase font-mono tracking-widest text-slate-400 font-bold">Execution Engine</div>
+          <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-blue-50 text-blue-700 border border-blue-200">Official X API v2</span>
         </div>
       </div>
 
     </section>
 
-    <!-- Real-Time Agent & Daemon Health Monitor -->
-    <section class="light-card p-5 space-y-3 bg-slate-900 text-white border-slate-800 rounded-2xl shadow-xl">
-      <div class="flex flex-wrap justify-between items-center gap-3 pb-3 border-b border-slate-800">
-        <div class="flex items-center gap-2.5">
-          <div class="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
-            <i data-lucide="cpu" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-black text-white flex items-center gap-2">
-              Autonomous Agent & Background Daemon Monitor
-              <span id="stat-active-agents-badge" class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                5 Agents Active
-              </span>
-            </h3>
-            <p class="text-xs text-slate-400">Live operational status, polling frequencies, and scheduled agent runtimes</p>
-          </div>
+    <!-- LIVE METRICS GRID -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+      
+      <div class="panel-card p-4 space-y-1 bg-white">
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Total Leads</span>
+          <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
         </div>
-        <div id="agent-monitor-last-updated" class="text-[10px] font-mono text-slate-400">
-          Last Check: Just Now
-        </div>
+        <div id="stat-total-prospects" class="text-2xl lg:text-3xl font-black text-slate-900 font-mono">0</div>
+        <div class="text-[11px] text-slate-500 font-medium">Discovered on X</div>
       </div>
 
-      <div id="agent-monitor-grid" class="grid grid-cols-1 md:grid-cols-5 gap-3 pt-1">
-        <!-- Dynamic Agent Status Badges rendered via JS -->
+      <div class="panel-card p-4 space-y-1 border-amber-200 bg-amber-50/30">
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-bold text-amber-700 uppercase tracking-widest font-mono">Warming Stage</span>
+          <i data-lucide="flame" class="w-4 h-4 text-amber-600"></i>
+        </div>
+        <div id="stat-warming" class="text-2xl lg:text-3xl font-black text-amber-600 font-mono">0</div>
+        <div class="text-[11px] text-amber-700/80 font-medium">Score 9-10 ICP Leads</div>
       </div>
+
+      <div class="panel-card p-4 space-y-1 border-blue-200 bg-blue-50/30">
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-bold text-blue-700 uppercase tracking-widest font-mono">Contacted / DMs</span>
+          <i data-lucide="send" class="w-4 h-4 text-blue-600"></i>
+        </div>
+        <div id="stat-contacted" class="text-2xl lg:text-3xl font-black text-blue-600 font-mono">0</div>
+        <div class="text-[11px] text-blue-700/80 font-medium">Outbound Pitches Sent</div>
+      </div>
+
+      <div class="panel-card p-4 space-y-1 border-purple-200 bg-purple-50/30">
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-bold text-purple-700 uppercase tracking-widest font-mono">Delivered Videos</span>
+          <i data-lucide="video" class="w-4 h-4 text-purple-600"></i>
+        </div>
+        <div id="stat-mention-jobs" class="text-2xl lg:text-3xl font-black text-purple-600 font-mono">0</div>
+        <div class="text-[11px] text-purple-700/80 font-medium">Pitch MCP 1080p MP4s</div>
+      </div>
+
+      <div class="panel-card p-4 space-y-1 border-emerald-200 bg-emerald-50/30">
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest font-mono">Customers / Trials</span>
+          <i data-lucide="trophy" class="w-4 h-4 text-emerald-600"></i>
+        </div>
+        <div id="stat-customers" class="text-2xl lg:text-3xl font-black text-emerald-600 font-mono">0</div>
+        <div class="text-[11px] text-emerald-700/80 font-medium">Converted SaaS Users</div>
+      </div>
+
     </section>
 
-    <!-- Metrics Grid -->
-    <section class="grid grid-cols-2 md:grid-cols-5 gap-4">
-      <div class="light-card p-4 space-y-1">
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Total Prospects</div>
-        <div id="stat-total-prospects" class="text-2xl font-black text-slate-900">0</div>
-        <div class="text-[11px] text-slate-500">Filtered by Account</div>
-      </div>
-      <div class="light-card p-4 space-y-1 border-amber-200 bg-amber-50/20">
-        <div class="text-[10px] font-bold text-amber-700 uppercase tracking-widest font-mono">Warming Stage</div>
-        <div id="stat-warming" class="text-2xl font-black text-amber-600">0</div>
-        <div class="text-[11px] text-amber-700/80">Likes / Comments</div>
-      </div>
-      <div class="light-card p-4 space-y-1 border-blue-200 bg-blue-50/20">
-        <div class="text-[10px] font-bold text-blue-700 uppercase tracking-widest font-mono">Contacted / DMs</div>
-        <div id="stat-contacted" class="text-2xl font-black text-blue-600">0</div>
-        <div class="text-[11px] text-blue-700/80">Outbound DMs Sent</div>
-      </div>
-      <div class="light-card p-4 space-y-1 border-purple-200 bg-purple-50/20">
-        <div class="text-[10px] font-bold text-purple-700 uppercase tracking-widest font-mono">Mention Bot Jobs</div>
-        <div id="stat-mention-jobs" class="text-2xl font-black text-purple-600">0</div>
-        <div class="text-[11px] text-purple-700/80 font-medium">Pitch MCP On-Demand Demos</div>
-      </div>
-      <div class="light-card p-4 space-y-1 border-emerald-200 bg-emerald-50/20">
-        <div class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest font-mono">Customers / Trials</div>
-        <div id="stat-customers" class="text-2xl font-black text-emerald-600">0</div>
-        <div class="text-[11px] text-emerald-700/80">Converted Leads</div>
-      </div>
-    </section>
-
-    <!-- Main Tabs Navigation -->
-    <div class="flex flex-wrap items-center border-b border-slate-200 gap-2 md:gap-6 pt-2">
-      <button id="tab-btn-crm" onclick="switchMainTab('crm')" class="pb-3 text-xs md:text-sm font-bold text-blue-600 border-b-2 border-blue-600 flex items-center gap-2 transition px-1">
-        <i data-lucide="columns" class="w-4 h-4"></i> CRM Pipeline Kanban
+    <!-- MAIN NAVIGATION TABS -->
+    <div class="flex flex-wrap items-center border-b border-slate-200 gap-2 md:gap-4 pt-2">
+      <button id="tab-btn-crm" onclick="switchMainTab('crm')" class="pb-3 text-xs md:text-sm font-bold text-blue-600 border-b-2 border-blue-600 flex items-center gap-2 transition px-2">
+        <i data-lucide="kanban" class="w-4 h-4"></i> CRM Pipeline Kanban
+        <span id="tab-badge-crm" class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-blue-100 text-blue-700">0</span>
       </button>
-      <button id="tab-btn-mentions" onclick="switchMainTab('mentions')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-1">
-        <i data-lucide="clapperboard" class="w-4 h-4 text-purple-600"></i> 🎬 Viral Mention Bot Pipeline
+      <button id="tab-btn-mentions" onclick="switchMainTab('mentions')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-2">
+        <i data-lucide="clapperboard" class="w-4 h-4 text-purple-600"></i> Viral Mention Bot Pipeline
+        <span id="tab-badge-mentions" class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-purple-100 text-purple-700">0</span>
       </button>
-      <button id="tab-btn-research" onclick="switchMainTab('research')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-1">
-        <i data-lucide="microscope" class="w-4 h-4 text-emerald-600"></i> 🔬 24/7 AI Research & Content Prioritization
+      <button id="tab-btn-research" onclick="switchMainTab('research')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-2">
+        <i data-lucide="microscope" class="w-4 h-4 text-emerald-600"></i> 24/7 AI Research & Content Matrix
       </button>
-      <button id="tab-btn-insights" onclick="switchMainTab('insights')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-1">
+      <button id="tab-btn-activity" onclick="switchMainTab('activity')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-2">
+        <i data-lucide="activity" class="w-4 h-4 text-teal-600"></i> Live Activity Audit Feed
+        <span id="tab-badge-activity" class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-teal-100 text-teal-700">0</span>
+      </button>
+      <button id="tab-btn-insights" onclick="switchMainTab('insights')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-2">
         <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-600"></i> Adaptive Strategy & Insights
       </button>
-      <button id="tab-btn-activity" onclick="switchMainTab('activity')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-1">
-        <i data-lucide="history" class="w-4 h-4 text-teal-600"></i> Live Activity Feed
+      <button id="tab-btn-monitor" onclick="switchMainTab('monitor')" class="pb-3 text-xs md:text-sm font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2 transition px-2">
+        <i data-lucide="cpu" class="w-4 h-4 text-slate-700"></i> System & Daemons
       </button>
     </div>
 
-    <!-- TAB 1: CRM Kanban Board -->
+    <!-- ========================================== -->
+    <!-- TAB 1: CRM KANBAN BOARD -->
+    <!-- ========================================== -->
     <section id="sec-crm" class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 overflow-x-auto pb-4">
+      
+      <!-- Kanban Controls & Filter Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+            <input id="search-prospects" oninput="renderFilteredData()" type="text" placeholder="Search by handle, name, notes, product..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-600 w-64 md:w-80 transition font-medium">
+          </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Score:</span>
+            <select id="filter-score" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="all">All Scores</option>
+              <option value="high">🔥 High Fit (Score 9-10)</option>
+              <option value="med">⚡ Medium Fit (Score 7-8)</option>
+              <option value="low">🌱 Low Fit (&lt; 7)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 font-mono">
+          Showing <strong id="cnt-filtered-prospects" class="text-slate-900">0</strong> prospects
+        </div>
+      </div>
+
+      <!-- Kanban Columns Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3.5 overflow-x-auto pb-2">
         
-        <!-- New Stage -->
-        <div class="kanban-col p-3 flex flex-col h-[calc(100vh-230px)] min-h-[500px]">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-3 flex-shrink-0">
-            <span class="text-[11px] font-bold text-slate-600 uppercase tracking-widest font-mono">New</span>
-            <span id="cnt-new" class="text-xs font-mono font-bold bg-white text-slate-700 px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">0</span>
+        <!-- Column 1: New -->
+        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-slate-200">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-2.5 flex-shrink-0">
+            <span class="text-[11px] font-extrabold text-slate-700 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span> New Leads
+            </span>
+            <span id="cnt-new" class="text-xs font-mono font-bold bg-white text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 shadow-sm">0</span>
           </div>
           <div id="col-new" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
         </div>
 
-        <!-- Warming Stage -->
-        <div class="kanban-col p-3 flex flex-col h-[calc(100vh-230px)] min-h-[500px] border-t-2 border-t-amber-500">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-3 flex-shrink-0">
-            <span class="text-[11px] font-bold text-amber-700 uppercase tracking-widest font-mono">Warming</span>
-            <span id="cnt-warming" class="text-xs font-mono font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200 shadow-sm">0</span>
+        <!-- Column 2: Warming -->
+        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-amber-200/80 bg-amber-50/20">
+          <div class="flex justify-between items-center pb-2 border-b border-amber-200/80 mb-2.5 flex-shrink-0">
+            <span class="text-[11px] font-extrabold text-amber-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Warming
+            </span>
+            <span id="cnt-warming" class="text-xs font-mono font-bold bg-amber-100/80 text-amber-800 px-2.5 py-0.5 rounded-full border border-amber-300 shadow-sm">0</span>
           </div>
           <div id="col-warming" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
         </div>
 
-        <!-- Contacted Stage -->
-        <div class="kanban-col p-3 flex flex-col h-[calc(100vh-230px)] min-h-[500px] border-t-2 border-t-blue-600">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-3 flex-shrink-0">
-            <span class="text-[11px] font-bold text-blue-700 uppercase tracking-widest font-mono">Contacted</span>
-            <span id="cnt-contacted" class="text-xs font-mono font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200 shadow-sm">0</span>
+        <!-- Column 3: Contacted -->
+        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-blue-200/80 bg-blue-50/20">
+          <div class="flex justify-between items-center pb-2 border-b border-blue-200/80 mb-2.5 flex-shrink-0">
+            <span class="text-[11px] font-extrabold text-blue-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-600"></span> Contacted
+            </span>
+            <span id="cnt-contacted" class="text-xs font-mono font-bold bg-blue-100/80 text-blue-800 px-2.5 py-0.5 rounded-full border border-blue-300 shadow-sm">0</span>
           </div>
           <div id="col-contacted" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
         </div>
 
-        <!-- In Convo Stage -->
-        <div class="kanban-col p-3 flex flex-col h-[calc(100vh-230px)] min-h-[500px] border-t-2 border-t-purple-600">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-3 flex-shrink-0">
-            <span class="text-[11px] font-bold text-purple-700 uppercase tracking-widest font-mono">In Convo</span>
-            <span id="cnt-in_convo" class="text-xs font-mono font-bold bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full border border-purple-200 shadow-sm">0</span>
+        <!-- Column 4: In Convo -->
+        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-purple-200/80 bg-purple-50/20">
+          <div class="flex justify-between items-center pb-2 border-b border-purple-200/80 mb-2.5 flex-shrink-0">
+            <span class="text-[11px] font-extrabold text-purple-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-purple-600"></span> In Convo
+            </span>
+            <span id="cnt-in_convo" class="text-xs font-mono font-bold bg-purple-100/80 text-purple-800 px-2.5 py-0.5 rounded-full border border-purple-300 shadow-sm">0</span>
           </div>
           <div id="col-in_convo" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
         </div>
 
-        <!-- Customer Stage -->
-        <div class="kanban-col p-3 flex flex-col h-[calc(100vh-230px)] min-h-[500px] border-t-2 border-t-emerald-600">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-3 flex-shrink-0">
-            <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-widest font-mono">Customer</span>
-            <span id="cnt-customer" class="text-xs font-mono font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200 shadow-sm">0</span>
+        <!-- Column 5: Customer -->
+        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-emerald-200/80 bg-emerald-50/20">
+          <div class="flex justify-between items-center pb-2 border-b border-emerald-200/80 mb-2.5 flex-shrink-0">
+            <span class="text-[11px] font-extrabold text-emerald-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Customer
+            </span>
+            <span id="cnt-customer" class="text-xs font-mono font-bold bg-emerald-100/80 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-300 shadow-sm">0</span>
           </div>
           <div id="col-customer" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
         </div>
 
-        <!-- Do Not Contact / Lost Stage -->
-        <div class="kanban-col p-3 flex flex-col h-[calc(100vh-230px)] min-h-[500px] border-t-2 border-t-red-500 opacity-80">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-200 mb-3 flex-shrink-0">
-            <span class="text-[11px] font-bold text-red-600 uppercase tracking-widest font-mono">Do Not Contact</span>
-            <span id="cnt-dnc" class="text-xs font-mono font-bold bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-200 shadow-sm">0</span>
+        <!-- Column 6: Do Not Contact -->
+        <div class="kanban-column p-3 flex flex-col h-[calc(100vh-320px)] min-h-[550px] border-red-200/80 bg-red-50/20">
+          <div class="flex justify-between items-center pb-2 border-b border-red-200/80 mb-2.5 flex-shrink-0">
+            <span class="text-[11px] font-extrabold text-red-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span> DNC / Lost
+            </span>
+            <span id="cnt-dnc" class="text-xs font-mono font-bold bg-red-100/80 text-red-800 px-2.5 py-0.5 rounded-full border border-red-300 shadow-sm">0</span>
           </div>
           <div id="col-dnc" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
         </div>
@@ -318,251 +417,211 @@
       </div>
     </section>
 
-    <!-- TAB 2: Viral Mention Bot Pipeline -->
-    <section id="sec-mentions" class="hidden">
-      <div class="light-card p-6 space-y-5 border-purple-200 bg-purple-50/10">
-        <div class="flex flex-wrap justify-between items-center pb-4 border-b border-slate-200 gap-4">
-          <div class="space-y-1">
-            <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2.5">
-              <i data-lucide="clapperboard" class="text-purple-600 w-5 h-5"></i> Viral Mention Demo Bot Pipeline (@trypitchdotco)
-            </h2>
-            <p class="text-xs text-slate-500 font-medium">Real-time tracking of tweet mentions, Pitch MCP Engine jobs, and playable S3 MP4 video link deliveries</p>
+    <!-- ========================================== -->
+    <!-- TAB 2: VIRAL MENTION BOT PIPELINE -->
+    <!-- ========================================== -->
+    <section id="sec-mentions" class="hidden space-y-4">
+      
+      <!-- Mentions Header & Filter Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+            <input id="search-mention-jobs" oninput="renderFilteredData()" type="text" placeholder="Search by handle or product URL..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-purple-600 w-64 md:w-80 transition font-medium">
           </div>
-          
-          <!-- Mention Pipeline Filters -->
-          <div class="flex flex-wrap items-center gap-2">
-            <select id="filter-mention-status" onchange="renderFilteredData()" class="bg-white border border-slate-200 text-xs text-slate-900 rounded-lg px-3 py-1.5 outline-none font-medium shadow-sm">
-              <option value="all">⚡ All Statuses</option>
-              <option value="completed">✅ Delivered / Completed</option>
-              <option value="rendering">⏳ Rendering / Processing</option>
-              <option value="submitted">📥 Pending / Submitted</option>
-            </select>
 
-            <div class="relative">
-              <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-              <input id="search-mention-jobs" oninput="renderFilteredData()" type="text" placeholder="Search handle, URL..." class="bg-white border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-900 outline-none focus:border-purple-600 w-44 shadow-sm">
-            </div>
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Status:</span>
+            <select id="filter-mention-status" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="all">All Mentions</option>
+              <option value="completed">🎬 Delivered Videos</option>
+              <option value="rendering">⏳ Rendering / Processing</option>
+              <option value="follow_required">🔒 Follow Required</option>
+              <option value="no_url_found">📝 No URL Mention</option>
+            </select>
           </div>
         </div>
 
-        <!-- Mention Jobs Table -->
-        <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <div class="text-xs text-slate-500 font-mono">
+          Total: <strong id="cnt-filtered-mentions" class="text-purple-700">0</strong> video jobs
+        </div>
+      </div>
+
+      <!-- Mention Jobs Table Container -->
+      <div class="panel-card overflow-hidden bg-white shadow-sm border-slate-200">
+        <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-slate-200 bg-slate-50 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">
-                <th class="p-3.5">Requested By</th>
+              <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
+                <th class="p-3.5">User Handle</th>
                 <th class="p-3.5">Mention Tweet</th>
                 <th class="p-3.5">Target Product URL</th>
-                <th class="p-3.5">Pitch MCP Job ID</th>
-                <th class="p-3.5">Render Status</th>
-                <th class="p-3.5">Rendered S3 Video MP4 Link</th>
-                <th class="p-3.5">X Reply Status</th>
-                <th class="p-3.5 text-right">Action</th>
+                <th class="p-3.5">Pitch MCP Job</th>
+                <th class="p-3.5">Status</th>
+                <th class="p-3.5">Rendered MP4</th>
+                <th class="p-3.5">X Reply</th>
+                <th class="p-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="mention-jobs-table-body" class="divide-y divide-slate-100 text-xs">
-              <tr><td colspan="8" class="p-6 text-center text-slate-400 italic font-medium">Loading mention bot video jobs...</td></tr>
+              <tr><td colspan="8" class="p-8 text-center text-slate-400 italic font-medium">Loading mention jobs from SQLite...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- TAB 3: 24/7 AI Research & Content Prioritization Intelligence -->
+    <!-- ========================================== -->
+    <!-- TAB 3: 24/7 AI RESEARCH & CONTENT -->
+    <!-- ========================================== -->
     <section id="sec-research" class="hidden space-y-6">
       
-      <!-- Top Account Toggle Switcher for Research -->
-      <div class="light-card p-5 border-emerald-200 bg-emerald-50/20 flex flex-wrap justify-between items-center gap-4">
-        <div class="space-y-1">
-          <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-            <i data-lucide="microscope" class="text-emerald-600 w-5 h-5"></i> 24/7 AI Research & Content Generation Pipeline
-          </h2>
-          <p class="text-xs text-slate-500 font-medium">Real-time search queries, lead scoring rules, and pre-cooked outreach content for both accounts</p>
-        </div>
-
-        <!-- Account Toggle Pills -->
-        <div class="flex items-center gap-1.5 bg-white border border-slate-200 p-1.5 rounded-xl shadow-sm">
-          <button id="res-toggle-all" onclick="switchResearchAccount('all')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-sm transition">
-            ⚡ All Accounts
-          </button>
-          <button id="res-toggle-adnan" onclick="switchResearchAccount('@adnanspitch')" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 transition">
-            👤 @adnanspitch (Operator)
-          </button>
-          <button id="res-toggle-pitch" onclick="switchResearchAccount('@trypitchdotco')" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 transition">
-            🚀 @trypitchdotco (Brand)
-          </button>
-        </div>
-      </div>
-
-      <!-- Section A & B Grid: Ongoing Research Queries + Lead Scoring Basis -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Section A: Ongoing Research Queries -->
-        <div class="light-card p-5 space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="radar" class="text-blue-600 w-4 h-4"></i> Ongoing 24/7 Research Search Queries
-            </h3>
-            <span class="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span> Active
-            </span>
+        <!-- Left: Search Queries Matrix -->
+        <div class="panel-card p-5 space-y-4 bg-white">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+            <i data-lucide="radar" class="text-blue-600 w-5 h-5"></i>
+            <h3 class="text-sm font-bold text-slate-900">24/7 Live Search Queries (@adnanspitch)</h3>
           </div>
-
+          <p class="text-xs text-slate-500">Autonomous Playwright browser search queries executed on X every 60 seconds</p>
           <div id="research-queries-container" class="space-y-2.5">
-            <!-- Rendered by JS -->
+            <!-- Rendered via JS -->
           </div>
         </div>
 
-        <!-- Section B: Lead Prioritization Scoring Matrix -->
-        <div class="light-card p-5 space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="sliders" class="text-emerald-600 w-4 h-4"></i> Lead Prioritization & Scoring Matrix
-            </h3>
-            <span class="text-xs font-mono font-bold text-emerald-700">1 - 10 Score Basis</span>
+        <!-- Right: Lead Scoring Rules Matrix -->
+        <div class="panel-card p-5 space-y-4 bg-white">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+            <i data-lucide="sliders" class="text-emerald-600 w-5 h-5"></i>
+            <h3 class="text-sm font-bold text-slate-900">Lead Scoring & ICP Prioritization Matrix</h3>
           </div>
-
+          <p class="text-xs text-slate-500">Scoring formula (1-10) applied to classify warm prospects</p>
           <div id="scoring-matrix-container" class="space-y-2.5">
-            <!-- Rendered by JS -->
+            <!-- Rendered via JS -->
           </div>
         </div>
 
       </div>
 
-      <!-- Section C: Generated Content Queue & Pre-cooked Pitch Hooks -->
-      <div class="light-card p-6 space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-          <div class="space-y-0.5">
-            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="sparkles" class="text-purple-600 w-5 h-5"></i> Pre-cooked Content & Outreach Hook Pipeline
-            </h3>
-            <p class="text-xs text-slate-500">Content generated in advance by the 24/7 researcher waiting for scheduled action windows</p>
+      <!-- Pre-cooked Content & Outreach Pipeline -->
+      <div class="panel-card p-5 space-y-4 bg-white">
+        <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+          <i data-lucide="sparkles" class="text-purple-600 w-5 h-5"></i>
+          <h3 class="text-sm font-bold text-slate-900">Pre-cooked Content & Outreach Hook Pipeline</h3>
+        </div>
+        <p class="text-xs text-slate-500">AI-generated value-first pitch hooks ready for instant execution during action windows</p>
+        <div id="content-queue-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: LIVE ACTIVITY AUDIT FEED -->
+    <!-- ========================================== -->
+    <section id="sec-activity" class="hidden space-y-4">
+      
+      <!-- Filter Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+            <input id="search-activity" oninput="renderFilteredData()" type="text" placeholder="Search activity..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-teal-600 w-64 md:w-80 transition font-medium">
           </div>
-        </div>
 
-        <div id="content-queue-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Rendered by JS -->
-        </div>
-      </div>
-
-    </section>
-
-    <!-- TAB 4: Adaptive Strategy & Insights -->
-    <section id="sec-insights" class="hidden">
-      <div class="light-card p-6 space-y-4">
-        <div class="flex justify-between items-center pb-4 border-b border-slate-200">
-          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="brain-circuit" class="text-indigo-600"></i> Adaptive Intelligence Memory (`insights.md`)
-          </h2>
-          <span class="text-xs text-slate-400 font-mono font-medium">Multi-Armed Bandit Learning Loop</span>
-        </div>
-        <div id="insights-content" class="text-xs font-mono text-slate-800 leading-relaxed whitespace-pre-wrap bg-slate-50 p-5 rounded-xl border border-slate-200 max-h-[600px] overflow-y-auto">
-          Loading insights...
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 5: Activity Feed -->
-    <section id="sec-activity" class="hidden">
-      <div class="light-card p-5 space-y-4">
-        <div class="flex flex-wrap justify-between items-center pb-2 border-b border-slate-200 gap-3">
-          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="activity" class="text-teal-600"></i> Session Activity Log
-          </h2>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <select id="filter-account" onchange="filterActivity()" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 outline-none font-medium shadow-sm">
-              <option value="all">⚡ All Handles</option>
-              <option value="@adnanspitch">👤 @adnanspitch</option>
-              <option value="@trypitchdotco">🚀 @trypitchdotco</option>
-            </select>
-
-            <select id="filter-action-type" onchange="renderFilteredData()" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 outline-none font-medium shadow-sm">
-              <option value="all">🎯 All Action Types</option>
-              <option value="replies">💬 Replies & Mention Demos</option>
-              <option value="posts">📝 Posts & Quote Tweets</option>
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Action:</span>
+            <select id="filter-action-type" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="all">All Actions</option>
+              <option value="discover">🔍 Lead Discovery</option>
+              <option value="posts">📝 Posts & Quotes</option>
+              <option value="replies">💬 Replies & Video Demos</option>
               <option value="likes">❤️ Likes</option>
-              <option value="dms">✉️ Outbound DMs</option>
             </select>
-
-            <div class="relative">
-              <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-              <input id="search-activity" oninput="renderFilteredData()" type="text" placeholder="Search activity..." class="bg-white border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-900 outline-none focus:border-teal-600 w-44 shadow-sm">
-            </div>
           </div>
         </div>
-        <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+
+        <div class="text-xs text-slate-500 font-mono">
+          Showing <strong id="cnt-filtered-activity" class="text-teal-700">0</strong> log entries
+        </div>
+      </div>
+
+      <!-- Activity Log Table -->
+      <div class="panel-card overflow-hidden bg-white shadow-sm border-slate-200">
+        <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-slate-200 bg-slate-50 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">
-                <th class="p-3.5">Timestamp</th>
+              <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
+                <th class="p-3.5">Timestamp (UTC)</th>
                 <th class="p-3.5">Action</th>
-                <th class="p-3.5">Handle</th>
-                <th class="p-3.5">Segment / Variant</th>
-                <th class="p-3.5">Detail</th>
+                <th class="p-3.5">Target Handle</th>
+                <th class="p-3.5">Details</th>
                 <th class="p-3.5">Result</th>
-                <th class="p-3.5 text-right">Action</th>
+                <th class="p-3.5 text-right">Delete</th>
               </tr>
             </thead>
             <tbody id="activity-table-body" class="divide-y divide-slate-100 text-xs">
-              <tr><td colspan="7" class="p-6 text-center text-slate-400 italic font-medium">Loading activity...</td></tr>
+              <tr><td colspan="6" class="p-8 text-center text-slate-400 italic font-medium">Loading session activity log...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
+
     </section>
 
-  </div>
-
-  <!-- Add Prospect Modal -->
-  <div id="add-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-    <div class="light-card p-6 w-full max-w-md space-y-4 border-slate-200 bg-white shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2"><i data-lucide="user-plus" class="text-blue-600 w-4 h-4"></i> Add New Prospect</h3>
-        <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- ========================================== -->
+    <!-- TAB 5: ADAPTIVE STRATEGY & INSIGHTS -->
+    <!-- ========================================== -->
+    <section id="sec-insights" class="hidden space-y-4">
+      <div class="panel-card p-6 space-y-4 bg-white shadow-sm border-slate-200">
+        <div class="flex items-center gap-2.5 pb-3 border-b border-slate-200">
+          <div class="p-2 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-200">
+            <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Adaptive Intelligence Memory (`insights.md`)</h3>
+            <p class="text-xs text-slate-500">Autonomous learning loop analyzing conversion rates and messaging effectiveness</p>
+          </div>
+        </div>
+        <div id="insights-content" class="text-xs font-mono text-slate-800 bg-slate-50/80 p-5 rounded-2xl border border-slate-200 whitespace-pre-wrap leading-relaxed">
+          Loading adaptive intelligence insights...
+        </div>
       </div>
-      <form onsubmit="submitProspect(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">X Handle (e.g. @username)</label>
-          <input id="inp-handle" type="text" required placeholder="@founder" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:border-blue-600 focus:bg-white outline-none">
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 6: SYSTEM & DAEMON MONITOR -->
+    <!-- ========================================== -->
+    <section id="sec-monitor" class="hidden space-y-4">
+      <div class="panel-card p-5 space-y-4 bg-slate-900 text-white border-slate-800 shadow-xl rounded-2xl">
+        <div class="flex flex-wrap justify-between items-center gap-3 pb-3 border-b border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              <i data-lucide="cpu" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-black text-white flex items-center gap-2">
+                Autonomous Services & Background Daemons
+                <span class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  6 Services Active
+                </span>
+              </h3>
+              <p class="text-xs text-slate-400">Live health checks, background polling loops, and execution architecture</p>
+            </div>
+          </div>
+          <div class="text-[10px] font-mono text-slate-400">
+            Model: <strong class="text-purple-400">google/gemini-3.6-flash</strong>
+          </div>
         </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">Name / Title</label>
-          <input id="inp-name" type="text" placeholder="John Doe (SaaS Founder)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:border-blue-600 focus:bg-white outline-none">
+
+        <div id="agent-monitor-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 pt-1">
+          <!-- Dynamic Agent Status Badges rendered via JS -->
         </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">Segment</label>
-          <select id="inp-segment" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:border-blue-600 focus:bg-white outline-none">
-            <option value="founder">Founder / Indie Hacker</option>
-            <option value="growth">Growth / PMM / Marketing</option>
-            <option value="agency">Agency / Demo Producer</option>
-            <option value="yc">YC Batch Builder</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">CRM Stage</label>
-          <select id="inp-stage" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:border-blue-600 focus:bg-white outline-none">
-            <option value="new">New</option>
-            <option value="warming">Warming</option>
-            <option value="contacted">Contacted</option>
-            <option value="in_convo">In Convo</option>
-            <option value="customer">Customer / Trial</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">Product URL</label>
-          <input id="inp-product_url" type="url" placeholder="https://product.com" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:border-blue-600 focus:bg-white outline-none">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-1">Notes</label>
-          <textarea id="inp-notes" rows="2" placeholder="Shipped new feature video on Product Hunt..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:border-blue-600 focus:bg-white outline-none"></textarea>
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-md shadow-blue-600/20">Save Prospect</button>
-        </div>
-      </form>
-    </div>
+      </div>
+    </section>
+
   </div>
 
   <script>
@@ -570,35 +629,27 @@
     let rawProspects = [];
     let rawMentionJobs = [];
     let rawResearchData = {};
-    let currentSelectedAccount = 'all';
-    let currentResearchAccount = 'all';
+    let currentMainTab = 'crm';
 
-    async function checkAuthStatus() {
-      try {
-        const token = localStorage.getItem('pitch_auth_token') || '';
-        const headers = {};
-        if (token) {
-          headers['X-Auth-Token'] = token;
-        }
-        const res = await fetch('/api/auth', { headers }).then(r => r.json());
-        if (res && res.authenticated) {
-          document.getElementById('auth-overlay').classList.add('hidden');
-          document.getElementById('dashboard-content').classList.remove('hidden');
-          fetchData();
-          startCountdown();
-          setInterval(fetchData, 10000);
-        } else {
-          document.getElementById('auth-overlay').classList.remove('hidden');
-          document.getElementById('dashboard-content').classList.add('hidden');
-        }
-      } catch (e) {
-        console.error('Auth check error:', e);
+    // AUTH / PASSWORD HANDLING
+    function checkAuthStatus() {
+      const cookieMatch = document.cookie.match(/pitch_auth=([^;]+)/);
+      const isAuth = sessionStorage.getItem('pitch_auth_token_verified') || cookieMatch;
+      if (isAuth) {
+        document.getElementById('auth-overlay').classList.add('hidden');
+        document.getElementById('dashboard-content').classList.remove('hidden');
+        fetchData();
+        startCountdown();
+        setInterval(fetchData, 10000);
+      } else {
+        document.getElementById('auth-overlay').classList.remove('hidden');
+        document.getElementById('dashboard-content').classList.add('hidden');
       }
     }
 
     async function handleAuthSubmit(e) {
       e.preventDefault();
-      const password = document.getElementById('auth-password').value;
+      const pwd = document.getElementById('auth-password').value;
       const errEl = document.getElementById('auth-error-msg');
       errEl.classList.add('hidden');
 
@@ -606,15 +657,16 @@
         const res = await fetch('/api/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password })
-        });
+          body: JSON.stringify({ password: pwd })
+        }).then(r => r.json());
 
-        if (res.ok) {
-          const data = await res.json();
-          if (data.token) {
-            localStorage.setItem('pitch_auth_token', data.token);
-          }
-          checkAuthStatus();
+        if (res.authenticated) {
+          sessionStorage.setItem('pitch_auth_token_verified', 'true');
+          document.getElementById('auth-overlay').classList.add('hidden');
+          document.getElementById('dashboard-content').classList.remove('hidden');
+          fetchData();
+          startCountdown();
+          setInterval(fetchData, 10000);
         } else {
           errEl.classList.remove('hidden');
         }
@@ -623,42 +675,10 @@
       }
     }
 
-    async function deleteEntry(type, id) {
-      if (!confirm(`Are you sure you want to delete this ${type.replace('_', ' ')}?`)) return;
-
-      if (type === 'prospect') {
-        rawProspects = rawProspects.filter(p => String(p.id) !== String(id) && p.handle !== id);
-      } else if (type === 'mention_job') {
-        rawMentionJobs = rawMentionJobs.filter(j => String(j.id) !== String(id) && j.tweet_id !== id);
-      } else if (type === 'activity') {
-        rawActivities = rawActivities.filter(a => String(a.id) !== String(id));
-      }
-      renderFilteredData();
-
-      try {
-        const res = await fetch('/api/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type, id })
-        });
-
-        if (res.ok) {
-          fetchData();
-        } else {
-          alert('Delete failed on server');
-        }
-      } catch (e) {
-        console.error('Delete error:', e);
-      }
-    }
-
-    function setElText(id, text) {
-      const el = document.getElementById(id);
-      if (el) el.innerText = text;
-    }
-
+    // TAB SWITCHER
     function switchMainTab(tab) {
-      ['crm', 'mentions', 'research', 'insights', 'activity'].forEach(t => {
+      currentMainTab = tab;
+      ['crm', 'mentions', 'research', 'activity', 'insights', 'monitor'].forEach(t => {
         const sec = document.getElementById('sec-' + t);
         const btn = document.getElementById('tab-btn-' + t);
         if (sec) sec.classList.add('hidden');
@@ -674,87 +694,142 @@
         targetBtn.classList.add('text-blue-600', 'border-blue-600');
         targetBtn.classList.remove('text-slate-500', 'border-transparent');
       }
-    }
-
-    function switchResearchAccount(acc) {
-      currentResearchAccount = acc;
-      ['all', 'adnan', 'pitch'].forEach(a => {
-        const btn = document.getElementById('res-toggle-' + a);
-        if (btn) {
-          btn.classList.remove('bg-emerald-600', 'text-white', 'shadow-sm');
-          btn.classList.add('text-slate-600');
-        }
-      });
-      const activeBtn = document.getElementById('res-toggle-' + (acc === '@adnanspitch' ? 'adnan' : acc === '@trypitchdotco' ? 'pitch' : 'all'));
-      if (activeBtn) {
-        activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-sm');
-        activeBtn.classList.remove('text-slate-600');
-      }
-      renderResearchTab();
-    }
-
-    function onAccountChange() {
-      const sel = document.getElementById('top-account-selector');
-      if (sel) currentSelectedAccount = sel.value;
-      
-      const cardAdnan = document.getElementById('card-adnanspitch');
-      const cardPitch = document.getElementById('card-trypitchdotco');
-
-      if (cardAdnan && cardPitch) {
-        if (currentSelectedAccount === '@adnanspitch') {
-          cardAdnan.classList.remove('opacity-50');
-          cardPitch.classList.add('opacity-50');
-        } else if (currentSelectedAccount === '@trypitchdotco') {
-          cardPitch.classList.remove('opacity-50');
-          cardAdnan.classList.add('opacity-50');
-        } else {
-          cardAdnan.classList.remove('opacity-50');
-          cardPitch.classList.remove('opacity-50');
-        }
-      }
-
-      const filterAcc = document.getElementById('filter-account');
-      if (filterAcc) filterAcc.value = currentSelectedAccount;
-
-      renderFilteredData();
-    }
-
-    function renderAgents(agents) {
-      const container = document.getElementById('agent-monitor-grid');
-      if (!container) return;
-      if (!agents || agents.length === 0) {
-        container.innerHTML = '<div class="col-span-5 text-center text-xs text-slate-400">Loading agent statuses...</div>';
-        return;
-      }
-
-      container.innerHTML = agents.map(a => {
-        const statusStr = (a.status || 'active').toLowerCase();
-        const isActive = statusStr === 'active' || statusStr === 'ok';
-        const badgeBg = isActive ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-        const dotBg = isActive ? 'bg-emerald-400' : 'bg-purple-400';
-        const agentId = (a.id || a.name || '').toLowerCase();
-        const icon = agentId.includes('mention') ? 'bell-ring' : agentId.includes('mcp') ? 'video' : agentId.includes('sync') ? 'refresh-cw' : agentId.includes('server') ? 'cpu' : 'calendar-clock';
-        const handleText = a.handle ? `<div class="text-[10px] font-mono text-purple-300 font-semibold">${a.handle}</div>` : '';
-        const descText = a.description ? `<div class="text-[10px] text-slate-400 leading-tight">${a.description}</div>` : (a.type ? `<div class="text-[10px] text-slate-400 leading-tight">${a.type}</div>` : '');
-
-        return `
-          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 space-y-2 hover:border-purple-500/50 transition">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-white flex items-center gap-1.5">
-                <i data-lucide="${icon}" class="w-3.5 h-3.5 text-purple-400"></i> ${a.name || 'Agent'}
-              </span>
-              <span class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full ${badgeBg} border flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full ${dotBg} animate-ping"></span> ${(a.status || 'ACTIVE').toUpperCase()}
-              </span>
-            </div>
-            ${handleText}
-            ${descText}
-          </div>
-        `;
-      }).join('');
       if (window.lucide) lucide.createIcons();
     }
 
+    // MODAL HANDLERS
+    function openVideoModal(url, title) {
+      const modal = document.getElementById('video-modal');
+      const player = document.getElementById('video-modal-player');
+      const titleEl = document.getElementById('video-modal-title');
+      const dlBtn = document.getElementById('video-modal-download');
+      
+      titleEl.innerText = title || 'PITCH Demo Video Playback';
+      player.src = url;
+      dlBtn.href = url;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      player.play().catch(() => {});
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeVideoModal() {
+      const modal = document.getElementById('video-modal');
+      const player = document.getElementById('video-modal-player');
+      player.pause();
+      player.src = '';
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openAddModal() {
+      document.getElementById('add-prospect-modal').classList.remove('hidden');
+      document.getElementById('add-prospect-modal').classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-prospect-modal').classList.add('hidden');
+      document.getElementById('add-prospect-modal').classList.remove('flex');
+    }
+
+    async function handleAddProspectSubmit(e) {
+      e.preventDefault();
+      const handle = document.getElementById('add-handle').value.trim();
+      const name = document.getElementById('add-name').value.trim();
+      const score = parseInt(document.getElementById('add-score').value) || 8;
+      const url = document.getElementById('add-url').value.trim();
+      const notes = document.getElementById('add-notes').value.trim();
+
+      const newP = {
+        id: Date.now(),
+        handle,
+        name,
+        score,
+        product_url: url,
+        notes,
+        stage: 'new',
+        segment: 'founder',
+        why: notes || 'Manually added prospect'
+      };
+
+      rawProspects.unshift(newP);
+      renderFilteredData();
+      closeAddModal();
+
+      try {
+        await fetch('/api/crm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newP)
+        });
+      } catch (err) {}
+    }
+
+    // STAGE MOVER
+    async function updateProspectStage(id, newStage) {
+      const p = rawProspects.find(x => String(x.id) === String(id) || x.handle === id);
+      if (p) {
+        p.stage = newStage;
+        renderFilteredData();
+      }
+      try {
+        await fetch('/api/stage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, stage: newStage })
+        });
+      } catch (e) {
+        console.error('Stage update error:', e);
+      }
+    }
+
+    // DELETE HANDLER
+    async function deleteEntry(type, id) {
+      if (!confirm(`Are you sure you want to delete this ${type.replace('_', ' ')}?`)) return;
+
+      if (type === 'prospect') {
+        rawProspects = rawProspects.filter(p => String(p.id) !== String(id) && p.handle !== id);
+      } else if (type === 'mention_job') {
+        rawMentionJobs = rawMentionJobs.filter(j => String(j.id) !== String(id) && j.tweet_id !== id);
+      } else if (type === 'activity') {
+        rawActivities = rawActivities.filter(a => String(a.id) !== String(id));
+      }
+      renderFilteredData();
+
+      try {
+        await fetch('/api/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, id })
+        });
+      } catch (e) {
+        console.error('Delete error:', e);
+      }
+    }
+
+    // CLIPBOARD HELPER
+    function copyTextToClipboard(text, btnEl) {
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(text).then(() => {
+        if (btnEl) {
+          const orig = btnEl.innerText;
+          btnEl.innerText = 'Copied!';
+          btnEl.classList.add('bg-emerald-600', 'text-white');
+          setTimeout(() => {
+            btnEl.innerText = orig;
+            btnEl.classList.remove('bg-emerald-600', 'text-white');
+          }, 2000);
+        }
+      });
+    }
+
+    function setElText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = text;
+    }
+
+    // COUNTDOWN TICKER
     function startCountdown() {
       function update() {
         const now = new Date();
@@ -784,7 +859,11 @@
       setInterval(update, 1000);
     }
 
+    // CORE DATA FETCHING
     async function fetchData() {
+      const spinIcon = document.querySelector('#btn-refresh i');
+      if (spinIcon) spinIcon.classList.add('animate-spin');
+
       try {
         const [resAct, resCrm, resIns, resStats, resMentions, resResearch] = await Promise.all([
           fetch('/api/activity').then(r => r.json()).catch(() => ({ activities: [] })),
@@ -812,148 +891,114 @@
         renderResearchTab();
       } catch (err) {
         console.error('Fetch error:', err);
+      } finally {
+        if (spinIcon) setTimeout(() => spinIcon.classList.remove('animate-spin'), 600);
       }
     }
 
+    // RENDER DATA & FILTERS
     function renderFilteredData() {
+      // 1. Prospect Filter
+      const pSearch = (document.getElementById('search-prospects')?.value || '').toLowerCase().trim();
+      const scoreFilter = document.getElementById('filter-score')?.value || 'all';
+
       let filteredProspects = rawProspects;
-      let filteredActivities = rawActivities;
-      let filteredMentionJobs = rawMentionJobs;
-
-      if (currentSelectedAccount !== 'all') {
-        filteredProspects = rawProspects.filter(p => p.account === currentSelectedAccount || !p.account);
-        filteredActivities = rawActivities.filter(a => a.handle === currentSelectedAccount || (a.detail && a.detail.includes(currentSelectedAccount)));
+      if (pSearch) {
+        filteredProspects = filteredProspects.filter(p =>
+          (p.handle || '').toLowerCase().includes(pSearch) ||
+          (p.name || '').toLowerCase().includes(pSearch) ||
+          (p.notes || '').toLowerCase().includes(pSearch) ||
+          (p.product_url || '').toLowerCase().includes(pSearch) ||
+          (p.why || '').toLowerCase().includes(pSearch)
+        );
       }
-
-      const actionTypeSel = document.getElementById('filter-action-type')?.value || 'all';
-      if (actionTypeSel !== 'all') {
-        if (actionTypeSel === 'replies') {
-          filteredActivities = filteredActivities.filter(a => a.action === 'reply' || a.action === 'mention_demo_reply');
-        } else if (actionTypeSel === 'posts') {
-          filteredActivities = filteredActivities.filter(a => a.action === 'post' || a.action === 'quote');
-        } else if (actionTypeSel === 'likes') {
-          filteredActivities = filteredActivities.filter(a => a.action === 'like');
-        } else if (actionTypeSel === 'dms') {
-          filteredActivities = filteredActivities.filter(a => a.action === 'dm');
+      if (scoreFilter !== 'all') {
+        if (scoreFilter === 'high') {
+          filteredProspects = filteredProspects.filter(p => (p.score || 0) >= 9);
+        } else if (scoreFilter === 'med') {
+          filteredProspects = filteredProspects.filter(p => (p.score || 0) >= 7 && (p.score || 0) < 9);
+        } else if (scoreFilter === 'low') {
+          filteredProspects = filteredProspects.filter(p => (p.score || 0) < 7);
         }
       }
 
-      const actSearch = document.getElementById('search-activity')?.value?.toLowerCase().trim() || '';
+      // 2. Mentions Filter
+      const mSearch = (document.getElementById('search-mention-jobs')?.value || '').toLowerCase().trim();
+      const mStatus = document.getElementById('filter-mention-status')?.value || 'all';
+
+      let filteredMentions = rawMentionJobs;
+      if (mSearch) {
+        filteredMentions = filteredMentions.filter(j =>
+          (j.user_handle || '').toLowerCase().includes(mSearch) ||
+          (j.target_url || '').toLowerCase().includes(mSearch) ||
+          (j.editor_job_id || '').toLowerCase().includes(mSearch)
+        );
+      }
+      if (mStatus !== 'all') {
+        if (mStatus === 'completed') {
+          filteredMentions = filteredMentions.filter(j => j.status === 'delivered' || j.status === 'completed');
+        } else if (mStatus === 'rendering') {
+          filteredMentions = filteredMentions.filter(j => j.status === 'rendering' || j.status === 'processing');
+        } else if (mStatus === 'follow_required') {
+          filteredMentions = filteredMentions.filter(j => j.status === 'follow_required');
+        } else if (mStatus === 'no_url_found') {
+          filteredMentions = filteredMentions.filter(j => j.status === 'no_url_found');
+        }
+      }
+
+      // 3. Activity Filter
+      const actSearch = (document.getElementById('search-activity')?.value || '').toLowerCase().trim();
+      const actType = document.getElementById('filter-action-type')?.value || 'all';
+
+      let filteredActivities = rawActivities;
       if (actSearch) {
-        filteredActivities = filteredActivities.filter(a => 
+        filteredActivities = filteredActivities.filter(a =>
           (a.handle || '').toLowerCase().includes(actSearch) ||
           (a.action || '').toLowerCase().includes(actSearch) ||
-          (a.detail || '').toLowerCase().includes(actSearch) ||
-          (a.segment || '').toLowerCase().includes(actSearch)
+          (a.detail || '').toLowerCase().includes(actSearch)
         );
       }
-
-      const mentionStatusSel = document.getElementById('filter-mention-status')?.value || 'all';
-      if (mentionStatusSel !== 'all') {
-        if (mentionStatusSel === 'completed') {
-          filteredMentionJobs = filteredMentionJobs.filter(j => j.status === 'completed' || j.status === 'delivered');
-        } else if (mentionStatusSel === 'rendering') {
-          filteredMentionJobs = filteredMentionJobs.filter(j => j.status === 'rendering' || j.status === 'processing');
-        } else if (mentionStatusSel === 'submitted') {
-          filteredMentionJobs = filteredMentionJobs.filter(j => j.status === 'submitted' || j.status === 'pending');
+      if (actType !== 'all') {
+        if (actType === 'discover') {
+          filteredActivities = filteredActivities.filter(a => a.action.includes('discover'));
+        } else if (actType === 'posts') {
+          filteredActivities = filteredActivities.filter(a => a.action === 'post' || a.action === 'quote');
+        } else if (actType === 'replies') {
+          filteredActivities = filteredActivities.filter(a => a.action === 'reply' || a.action === 'mention_demo_reply');
+        } else if (actType === 'likes') {
+          filteredActivities = filteredActivities.filter(a => a.action === 'like');
         }
       }
 
-      const mentionSearch = document.getElementById('search-mention-jobs')?.value?.toLowerCase().trim() || '';
-      if (mentionSearch) {
-        filteredMentionJobs = filteredMentionJobs.filter(j =>
-          (j.user_handle || '').toLowerCase().includes(mentionSearch) ||
-          (j.target_url || '').toLowerCase().includes(mentionSearch) ||
-          (j.editor_job_id || '').toLowerCase().includes(mentionSearch)
-        );
-      }
+      // Update KPI Counter Cards directly from live datasets
+      setElText('stat-total-prospects', rawProspects.length);
+      setElText('stat-warming', rawProspects.filter(p => p.stage === 'warming').length);
+      setElText('stat-contacted', rawProspects.filter(p => p.stage === 'contacted' || p.stage === 'in_convo').length);
+      setElText('stat-mention-jobs', rawMentionJobs.filter(j => j.status === 'delivered' || j.s3_video_url).length);
+      setElText('stat-customers', rawProspects.filter(p => p.stage === 'customer' || p.stage === 'trial').length);
 
-      setElText('stat-total-prospects', filteredProspects.length);
-      setElText('stat-warming', filteredProspects.filter(p => p.stage === 'warming').length);
-      setElText('stat-contacted', filteredProspects.filter(p => p.stage === 'contacted').length);
-      setElText('stat-customers', filteredProspects.filter(p => p.stage === 'customer').length);
-      setElText('stat-mention-jobs', rawMentionJobs.length);
+      setElText('cnt-filtered-prospects', filteredProspects.length);
+      setElText('cnt-filtered-mentions', filteredMentions.length);
+      setElText('cnt-filtered-activity', filteredActivities.length);
+      setElText('tab-badge-crm', rawProspects.length);
+      setElText('tab-badge-mentions', rawMentionJobs.length);
+      setElText('tab-badge-activity', rawActivities.length);
 
       const stages = {
-        new: filteredProspects.filter(p => p.stage === 'new' || !p.stage),
+        new: filteredProspects.filter(p => p.stage === 'new' || !p.stage || p.stage === ''),
         warming: filteredProspects.filter(p => p.stage === 'warming'),
         contacted: filteredProspects.filter(p => p.stage === 'contacted'),
         in_convo: filteredProspects.filter(p => p.stage === 'in_convo'),
-        customer: filteredProspects.filter(p => p.stage === 'customer'),
+        customer: filteredProspects.filter(p => p.stage === 'customer' || p.stage === 'trial'),
         'do-not-contact': filteredProspects.filter(p => p.stage === 'do-not-contact' || p.stage === 'lost')
       };
+
       renderKanban(stages);
-      renderMentionJobs(filteredMentionJobs);
+      renderMentionJobs(filteredMentions);
       renderActivity(filteredActivities);
     }
 
-    function renderResearchTab() {
-      // 1. Render Research Queries
-      const qContainer = document.getElementById('research-queries-container');
-      if (qContainer && rawResearchData.queries) {
-        qContainer.innerHTML = rawResearchData.queries.map(q => `
-          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-            <div>
-              <div class="text-xs font-bold text-slate-900 font-mono">'${q.query}'</div>
-              <div class="text-[10px] text-slate-500 font-medium">${q.category}</div>
-            </div>
-            <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200">${q.priority} Priority</span>
-          </div>
-        `).join('');
-      }
-
-      // 2. Render Scoring Rules Matrix
-      const mContainer = document.getElementById('scoring-matrix-container');
-      if (mContainer && rawResearchData.scoringRules) {
-        mContainer.innerHTML = rawResearchData.scoringRules.map(r => `
-          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-            <div>
-              <div class="text-xs font-bold text-slate-900">${r.rule}</div>
-              <div class="text-[10px] text-slate-500 font-medium">${r.description}</div>
-            </div>
-            <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">${r.points}</span>
-          </div>
-        `).join('');
-      }
-
-      // 3. Render Generated Content Queue
-      const cContainer = document.getElementById('content-queue-container');
-      if (cContainer && rawResearchData.contentQueue) {
-        let queue = rawResearchData.contentQueue;
-        if (currentResearchAccount !== 'all') {
-          queue = queue.filter(item => item.account === currentResearchAccount);
-        }
-        cContainer.innerHTML = queue.map(c => `
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full ${c.account === '@trypitchdotco' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${c.account}</span>
-              <span class="text-[10px] font-mono text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">${c.status}</span>
-            </div>
-            <div class="text-xs font-bold text-slate-900">${c.type}</div>
-            <div class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200 font-medium">${c.hook}</div>
-            <div class="text-[10px] text-slate-400 font-mono pt-1">${c.preset}</div>
-          </div>
-        `).join('');
-      }
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function copyTextToClipboard(text, btnEl) {
-      if (!navigator.clipboard) return;
-      navigator.clipboard.writeText(text).then(() => {
-        if (btnEl) {
-          const orig = btnEl.innerText;
-          btnEl.innerText = 'Copied!';
-          btnEl.classList.add('bg-emerald-600', 'text-white');
-          setTimeout(() => {
-            btnEl.innerText = orig;
-            btnEl.classList.remove('bg-emerald-600', 'text-white');
-          }, 2000);
-        }
-      });
-    }
-
+    // RENDER KANBAN
     function renderKanban(stages) {
       const stageMap = {
         'new': 'col-new',
@@ -994,31 +1039,46 @@
                   </a>
                   <div class="flex items-center gap-1">
                     <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 font-semibold">${p.segment || 'founder'}</span>
-                    <button onclick="deleteEntry('prospect', '${p.id}')" title="Delete Prospect" class="text-slate-400 hover:text-red-600 p-1 transition"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    <button onclick="deleteEntry('prospect', '${p.id || cleanHandle}')" title="Delete Prospect" class="text-slate-400 hover:text-red-600 p-1 transition"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
                   </div>
                 </div>
-                ${p.name ? `<div class="text-xs text-slate-800 font-semibold">${p.name}</div>` : ''}
-                ${p.notes ? `<div class="text-[11px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">${p.notes}</div>` : ''}
+
+                ${p.name ? `<div class="text-xs text-slate-800 font-bold">${p.name}</div>` : ''}
+                ${p.notes ? `<div class="text-[11px] text-slate-600 bg-slate-50/80 p-2 rounded-lg border border-slate-200 leading-snug">${p.notes}</div>` : ''}
                 
+                <!-- Potential Message Callout -->
                 <div class="p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200/80 space-y-1">
                   <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800 uppercase font-mono">
-                    <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3 text-emerald-600"></i> Potential Outreach Message</span>
-                    <button onclick="copyTextToClipboard(\`${draftMessage.replace(/'/g, "\\'")}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-emerald-100 text-emerald-700 font-bold rounded-md border border-emerald-200 shadow-sm transition">Copy</button>
+                    <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3 text-emerald-600"></i> Outreach Hook</span>
+                    <button onclick="copyTextToClipboard(\`${draftMessage.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-emerald-100 text-emerald-700 font-bold rounded-md border border-emerald-200 shadow-sm transition">Copy</button>
                   </div>
                   <p class="text-[11px] text-slate-700 italic leading-snug font-sans">"${draftMessage}"</p>
                 </div>
 
-                <div class="flex items-center gap-2 pt-0.5 flex-wrap">
-                  ${p.url ? `<a href="${tweetUrl}" target="_blank" class="text-[10px] font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-1 rounded-md border border-purple-200 flex items-center gap-1 transition">
-                    <i data-lucide="twitter" class="w-3 h-3 text-purple-600"></i> View Tweet <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
-                  </a>` : ''}
-                  ${p.product_url ? `<a href="${p.product_url}" target="_blank" class="text-[10px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md border border-blue-200 flex items-center gap-1 transition">
-                    <i data-lucide="globe" class="w-3 h-3 text-blue-600"></i> Product Site <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
-                  </a>` : ''}
+                <!-- Action Links & Stage Mover -->
+                <div class="flex items-center justify-between pt-1 gap-1.5 flex-wrap border-t border-slate-100">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    ${p.url ? `<a href="${tweetUrl}" target="_blank" class="text-[10px] font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1 transition">
+                      <i data-lucide="twitter" class="w-2.5 h-2.5 text-purple-600"></i> Tweet
+                    </a>` : ''}
+                    ${p.product_url ? `<a href="${p.product_url}" target="_blank" class="text-[10px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-md border border-blue-200 flex items-center gap-1 transition">
+                      <i data-lucide="globe" class="w-2.5 h-2.5 text-blue-600"></i> Site
+                    </a>` : ''}
+                  </div>
+
+                  <select onchange="updateProspectStage('${p.id || cleanHandle}', this.value)" class="text-[10px] font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 rounded px-1.5 py-0.5 outline-none cursor-pointer">
+                    <option value="new" ${p.stage === 'new' || !p.stage ? 'selected' : ''}>New</option>
+                    <option value="warming" ${p.stage === 'warming' ? 'selected' : ''}>Warming</option>
+                    <option value="contacted" ${p.stage === 'contacted' ? 'selected' : ''}>Contacted</option>
+                    <option value="in_convo" ${p.stage === 'in_convo' ? 'selected' : ''}>In Convo</option>
+                    <option value="customer" ${p.stage === 'customer' ? 'selected' : ''}>Customer</option>
+                    <option value="do-not-contact" ${p.stage === 'do-not-contact' ? 'selected' : ''}>DNC</option>
+                  </select>
                 </div>
-                <div class="flex justify-between items-center text-[10px] text-slate-500 pt-1 font-mono border-t border-slate-100">
-                  <span>Score: <strong class="text-slate-700">${p.score || 0}</strong></span>
-                  <span>Touches: <strong class="text-slate-700">${p.touches || 0}</strong></span>
+
+                <div class="flex justify-between items-center text-[10px] text-slate-500 pt-0.5 font-mono">
+                  <span>Score: <strong class="text-slate-800">${p.score || 0}</strong></span>
+                  <span>Touches: <strong class="text-slate-800">${p.touches || 0}</strong></span>
                 </div>
               </div>
             `;
@@ -1029,6 +1089,7 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    // RENDER MENTION JOBS TABLE
     function renderMentionJobs(jobs) {
       const tbody = document.getElementById('mention-jobs-table-body');
       if (!tbody) return;
@@ -1038,93 +1099,190 @@
       }
       tbody.innerHTML = jobs.map(j => {
         const cleanHandle = (j.user_handle || '').replace('@','');
-        const tweetUrl = j.tweet_url || (j.tweet_id && /^\d+$/.test(j.tweet_id) ? `https://x.com/${cleanHandle}/status/${j.tweet_id}` : `https://x.com/${cleanHandle}`);
+        const cleanTweetId = (j.tweet_id || '').replace(/_\w+$/, '');
+        const tweetUrl = j.tweet_url || (/^\d+$/.test(cleanTweetId) ? `https://x.com/i/status/${cleanTweetId}` : `https://x.com/${cleanHandle}`);
+        let replyUrl = `https://x.com/trypitchdotco`;
+        if (j.x_reply_id && /^\d+$/.test(j.x_reply_id)) {
+          replyUrl = `https://x.com/trypitchdotco/status/${j.x_reply_id}`;
+        } else if (tweetUrl && tweetUrl.includes('/status/')) {
+          replyUrl = tweetUrl;
+        }
+
+        const isDelivered = j.status === 'delivered' || j.status === 'completed' || Boolean(j.s3_video_url);
+
         return `
-        <tr class="hover:bg-purple-50/50 transition">
+        <tr class="hover:bg-purple-50/40 transition">
           <td class="p-3.5 font-bold text-blue-600">
             <a href="https://x.com/${cleanHandle}" target="_blank" class="hover:underline flex items-center gap-1.5">
               ${j.user_handle || '@user'} <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
             </a>
           </td>
           <td class="p-3.5">
-            <a href="${tweetUrl}" target="_blank" class="px-2.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold rounded-lg flex items-center gap-1.5 w-fit border border-purple-200/80 shadow-sm transition" title="Visit mentioning tweet on X">
+            <a href="${tweetUrl}" target="_blank" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold rounded-lg flex items-center gap-1.5 w-fit border border-purple-200/80 shadow-sm transition text-xs" title="Visit mentioning tweet on X">
               <i data-lucide="twitter" class="w-3.5 h-3.5 text-purple-600"></i> View Tweet <i data-lucide="external-link" class="w-3 h-3 text-purple-400"></i>
             </a>
           </td>
           <td class="p-3.5 font-mono text-slate-700">
-            <a href="${j.target_url}" target="_blank" class="hover:underline text-blue-600 font-semibold">${j.target_url}</a>
+            ${j.target_url && j.target_url !== 'N/A' ? `<a href="${j.target_url}" target="_blank" class="hover:underline text-blue-600 font-semibold">${j.target_url}</a>` : '<span class="text-slate-400">No URL</span>'}
           </td>
           <td class="p-3.5 font-mono text-purple-700 font-bold">
-            ${j.editor_job_id ? `<a href="https://trypitch.co/editor/${j.editor_job_id}" target="_blank" class="hover:underline">${j.editor_job_id}</a>` : '<span class="text-slate-400">Pending</span>'}
+            ${j.editor_job_id ? `<span class="px-2 py-0.5 rounded bg-purple-50 border border-purple-200">${j.editor_job_id}</span>` : '<span class="text-slate-400 font-normal">Pending</span>'}
           </td>
           <td class="p-3.5">
             <span class="px-2.5 py-1 text-[10px] uppercase font-mono font-bold rounded-full ${
-              j.status === 'delivered' || j.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm' :
+              isDelivered ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm' :
               j.status === 'rendering' || j.status === 'processing' ? 'bg-amber-50 text-amber-700 border border-amber-200 animate-pulse' :
-              'bg-purple-50 text-purple-700 border border-purple-200'
-            }">${j.status || 'submitted'}</span>
+              j.status === 'follow_required' ? 'bg-orange-50 text-orange-700 border border-orange-200' :
+              'bg-slate-100 text-slate-600 border border-slate-200'
+            }">${isDelivered ? 'delivered' : (j.status || 'submitted')}</span>
           </td>
           <td class="p-3.5 font-mono">
-            ${j.s3_video_url ? `<a href="${j.s3_video_url}" target="_blank" class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white font-semibold rounded-lg flex items-center gap-1.5 w-fit shadow-md shadow-emerald-600/20 transition">
-              <i data-lucide="play-circle" class="w-4 h-4"></i> Play S3 MP4 Video
-            </a>` : '<span class="text-amber-600 italic font-mono flex items-center gap-1 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Rendering...</span>'}
+            ${j.s3_video_url ? `
+              <button onclick="openVideoModal('${j.s3_video_url}', 'Demo Video for ${j.user_handle || j.target_url}')" class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white font-bold rounded-lg flex items-center gap-1.5 w-fit shadow-md shadow-purple-600/20 transition text-xs">
+                <i data-lucide="play-circle" class="w-4 h-4"></i> Play 1080p MP4
+              </button>
+            ` : (j.status === 'rendering' || j.status === 'processing' ? '<span class="text-amber-600 italic font-mono flex items-center gap-1 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Rendering...</span>' : '<span class="text-slate-400 font-mono text-xs">—</span>')}
           </td>
           <td class="p-3.5">
-            ${j.status === 'delivered' || j.x_reply_id ? `<a href="${(j.x_reply_id && /^\d+$/.test(j.x_reply_id)) ? `https://x.com/trypitchdotco/status/${j.x_reply_id}` : tweetUrl}" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1 font-semibold">
-              View Tweet Reply <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-            </a>` : '<span class="text-slate-400 italic font-medium">Pending Reply</span>'}
+            ${isDelivered || j.x_reply_id ? `<a href="${replyUrl}" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1 font-semibold text-xs">
+              View Reply <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>` : '<span class="text-slate-400 italic font-medium text-xs">Pending Reply</span>'}
           </td>
           <td class="p-3.5 text-right">
-            <button onclick="deleteEntry('mention_job', '${j.id}')" title="Delete Entry" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg border border-transparent hover:border-red-200 transition">
+            <button onclick="deleteEntry('mention_job', '${j.id || cleanTweetId}')" title="Delete Entry" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg border border-transparent hover:border-red-200 transition">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </td>
         </tr>
-      `;}).join('');
+        `;
+      }).join('');
       if (window.lucide) lucide.createIcons();
     }
 
-    function filterActivity() {
-      const filterAcc = document.getElementById('filter-account');
-      if (filterAcc) currentSelectedAccount = filterAcc.value;
-      const topSel = document.getElementById('top-account-selector');
-      if (topSel) topSel.value = currentSelectedAccount;
-      onAccountChange();
+    // RENDER RESEARCH TAB
+    function renderResearchTab() {
+      const qContainer = document.getElementById('research-queries-container');
+      if (qContainer && rawResearchData.queries) {
+        qContainer.innerHTML = rawResearchData.queries.map(q => `
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between shadow-sm">
+            <div>
+              <div class="text-xs font-bold text-slate-900 font-mono">${q.query}</div>
+              <div class="text-[10px] text-slate-500 font-medium">${q.category}</div>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200">${q.priority}</span>
+          </div>
+        `).join('');
+      }
+
+      const mContainer = document.getElementById('scoring-matrix-container');
+      if (mContainer && rawResearchData.scoringRules) {
+        mContainer.innerHTML = rawResearchData.scoringRules.map(r => `
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between shadow-sm">
+            <div>
+              <div class="text-xs font-bold text-slate-900">${r.rule}</div>
+              <div class="text-[10px] text-slate-500 font-medium">${r.description}</div>
+            </div>
+            <span class="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">${r.points}</span>
+          </div>
+        `).join('');
+      }
+
+      const cContainer = document.getElementById('content-queue-container');
+      if (cContainer && rawResearchData.contentQueue) {
+        cContainer.innerHTML = rawResearchData.contentQueue.map(c => `
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full ${c.account === '@trypitchdotco' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${c.account}</span>
+              <span class="text-[10px] font-mono text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">${c.status}</span>
+            </div>
+            <div class="text-xs font-bold text-slate-900">${c.type}</div>
+            <div class="text-xs text-slate-600 bg-slate-50/80 p-2.5 rounded-lg border border-slate-200 font-medium leading-snug">${c.hook}</div>
+            <div class="text-[10px] text-slate-400 font-mono pt-1">${c.preset}</div>
+          </div>
+        `).join('');
+      }
+
+      if (window.lucide) lucide.createIcons();
     }
 
+    // RENDER ACTIVITY LOG
     function renderActivity(activities) {
       const tbody = document.getElementById('activity-table-body');
       if (!tbody) return;
       if (!activities || activities.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 italic font-medium">No activity matches your filter</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 italic font-medium">No session activities logged yet</td></tr>';
         return;
       }
       tbody.innerHTML = activities.map(a => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="p-3.5 font-mono text-slate-500 text-[11px]">${a.ts || ''}</td>
+        <tr class="hover:bg-slate-50/80 transition">
+          <td class="p-3.5 font-mono text-slate-500 text-[11px]">${a.ts || '—'}</td>
           <td class="p-3.5">
             <span class="px-2.5 py-0.5 text-[10px] font-mono uppercase font-bold rounded-full ${
-              a.action === 'like' ? 'bg-pink-50 text-pink-700 border border-pink-200' :
-              a.action === 'reply' || a.action === 'mention_demo_reply' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
-              a.action === 'post' || a.action === 'quote' ? 'bg-purple-50 text-purple-700 border border-purple-200' :
-              a.action === 'dm' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-              'bg-slate-100 text-slate-700'
-            }">${a.action || ''}</span>
+              a.action.includes('like') ? 'bg-pink-50 text-pink-700 border border-pink-200' :
+              a.action.includes('reply') || a.action.includes('mention') ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+              a.action.includes('post') ? 'bg-purple-50 text-purple-700 border border-purple-200' :
+              'bg-emerald-50 text-emerald-700 border border-emerald-200'
+            }">${a.action || 'activity'}</span>
           </td>
-          <td class="p-3.5 font-mono text-blue-600 font-bold">${a.handle || '@adnanspitch'}</td>
-          <td class="p-3.5 text-slate-600 font-mono">${a.segment || ''} ${a.variant ? `/ ${a.variant}` : ''}</td>
-          <td class="p-3.5 text-slate-700 max-w-sm truncate font-medium">${a.detail || ''}</td>
-          <td class="p-3.5 font-mono font-bold ${a.result === 'ok' ? 'text-emerald-600' : 'text-red-600'}">${a.result || ''}</td>
+          <td class="p-3.5 font-bold text-slate-900 font-mono">
+            ${a.handle ? (a.handle.startsWith('@') ? `<a href="https://x.com/${a.handle.replace('@','')}" target="_blank" class="text-blue-600 hover:underline">${a.handle}</a>` : `<a href="https://x.com/${a.handle}" target="_blank" class="text-blue-600 hover:underline">@${a.handle}</a>`) : '<span class="text-slate-400 font-normal">system</span>'}
+          </td>
+          <td class="p-3.5 text-slate-600 text-xs">${a.detail || a.action}</td>
+          <td class="p-3.5">
+            <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded ${a.result === 'ok' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}">${(a.result || 'ok').toUpperCase()}</span>
+          </td>
           <td class="p-3.5 text-right">
-            <button onclick="deleteEntry('activity', '${a.id}')" title="Delete Entry" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg border border-transparent hover:border-red-200 transition">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <button onclick="deleteEntry('activity', '${a.id}')" title="Delete Activity" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </td>
         </tr>
       `).join('');
+      if (window.lucide) lucide.createIcons();
     }
 
-    checkAuthStatus();
+    // RENDER AGENT MONITORS
+    function renderAgents(agents) {
+      const container = document.getElementById('agent-monitor-grid');
+      if (!container) return;
+      if (!agents || agents.length === 0) {
+        container.innerHTML = '<div class="col-span-5 text-center text-xs text-slate-400 py-4">All background services operational</div>';
+        return;
+      }
+
+      container.innerHTML = agents.map(a => {
+        const statusStr = (a.status || 'active').toLowerCase();
+        const isActive = statusStr === 'active' || statusStr === 'ok';
+        const badgeBg = isActive ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+        const dotBg = isActive ? 'bg-emerald-400' : 'bg-purple-400';
+        const agentId = (a.id || a.name || '').toLowerCase();
+        const icon = agentId.includes('mention') ? 'bell-ring' : agentId.includes('mcp') || agentId.includes('video') ? 'video' : agentId.includes('sync') || agentId.includes('tunnel') ? 'refresh-cw' : agentId.includes('server') ? 'server' : 'cpu';
+        const handleText = a.handle ? `<div class="text-[10px] font-mono text-purple-300 font-semibold">${a.handle}</div>` : '';
+        const descText = a.description ? `<div class="text-[10px] text-slate-400 leading-tight">${a.description}</div>` : (a.type ? `<div class="text-[10px] text-slate-400 leading-tight">${a.type}</div>` : '');
+
+        return `
+          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/70 space-y-2 hover:border-purple-500/50 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                <i data-lucide="${icon}" class="w-3.5 h-3.5 text-purple-400"></i> ${a.name || 'Service'}
+              </span>
+              <span class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full ${badgeBg} border flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full ${dotBg} animate-ping"></span> ${(a.status || 'ACTIVE').toUpperCase()}
+              </span>
+            </div>
+            ${handleText}
+            ${descText}
+          </div>
+        `;
+      }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // BOOTSTRAP
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuthStatus();
+      if (window.lucide) lucide.createIcons();
+    });
   </script>
 </body>
 </html>

@@ -80,6 +80,7 @@ pub async fn run_server(port_override: Option<u16>) {
         .route("/activity", get(handle_activity))
         .route("/research", get(handle_research))
         .route("/delete", post(handle_delete))
+        .route("/prospect/stage", post(handle_update_stage))
         .route("/api/x", get(handle_crc).post(handle_x_webhook))
         .route("/api/x-webhook", get(handle_crc).post(handle_x_webhook))
         .route("/api/trigger", post(handle_manual_trigger))
@@ -91,6 +92,7 @@ pub async fn run_server(port_override: Option<u16>) {
         .route("/api/activity", get(handle_activity))
         .route("/api/research", get(handle_research))
         .route("/api/delete", post(handle_delete))
+        .route("/api/prospect/stage", post(handle_update_stage))
         .route("/api/webhook/x", get(handle_crc).post(handle_x_webhook))
         .route("/api/webhook/x-webhook", get(handle_crc).post(handle_x_webhook))
         .route("/api/webhook/trigger", post(handle_manual_trigger))
@@ -102,6 +104,7 @@ pub async fn run_server(port_override: Option<u16>) {
         .route("/api/webhook/activity", get(handle_activity))
         .route("/api/webhook/research", get(handle_research))
         .route("/api/webhook/delete", post(handle_delete))
+        .route("/api/webhook/prospect/stage", post(handle_update_stage))
         .with_state(state)
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());
@@ -217,11 +220,21 @@ async fn handle_health() -> impl IntoResponse {
 
 async fn handle_stats() -> impl IntoResponse {
     if let Ok(db) = Database::open() {
-        let mention_jobs = db.get_mention_jobs_by_status(None, 100).unwrap_or_default();
+        let mention_jobs = db.get_mention_jobs_by_status(None, 200).unwrap_or_default();
         let prospects = db.get_all_prospects(None).unwrap_or_default();
+        let activities = db.get_activities(200).unwrap_or_default();
 
         let delivered = mention_jobs.iter().filter(|j| j.status == "delivered").count();
-        let rendering = mention_jobs.iter().filter(|j| j.status == "rendering").count();
+        let rendering = mention_jobs.iter().filter(|j| j.status == "rendering" || j.status == "processing").count();
+        let follow_required = mention_jobs.iter().filter(|j| j.status == "follow_required").count();
+        let no_url_found = mention_jobs.iter().filter(|j| j.status == "no_url_found").count();
+
+        let new_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("new") || p.stage.as_deref() == Some("") || p.stage.is_none()).count();
+        let warming_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("warming")).count();
+        let contacted_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("contacted")).count();
+        let in_convo_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("in_convo")).count();
+        let customer_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("customer") || p.stage.as_deref() == Some("trial")).count();
+        let dnc_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("do-not-contact") || p.stage.as_deref() == Some("lost")).count();
 
         (
             StatusCode::OK,
@@ -230,7 +243,23 @@ async fn handle_stats() -> impl IntoResponse {
                 "mention_jobs_total": mention_jobs.len(),
                 "delivered": delivered,
                 "rendering": rendering,
-                "prospects_total": prospects.len()
+                "follow_required": follow_required,
+                "no_url_found": no_url_found,
+                "prospects_total": prospects.len(),
+                "prospects_new": new_count,
+                "prospects_warming": warming_count,
+                "prospects_contacted": contacted_count,
+                "prospects_in_convo": in_convo_count,
+                "prospects_customer": customer_count,
+                "prospects_dnc": dnc_count,
+                "activities_total": activities.len(),
+                "agents": [
+                    { "name": "Mention Bot Pass", "handle": "@trypitchdotco", "status": "active", "type": "Autonomous Agent", "description": "10s Real-Time Mention Scan, Instant Receipts & S3 Video Reply" },
+                    { "name": "SaaS Lead Discovery", "handle": "@adnanspitch", "status": "active", "type": "Browser Agent", "description": "60s Playwright Search, ICP Scoring & Pitch Hook Generation" },
+                    { "name": "Content & Strategy Pass", "handle": "@trypitchdotco", "status": "active", "type": "Strategy Agent", "description": "6h Algorithm Optimizer, Founder Posts & Trend Commentary" },
+                    { "name": "Tunnel Sync Daemon", "handle": "pass-tunnelsync", "status": "active", "type": "Background Daemon", "description": "15s Live Tunnel URL Resolver & Vercel Edge Bridge" },
+                    { "name": "Rust Axum Webhook Server", "handle": "pitch-server", "status": "active", "type": "Core Engine", "description": "Port 8790 Local SQLite Memory & Webhook Router" }
+                ]
             })),
         )
     } else {
@@ -244,7 +273,7 @@ async fn handle_stats() -> impl IntoResponse {
 async fn handle_crm() -> impl IntoResponse {
     if let Ok(db) = Database::open() {
         let prospects = db.get_all_prospects(None).unwrap_or_default();
-        let new_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("new")).cloned().collect();
+        let new_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("new") || p.stage.as_deref() == Some("") || p.stage.is_none()).cloned().collect();
         let warming_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("warming")).cloned().collect();
         let contacted_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("contacted")).cloned().collect();
         let in_convo_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("in_convo")).cloned().collect();
@@ -383,5 +412,27 @@ async fn handle_delete(Json(payload): Json<DeletePayload>) -> impl IntoResponse 
     (
         StatusCode::OK,
         Json(serde_json::json!({ "status": "ok", "deleted": true })),
+    )
+}
+
+#[derive(serde::Deserialize)]
+struct StagePayload {
+    id: Option<String>,
+    stage: Option<String>,
+}
+
+async fn handle_update_stage(Json(payload): Json<StagePayload>) -> impl IntoResponse {
+    if let (Some(id), Some(stage)) = (payload.id, payload.stage) {
+        if let Ok(db) = Database::open() {
+            let _ = db.update_prospect_stage(&id, &stage);
+            return (
+                StatusCode::OK,
+                Json(serde_json::json!({ "status": "ok", "updated": true, "id": id, "stage": stage })),
+            );
+        }
+    }
+    (
+        StatusCode::BAD_REQUEST,
+        Json(serde_json::json!({ "status": "error", "message": "Missing id or stage" })),
     )
 }
