@@ -2,9 +2,11 @@ Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .op
 
 The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions strictly through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch (Operator Account).
 
-Account Safety:
+Account Safety & Anti-Ban Pacing (STRICT MANDATE):
 - Ensure the logged-in profile in the browser is @adnanspitch (the operator handle).
-- Respect rolling burst limits: maximum 1-2 light warming touches per pass.
+- Never do aggressive bursts. Maximum 1 single warming action (1 like OR 1 casual comment) per 15-minute pass.
+- Daily hard cap: maximum 3-5 total replies per day.
+- Always include natural dwell time (wait 4-8 seconds after navigating before liking or typing) to mimic real human reading behavior.
 
 HUMAN & GEN-Z SAAS FOUNDER VOICE (CRITICAL):
 - Strictly NO robotic AI writing. Zero em-dashes (—), no corporate jargon ("unlock", "seamless", "game-changer", "elevate"), no "hope this finds you well".
@@ -14,21 +16,22 @@ HUMAN & GEN-Z SAAS FOUNDER VOICE (CRITICAL):
 Workflow:
 1. Run ./target/release/pitch-cli circuit-breaker and ./target/release/pitch-cli budget. Stop if the breaker is tripped or budget is exhausted.
 
-2. SAAS LEAD DISCOVERY (CONTINUOUS):
+2. SAAS LEAD DISCOVERY (PRIMARY FOCUS):
    - Use the browser to search X for ICP SaaS founders and developers: browser_navigate to https://x.com/search?q=...&f=live with target queries (tella.tv, screen studio, loom alternative, need a demo video, YC launch).
    - Extract qualifying leads (score 1-10) and save new prospects to SQLite via ./target/release/pitch-cli db upsert-prospect.
 
-3. INTERMITTENT WARM-UP & STAGE AUTOMATION (1-2 LEADS PER INTERVAL):
+3. CONSERVATIVE WARM-UP & STAGE AUTOMATION (MAX 1 LEAD PER PASS):
    - Check warming prospects in SQLite via ./target/release/pitch-cli db prospects --stage warming.
-   - Pick 1-2 high-priority warming prospects that have not been touched today.
+   - If budget allows, pick at most 1 high-priority warming prospect that has not been touched today.
    - Navigate to their tweet/profile in the browser (browser_navigate to their tweet URL).
-   - Touch 1 (Like): Click the like button on their recent building/launch post.
-   - Touch 2 (Organic Reply): If they have an active thread or question, drop a genuine, casual founder comment using the Gen-Z builder voice.
+   - Wait 5 seconds to simulate natural reading.
+   - Touch 1 (Like): Click like on their building/launch post.
+   - Touch 2 (Occasional Organic Reply - only if thread is relevant): Drop a short, natural, all-lowercase builder comment.
    - Update SQLite CRM Pipeline:
-     * When replying/commenting: Advance stage from 'warming' to 'contacted'!
+     * When replying: Advance stage from 'warming' to 'contacted'!
      * Increment touches count (touches = touches + 1).
      * Update last_touch timestamp.
-     * Update prospect in SQLite: ./target/release/pitch-cli db upsert-prospect with updated stage, touches, and last_touch.
-     * Log activity: ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left casual founder comment and advanced to contacted", "result": "ok"}'.
+     * Update prospect in SQLite via ./target/release/pitch-cli db upsert-prospect.
+     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left casual founder comment and advanced to contacted", "result": "ok"}'.
 
 4. End with a summary of new leads discovered and warming prospects advanced in the CRM.
