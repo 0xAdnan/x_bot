@@ -104,62 +104,30 @@ def fetch_4chan_memes(board="g", limit=6):
     return memes
 
 def generate_meme_caption(title, source):
-    t_lower = title.lower()
-    
-    # 1. Broken / janky / it works / duct tape memes
-    if any(k in t_lower for k in ["works", "work", "slop", "broken", "fix", "tape", "jank", "hate software"]):
-        options = [
-            "my production backend held together by 3 edge functions, zero error handling, and sheer vibes. somehow hasn't crashed yet",
-            "the screen recording setup you hack together with 4 virtual audio cables before giving up and using @trypitchdotco",
-            "average tech stack in 2026: 15 ai wrappers, 1 supabase instance, and a founder on their 40th screen studio retake",
-            "when your code is absolute spaghetti but the stripe webhooks are hitting and users are paying"
-        ]
-    # 2. GitHub / Git / Commits / PRs / Deploying
-    elif any(k in t_lower for k in ["github", "git", "commit", "merge", "push", "branch", "repo"]):
-        options = [
-            "bro has 0 public commits, 14 unmerged local branches, and just deployed a $40k mrr app to production",
-            "pushing directly to main at 4:59 pm on a friday and immediately closing the laptop",
-            "building in public until you see your own messy codebase on the screen recording"
-        ]
-    # 3. AI / Claude / Cursor / Vibe Coding / LLMs
-    elif any(k in t_lower for k in ["ai", "claude", "cursor", "vibe", "model", "anthropic", "openai", "agent"]):
-        options = [
-            "spent 10 minutes vibe-coding an entire full-stack saas with claude and then spent 4 business days trying to record a clean 60s demo video",
-            "ai will replace software engineers by 2027 but founders will still be doing 50 screen studio takes because their dog barked at 0:58",
-            "polymarket 95% probability devs spend more time arguing about AI models on twitter than writing code"
-        ]
-    # 4. Programming languages / Python / Rust / C++
-    elif any(k in t_lower for k in ["python", "rust", "cpp", "c++", "javascript", "typescript", "linux"]):
-        options = [
-            "senior dev spending 6 hours debugging a memory leak only to realize the env variable was misspelled",
-            "rewriting your entire backend in rust because you didn't want to record a 1-minute loom for your users",
-            "why are programmers like this. 4 hours optimizing a sql query to save 2ms instead of shipping the demo"
-        ]
-    # 5. Friday / Deadlines / Stress / Late night
-    elif any(k in t_lower for k in ["friday", "deadline", "four", "thirty", "night", "sleep", "stress"]):
-        options = [
-            "launching in 2 hours with 0 docs and a prayer. tag @trypitchdotco with your link and at least your demo video won't look like a 2012 screencast",
-            "it is 3:30 am, the app is broken, and you are still editing zooms in premiere pro. just let @trypitchdotco render the video in 60s",
-            "the Friday deployment energy. what could possibly go wrong"
-        ]
-    # 6. Tech support / Family / Hardware / General Tech Twitter Pain
-    elif any(k in t_lower for k in ["computer", "phone", "hardware", "printer", "nokia", "apple"]):
-        options = [
-            "paying $1,600 for a phone just to check stripe dashboard and argue with strangers on tech twitter",
-            "can you fix my wifi? no auntie i build AI agents that turn product URLs into 60s narrated video demos, your printer is beyond help",
-            "the reality of working in tech vs what your family thinks you do"
-        ]
-    # 7. Sarcastic Builder Defaults (Relatable rage-bait / founder banter)
-    else:
-        options = [
-            "nothing tests founder sanity like doing take #34 of a product video and getting a slack ping mid-zoom. @trypitchdotco fixes this in 1 prompt",
-            "building the product: 2 days. recording a clean 60s demo without stuttering: 2 weeks. stop suffering and generate it on @trypitchdotco",
-            "polymarket 90% odds that founders spend more time re-recording 2-minute product demos than writing code",
-            "the 4 stages of recording a demo: 1. this takes 5 mins 2. mic was muted 3. notification popup 4. it is 4 am and you're learning after effects"
-        ]
+    # Split camelCase or PascalCase into natural words (e.g. improvingPasswordSecurity -> improving password security)
+    s = re.sub(r'([a-z])([A-Z])', r'\1 \2', title)
+    s = s.replace('_', ' ').replace('-', ' ').replace('—', ' ').replace('–', ' ').strip()
+    clean = s.lower()
+    clean = re.sub(r'\s+', ' ', clean)
 
-    import random
-    return random.choice(options)
+    # Remove generic subreddit tags or quotes if any
+    clean = clean.replace('&#039;', "'").replace('&quot;', '"').replace('&amp;', '&')
+    
+    # If 4chan board tags
+    if clean.startswith('/vcg/') or 'vibe coding' in clean:
+        return "vibe coding general in full effect"
+    if clean.startswith('/lmg/') or 'local models' in clean:
+        return "local models general"
+
+    # Specific authentic developer touchups
+    if 'sell me this pen' in clean:
+        return "sell me this pen. it's AI powered."
+    if 'it still works' in clean:
+        return "my production backend held together by sheer vibes. it still works tho"
+    if 'nothing on github' in clean:
+        return "bro has 0 commits and just deployed a $40k mrr app to prod"
+
+    return clean
 
 def download_meme_images(memes):
     downloaded = []
