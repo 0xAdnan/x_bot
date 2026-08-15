@@ -21,6 +21,59 @@ fn extract_url(text: &str) -> String {
     "N/A".to_string()
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum MentionIntent {
+    LaunchVideo(String),         // Explicit launch video request + valid product URL
+    DemoVideo(String),           // Explicit demo / walkthrough request + valid product URL
+    ConversationWithUrl(String), // Mention contains a link, but user is NOT asking for a video
+    Conversation,                // General chat, praise, question, or discussion
+}
+
+pub fn classify_mention_intent(text: &str) -> MentionIntent {
+    let lower = text.to_lowercase();
+    let url = extract_url(text);
+
+    let is_valid_product_url = url != "N/A"
+        && !url.contains("trypitch.co")
+        && !url.contains("twitter.com")
+        && !url.contains("x.com")
+        && !url.contains("t.co/")
+        && !url.contains("localhost")
+        && !url.contains("loca.lt")
+        && !url.contains("vercel.app");
+
+    if !is_valid_product_url {
+        return MentionIntent::Conversation;
+    }
+
+    // 1. Explicit Launch Video intent
+    let launch_triggers = [
+        "launch video", "launch demo", "product hunt launch", "for launch",
+        "make a launch", "create a launch", "generate a launch",
+        "build a launch", "launch walkthrough", "launch clip", "launching"
+    ];
+    if launch_triggers.iter().any(|t| lower.contains(t)) {
+        return MentionIntent::LaunchVideo(url);
+    }
+
+    // 2. Explicit Demo Video intent
+    let demo_triggers = [
+        "make a demo", "create a demo", "generate a demo", "record a demo",
+        "make a video", "create a video", "generate a video", "record a video",
+        "show me a demo", "build a demo", "demo for", "demo of",
+        "walkthrough for", "walkthrough of", "can you make", "can you create",
+        "can you demo", "can you record", "make me a", "generate me a",
+        "cook a demo", "cook a video", "video for", "demo this",
+        "video demo", "make demo", "generate demo", "give me a demo", "give me a video"
+    ];
+    if demo_triggers.iter().any(|t| lower.contains(t)) {
+        return MentionIntent::DemoVideo(url);
+    }
+
+    // 3. User included a URL, but did not ask to make a video
+    MentionIntent::ConversationWithUrl(url)
+}
+
 pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize, usize), String> {
     println!("=== [TRIGGERED MENTION INGESTION (WEBHOOK PASS)] ===");
 
@@ -54,148 +107,213 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
         }
 
         new_count += 1;
-        let target_url = extract_url(&text);
-        let lower_text = text.to_lowercase();
-        let is_launch = lower_text.contains("launch");
-        let (custom_instructions, video_label) = if is_launch {
-            (
-                "Create a high-energy, cinematic launch video of this product for Product Hunt / X launch. Highlight the core value proposition, key breakthrough features, and launch excitement.",
-                "launch video"
-            )
-        } else {
-            (
-                "Create a cinematic, polished product demo of this product. Highlight key features, value proposition, and user experience.",
-                "demo"
-            )
-        };
+        let intent = classify_mention_intent(&text);
 
         println!("\n--------------------------------------------------");
         println!("[NEW MENTION DETECTED] Tweet ID: {}", tweet_id);
         println!("User: {}", author_handle);
         println!("Text: {}", text.replace('\n', " "));
-        println!("Target URL: {}", target_url);
-        println!("Video Type: {}", video_label);
+        println!("Classified Intent: {:?}", intent);
 
-        if target_url == "N/A" || target_url.contains("s3.trypitch.co") {
-            println!("[Inbox] No external product URL found in mention. Recording status: no_url_found");
-            let _ = db.upsert_mention_job(&MentionJob {
-                id: None,
-                tweet_id: tweet_id.clone(),
-                user_handle: author_handle.clone(),
-                target_url: "N/A".to_string(),
-                editor_job_id: None,
-                status: "no_url_found".to_string(),
-                s3_video_url: None,
-                x_reply_id: None,
-                created_at: None,
-                updated_at: None,
-            });
-            continue;
-        }
-
-        let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
-        if previous_user_jobs >= 1 {
-            println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
-            let follow_gate_msg = format!(
-                "Hey {}! Glad you enjoyed your first demo! 🎬 To generate additional free product demos & launch videos, please follow @trypitchdotco first, then mention us again with your URL! 🚀",
-                author_handle
-            );
-            if !dry_run {
-                match x_client.post_tweet(&follow_gate_msg, Some(&tweet_id)).await {
-                    Ok(rid) => println!("[Follower Gate Reply Sent] Reply Tweet ID: {}", rid),
-                    Err(e) => println!("[Follower Gate Reply Warning]: {}", e),
-                }
-            }
-            let _ = db.upsert_mention_job(&MentionJob {
-                id: None,
-                tweet_id: tweet_id.clone(),
-                user_handle: author_handle.clone(),
-                target_url: target_url.clone(),
-                editor_job_id: None,
-                status: "follow_required".to_string(),
-                s3_video_url: None,
-                x_reply_id: None,
-                created_at: None,
-                updated_at: None,
-            });
-            continue;
-        }
-
-        if !no_ack && !dry_run {
-            let ack_text = format!(
-                "Cool {}, we're on it! 🚀 Generating your cinematic {} for {} now, we'll get back to you with the video link right here soon!",
-                author_handle, video_label, target_url
-            );
-            match x_client.post_tweet(&ack_text, Some(&tweet_id)).await {
-                Ok(reply_id) => println!("[X Receipt Reply Sent] Reply Tweet ID: {}", reply_id),
-                Err(e) => println!("[Ack Warning] Could not send receipt reply: {}", e),
-            }
-        }
-
-        if dry_run {
-            println!("[DRY RUN] Would trigger Pitch MCP for {} ({})", target_url, video_label);
-            continue;
-        }
-
-        println!("Triggering Pitch MCP video creation ({}) for {}...", video_label, target_url);
-        let mcp_result = if is_launch {
-            let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("app").to_string();
-            let project_name = format!("{}-launch-{}", clean_domain, tweet_id.replace('-', "_"));
-            let prompt_text = format!("Create a cinematic 45-second product launch video for {}. Target startup founders and product marketers. Emphasize AI-generated product demos, polished motion graphics, and fast sharing. Use an energetic premium style with concise narration.", target_url);
-            match create_launch_video(&project_name, &prompt_text, Some("optional-library-track.mp3")).await {
-                Ok(res) => {
-                    let jid = res["jobId"].as_str().unwrap_or_default().to_string();
-                    if !jid.is_empty() {
-                        Ok((jid, res))
-                    } else {
-                        Ok((format!("launch:{}", project_name), res))
+        match intent {
+            MentionIntent::LaunchVideo(target_url) => {
+                let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
+                if previous_user_jobs >= 1 {
+                    println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
+                    let follow_gate_msg = format!(
+                        "Hey {}! Glad you enjoyed your first demo! 🎬 To generate additional free product demos & launch videos, please follow @trypitchdotco first, then mention us again with your URL! 🚀",
+                        author_handle
+                    );
+                    if !dry_run {
+                        match x_client.post_tweet(&follow_gate_msg, Some(&tweet_id)).await {
+                            Ok(rid) => println!("[Follower Gate Reply Sent] Reply Tweet ID: {}", rid),
+                            Err(e) => println!("[Follower Gate Reply Warning]: {}", e),
+                        }
                     }
-                },
-                Err(e) => Err(e)
-            }
-        } else {
-            match create_demo_video(&target_url, Some(custom_instructions), None, None, None, None).await {
-                Ok(res) => {
-                    let jid = res["jobId"].as_str().unwrap_or_default().to_string();
-                    Ok((jid, res))
-                },
-                Err(e) => Err(e)
-            }
-        };
-
-        match mcp_result {
-            Ok((job_id, _res)) => {
-                if !job_id.is_empty() {
-                    println!("[Pitch MCP Success] Job ID / Project Name: {}", job_id);
-                    let _ = db.upsert_mention_job(&MentionJob {
-                        id: None,
-                        tweet_id: tweet_id.clone(),
-                        user_handle: author_handle.clone(),
-                        target_url: target_url.clone(),
-                        editor_job_id: Some(job_id.clone()),
-                        status: "rendering".to_string(),
-                        s3_video_url: None,
-                        x_reply_id: None,
-                        created_at: None,
-                        updated_at: None,
-                    });
-                    jobs_count += 1;
-                } else {
                     let _ = db.upsert_mention_job(&MentionJob {
                         id: None,
                         tweet_id: tweet_id.clone(),
                         user_handle: author_handle.clone(),
                         target_url: target_url.clone(),
                         editor_job_id: None,
-                        status: "submitted".to_string(),
+                        status: "follow_required".to_string(),
                         s3_video_url: None,
                         x_reply_id: None,
                         created_at: None,
                         updated_at: None,
                     });
+                    continue;
+                }
+
+                if !no_ack && !dry_run {
+                    let ack_text = format!(
+                        "Cool {}, we're on it! 🚀 Generating your cinematic launch video for {} now, we'll get back to you with the video link right here soon!",
+                        author_handle, target_url
+                    );
+                    match x_client.post_tweet(&ack_text, Some(&tweet_id)).await {
+                        Ok(reply_id) => println!("[X Receipt Reply Sent] Reply Tweet ID: {}", reply_id),
+                        Err(e) => println!("[Ack Warning] Could not send receipt reply: {}", e),
+                    }
+                }
+
+                if dry_run {
+                    println!("[DRY RUN] Would trigger Pitch MCP create_launch_video for {}", target_url);
+                    continue;
+                }
+
+                println!("Triggering Pitch MCP create_launch_video for {}...", target_url);
+                let clean_domain = target_url.replace("https://", "").replace("http://", "").replace("www.", "").split('/').next().unwrap_or("app").to_string();
+                let project_name = format!("{}-launch-{}", clean_domain, tweet_id.replace('-', "_"));
+                let prompt_text = format!("Create a cinematic 45-second product launch video for {}. Target startup founders and product marketers. Emphasize AI-generated product demos, polished motion graphics, and fast sharing. Use an energetic premium style with concise narration.", target_url);
+                match create_launch_video(&project_name, &prompt_text, Some("optional-library-track.mp3")).await {
+                    Ok(res) => {
+                        let jid = res["jobId"].as_str().unwrap_or_default().to_string();
+                        let final_job_id = if !jid.is_empty() { jid } else { format!("launch:{}", project_name) };
+                        println!("[Pitch MCP Success] Launch Job ID: {}", final_job_id);
+                        let _ = db.upsert_mention_job(&MentionJob {
+                            id: None,
+                            tweet_id: tweet_id.clone(),
+                            user_handle: author_handle.clone(),
+                            target_url: target_url.clone(),
+                            editor_job_id: Some(final_job_id),
+                            status: "rendering".to_string(),
+                            s3_video_url: None,
+                            x_reply_id: None,
+                            created_at: None,
+                            updated_at: None,
+                        });
+                        jobs_count += 1;
+                    }
+                    Err(e) => println!("[Pitch MCP Error]: {}", e),
                 }
             }
-            Err(e) => println!("[Pitch MCP Error]: {}", e),
+
+            MentionIntent::DemoVideo(target_url) => {
+                let previous_user_jobs = db.count_jobs_by_user(&author_handle).unwrap_or(0);
+                if previous_user_jobs >= 1 {
+                    println!("[Inbox FOLLOWER GATE] User {} has {} previous jobs. Enforcing follow gate...", author_handle, previous_user_jobs);
+                    let follow_gate_msg = format!(
+                        "Hey {}! Glad you enjoyed your first demo! 🎬 To generate additional free product demos & launch videos, please follow @trypitchdotco first, then mention us again with your URL! 🚀",
+                        author_handle
+                    );
+                    if !dry_run {
+                        match x_client.post_tweet(&follow_gate_msg, Some(&tweet_id)).await {
+                            Ok(rid) => println!("[Follower Gate Reply Sent] Reply Tweet ID: {}", rid),
+                            Err(e) => println!("[Follower Gate Reply Warning]: {}", e),
+                        }
+                    }
+                    let _ = db.upsert_mention_job(&MentionJob {
+                        id: None,
+                        tweet_id: tweet_id.clone(),
+                        user_handle: author_handle.clone(),
+                        target_url: target_url.clone(),
+                        editor_job_id: None,
+                        status: "follow_required".to_string(),
+                        s3_video_url: None,
+                        x_reply_id: None,
+                        created_at: None,
+                        updated_at: None,
+                    });
+                    continue;
+                }
+
+                if !no_ack && !dry_run {
+                    let ack_text = format!(
+                        "Cool {}, we're on it! 🚀 Generating your cinematic demo for {} now, we'll get back to you with the video link right here soon!",
+                        author_handle, target_url
+                    );
+                    match x_client.post_tweet(&ack_text, Some(&tweet_id)).await {
+                        Ok(reply_id) => println!("[X Receipt Reply Sent] Reply Tweet ID: {}", reply_id),
+                        Err(e) => println!("[Ack Warning] Could not send receipt reply: {}", e),
+                    }
+                }
+
+                if dry_run {
+                    println!("[DRY RUN] Would trigger Pitch MCP create_demo_video for {}", target_url);
+                    continue;
+                }
+
+                println!("Triggering Pitch MCP create_demo_video for {}...", target_url);
+                match create_demo_video(&target_url, None, None, None, None, None).await {
+                    Ok(res) => {
+                        let job_id = res["jobId"].as_str().unwrap_or_default().to_string();
+                        if !job_id.is_empty() {
+                            println!("[Pitch MCP Success] Demo Job ID: {}", job_id);
+                            let _ = db.upsert_mention_job(&MentionJob {
+                                id: None,
+                                tweet_id: tweet_id.clone(),
+                                user_handle: author_handle.clone(),
+                                target_url: target_url.clone(),
+                                editor_job_id: Some(job_id),
+                                status: "rendering".to_string(),
+                                s3_video_url: None,
+                                x_reply_id: None,
+                                created_at: None,
+                                updated_at: None,
+                            });
+                            jobs_count += 1;
+                        }
+                    }
+                    Err(e) => println!("[Pitch MCP Error]: {}", e),
+                }
+            }
+
+            MentionIntent::ConversationWithUrl(target_url) => {
+                println!("[INTENT: CONVERSATION WITH URL] User: {} | URL: {} (No video requested - DO NOT call Pitch MCP)", author_handle, target_url);
+                let reply_msg = format!(
+                    "Appreciate you sharing! If you ever want a quick 60s automated video walkthrough or launch demo for your project, just tag us with 'make a demo for {}' and we'll render one! 🎬",
+                    target_url
+                );
+                if !dry_run {
+                    match x_client.post_tweet(&reply_msg, Some(&tweet_id)).await {
+                        Ok(rid) => println!("[Conversation Reply Sent] Reply Tweet ID: {}", rid),
+                        Err(e) => println!("[Conversation Reply Warning]: {}", e),
+                    }
+                }
+                let _ = db.upsert_mention_job(&MentionJob {
+                    id: None,
+                    tweet_id: tweet_id.clone(),
+                    user_handle: author_handle.clone(),
+                    target_url: target_url.clone(),
+                    editor_job_id: None,
+                    status: "conversation".to_string(),
+                    s3_video_url: None,
+                    x_reply_id: None,
+                    created_at: None,
+                    updated_at: None,
+                });
+            }
+
+            MentionIntent::Conversation => {
+                println!("[INTENT: CONVERSATIONAL CHAT] User: {} (No video requested - DO NOT call Pitch MCP)", author_handle);
+                let lower_text = text.to_lowercase();
+                let reply_msg = if lower_text.contains("thank") || lower_text.contains("nice") || lower_text.contains("cool") || lower_text.contains("awesome") {
+                    format!("Glad you like it {}! Let us know anytime if you want a 60s demo or launch video for any project you're building! 🎬", author_handle)
+                } else if lower_text.contains("how") || lower_text.contains("what") {
+                    format!("Hey {}! We turn text walkthroughs into 1080p narrated video demos via automated browser recording + AI narration. Mention us with any URL to try it! 🚀", author_handle)
+                } else {
+                    format!("Hey {}! Thanks for the shoutout. Mention us anytime with a product URL (e.g. '@trypitchdotco make a demo for yoursite.com') to get an automated 60s demo! 🎬", author_handle)
+                };
+
+                if !dry_run {
+                    match x_client.post_tweet(&reply_msg, Some(&tweet_id)).await {
+                        Ok(rid) => println!("[Conversational Reply Sent] Reply Tweet ID: {}", rid),
+                        Err(e) => println!("[Conversational Reply Warning]: {}", e),
+                    }
+                }
+                let _ = db.upsert_mention_job(&MentionJob {
+                    id: None,
+                    tweet_id: tweet_id.clone(),
+                    user_handle: author_handle.clone(),
+                    target_url: "N/A".to_string(),
+                    editor_job_id: None,
+                    status: "conversation".to_string(),
+                    s3_video_url: None,
+                    x_reply_id: None,
+                    created_at: None,
+                    updated_at: None,
+                });
+            }
         }
     }
 
