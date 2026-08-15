@@ -548,6 +548,15 @@ async fn handle_research() -> impl IntoResponse {
         }
     ]);
 
+    let mut memes_val = memes;
+    if let Ok(content) = std::fs::read_to_string("data/fetched_memes.json") {
+        if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&content) {
+            if parsed.is_array() && !parsed.as_array().unwrap().is_empty() {
+                memes_val = parsed;
+            }
+        }
+    }
+
     let curated_lists = serde_json::json!([
         {
             "name": "AI Engineers & Vibe Coders",
@@ -612,7 +621,7 @@ async fn handle_research() -> impl IntoResponse {
             "trends": trends,
             "influencers": influencers,
             "curatedLists": curated_lists,
-            "memes": memes,
+            "memes": memes_val,
             "scoringRules": scoring_rules,
             "contentQueue": queue
         })),

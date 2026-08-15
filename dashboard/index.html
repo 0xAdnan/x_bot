@@ -1741,7 +1741,13 @@
       if (memContainer && rawResearchData.memes) {
         memContainer.innerHTML = rawResearchData.memes.map(m => {
           let visualDetail = '';
-          if (m.stages) {
+          if (m.imageUrl) {
+            visualDetail = `
+              <div class="relative group overflow-hidden rounded-xl border border-pink-200/80 bg-slate-900 shadow-inner">
+                <img src="${m.imageUrl}" alt="${m.title || 'Tech Meme'}" class="w-full h-44 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
+              </div>
+            `;
+          } else if (m.stages) {
             visualDetail = `<div class="space-y-1 text-[10px] text-slate-600 bg-white/90 p-2.5 rounded-lg border border-pink-100">${m.stages.map(s => `<div>• ${s}</div>`).join('')}</div>`;
           } else if (m.top && m.bottom) {
             visualDetail = `
@@ -1751,19 +1757,26 @@
               </div>
             `;
           }
+          const memeTitle = m.title || m.template || 'Visual Tech Meme';
+          const memeSource = m.source || m.format || 'Live Scraped';
+          const sourceBadgeColor = memeSource.includes('4chan') ? 'bg-amber-100 text-amber-900 border-amber-300' : (memeSource.includes('Reddit') || memeSource.includes('r/') ? 'bg-orange-100 text-orange-900 border-orange-300' : 'bg-pink-100 text-pink-800 border-pink-200');
           return `
             <div class="p-4 bg-pink-50/40 rounded-xl border border-pink-200/80 space-y-2.5 shadow-sm">
               <div class="flex justify-between items-start">
-                <h4 class="text-xs font-bold text-slate-900">${m.template}</h4>
-                <span class="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-pink-100 text-pink-800 border border-pink-200">${m.format}</span>
+                <div class="space-y-0.5">
+                  <h4 class="text-xs font-bold text-slate-900 leading-snug">${memeTitle}</h4>
+                  ${m.sourceUrl ? `<a href="${m.sourceUrl}" target="_blank" class="text-[10px] font-mono font-semibold text-pink-600 hover:underline flex items-center gap-1">view origin <i data-lucide="external-link" class="w-2.5 h-2.5"></i></a>` : ''}
+                </div>
+                <span class="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full ${sourceBadgeColor} border">${memeSource}</span>
               </div>
               ${visualDetail}
-              <div class="text-[11px] text-slate-800 bg-white p-2 rounded-lg border border-pink-100 font-medium italic">
+              <div class="text-[11px] text-slate-800 bg-white p-2 rounded-lg border border-pink-100 font-medium italic leading-relaxed">
                 "${m.caption}"
               </div>
-              <div class="flex justify-end pt-1">
+              <div class="flex justify-between items-center pt-1 text-[10px]">
+                <span class="text-slate-500 font-mono">${m.ups ? `🔥 ${m.ups} heat score` : 'Real Scraped Meme'}</span>
                 <button onclick="copyTextToClipboard(\`${m.caption.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2.5 py-1 text-[9px] bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1">
-                  <i data-lucide="copy" class="w-3 h-3"></i> Copy Meme Text
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copy Meme Post
                 </button>
               </div>
             </div>
