@@ -9,8 +9,8 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-const COLD_FACTOR: f64 = 0.25;
-const BURST_HR_LIMIT: usize = 10;
+const COLD_FACTOR: f64 = 0.75;
+const BURST_HR_LIMIT: usize = 15;
 const MAX_CONSECUTIVE_TRIPS: usize = 3;
 const WINDOW_SECS: u64 = 86400; // 24h
 
@@ -175,13 +175,13 @@ pub fn budget_check() -> BudgetStatus {
     let ramp_active = !ramp_until.is_empty() && today < ramp_until;
 
     let default_caps: HashMap<&str, usize> = HashMap::from([
-        ("like", 50),
-        ("reply", 15),
-        ("follow", 15),
-        ("dm", 10),
-        ("post", 4),
-        ("quote", 4),
-        ("discover", 40),
+        ("like", 60),
+        ("reply", 20),
+        ("follow", 20),
+        ("dm", 15),
+        ("post", 6),
+        ("quote", 6),
+        ("discover", 100),
     ]);
 
     let mut caps = HashMap::new();
