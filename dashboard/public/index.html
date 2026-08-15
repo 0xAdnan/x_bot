@@ -542,7 +542,22 @@
         </div>
       </div>
 
-      <!-- Third Row: Visual Meme & Rage-Bait Production Matrix -->
+      <!-- Third Row: Curated X Lists & High-Converting Listicles Matrix -->
+      <div class="panel-card p-5 space-y-4 bg-white">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <i data-lucide="list-filter" class="text-teal-600 w-5 h-5"></i>
+            <h3 class="text-sm font-bold text-slate-900">Curated X Lists & High-Converting Listicle Matrix</h3>
+          </div>
+          <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 uppercase">High Response Curation</span>
+        </div>
+        <p class="text-xs text-slate-500">High-signal X lists to monitor for active discussions, plus ready-to-post tool stacks & ranked curation listicles</p>
+        <div id="research-lists-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Fourth Row: Visual Meme & Rage-Bait Production Matrix -->
       <div class="panel-card p-5 space-y-4 bg-white">
         <div class="flex items-center justify-between pb-2 border-b border-slate-200">
           <div class="flex items-center gap-2">
@@ -1690,6 +1705,35 @@
             </div>
           `;
         }).join('');
+      }
+
+      // Curated Lists Matrix
+      const lContainer = document.getElementById('research-lists-container');
+      if (lContainer && rawResearchData.curatedLists) {
+        lContainer.innerHTML = rawResearchData.curatedLists.map(lst => `
+          <div class="p-4 bg-teal-50/40 rounded-xl border border-teal-200/80 space-y-2.5 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <a href="${lst.url}" target="_blank" class="text-xs font-bold text-teal-800 hover:underline flex items-center gap-1">
+                  ${lst.name} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+                </a>
+                <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold border border-teal-200 mt-1 inline-block">${lst.category}</span>
+              </div>
+              <span class="text-[10px] font-mono font-bold text-teal-700 bg-white px-2 py-0.5 rounded-md border border-teal-200">${lst.members}</span>
+            </div>
+            <div class="text-[10px] text-teal-900 bg-white/80 p-2 rounded-lg border border-teal-100">
+              <span class="font-bold uppercase font-mono text-[9px] text-teal-600">List Tactical Angle:</span> ${lst.angle}
+            </div>
+            <div class="text-[11px] text-slate-700 bg-white/90 p-2.5 rounded-lg border border-teal-100 font-sans italic leading-relaxed">
+              "${lst.sampleHook}"
+            </div>
+            <div class="flex justify-end pt-1">
+              <button onclick="copyTextToClipboard(\`${lst.sampleHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2.5 py-1 text-[9px] bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copy List Post
+              </button>
+            </div>
+          </div>
+        `).join('');
       }
 
       // Memes Matrix

@@ -548,6 +548,41 @@ async fn handle_research() -> impl IntoResponse {
         }
     ]);
 
+    let curated_lists = serde_json::json!([
+        {
+            "name": "AI Engineers & Vibe Coders",
+            "category": "AI Devtools",
+            "members": "2,400+ builders",
+            "url": "https://x.com/search?q=list:ai-engineers-builders&f=live",
+            "angle": "Devs using Claude/Cursor who need 60s video walkthroughs for their repos",
+            "sampleHook": "curated 5 tools that save vibe coders 20h a week: 1. cursor (coding) 2. v0 (frontend) 3. supabase (db) 4. @trypitchdotco (60s automated video demos) 5. posthog"
+        },
+        {
+            "name": "YC Founders & Micro-SaaS Shippers",
+            "category": "SaaS Launches",
+            "members": "1,850+ founders",
+            "url": "https://x.com/search?q=list:yc-founders-shippers&f=live",
+            "angle": "Founders launching on PH/YC needing instant launch videos without spending $2k",
+            "sampleHook": "the modern yc launch stack: nextjs + tailwind + stripe + @trypitchdotco for your demo video walkthrough. stop paying agencies $3,000 for a 45s clip"
+        },
+        {
+            "name": "Screen Recording & DevRel Tools",
+            "category": "Competitor Orbit",
+            "members": "980+ creators",
+            "url": "https://x.com/search?q=list:screen-recording-devrel&f=live",
+            "angle": "Creators frustrated with Screen Studio / Loom manual retakes",
+            "sampleHook": "ranking every video demo tool by founder friction: loom (raw, low visual polish) -> screen studio (beautiful but 40 takes) -> @trypitchdotco (1 prompt, 60s ai narrated demo)"
+        },
+        {
+            "name": "Polymarket & AI Tech Alpha VIPs",
+            "category": "High-Heat Discourse",
+            "members": "3,100+ traders & tech thinkers",
+            "url": "https://x.com/search?q=list:polymarket-ai-alpha&f=live",
+            "angle": "Spicy prediction lists and sarcastic tech odds that generate massive replies",
+            "sampleHook": "top 3 tech prediction markets for 2026: 1. 95% odds manual demo recording dies out 2. 80% odds AI writes 90% of SaaS code 3. 99% odds founders still complain about loom pricing"
+        }
+    ]);
+
     let scoring_rules = serde_json::json!([
         { "rule": "Founder / CEO / CTO in bio", "description": "Target ICP decision maker", "points": "+3" },
         { "rule": "Explicit demo video request", "description": "Immediate high intent", "points": "+4" },
@@ -576,6 +611,7 @@ async fn handle_research() -> impl IntoResponse {
             "queries": queries,
             "trends": trends,
             "influencers": influencers,
+            "curatedLists": curated_lists,
             "memes": memes,
             "scoringRules": scoring_rules,
             "contentQueue": queue
