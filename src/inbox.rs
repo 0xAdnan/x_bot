@@ -171,19 +171,19 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                         let jid = res["jobId"].as_str().unwrap_or_default().to_string();
                         let final_job_id = if !jid.is_empty() { jid } else { format!("launch:{}", project_name) };
                         println!("[Pitch MCP Success] Launch Job ID: {}", final_job_id);
-                    let _ = db.upsert_mention_job(&MentionJob {
-                        id: None,
-                        tweet_id: tweet_id.clone(),
-                        user_handle: author_handle.clone(),
-                        target_url: target_url.clone(),
-                        editor_job_id: None,
-                        status: "follow_required".to_string(),
-                        s3_video_url: None,
-                        x_reply_id: None,
-                        tweet_text: Some(text.clone()),
-                        created_at: None,
-                        updated_at: None,
-                    });
+                        let _ = db.upsert_mention_job(&MentionJob {
+                            id: None,
+                            tweet_id: tweet_id.clone(),
+                            user_handle: author_handle.clone(),
+                            target_url: target_url.clone(),
+                            editor_job_id: Some(final_job_id),
+                            status: "rendering".to_string(),
+                            s3_video_url: None,
+                            x_reply_id: None,
+                            tweet_text: Some(text.clone()),
+                            created_at: None,
+                            updated_at: None,
+                        });
                         jobs_count += 1;
                     }
                     Err(e) => println!("[Pitch MCP Error]: {}", e),

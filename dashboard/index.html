@@ -1039,8 +1039,17 @@
           rawResearchData = resResearch;
         }
 
-        if (resIns && resIns.content) {
-          setElText('insights-content', resIns.content);
+        if (resIns) {
+          if (resIns.content) {
+            const insEl = document.getElementById('insights-content');
+            if (insEl) insEl.innerHTML = renderFormattedMarkdown(resIns.content);
+          }
+          if (resIns.competitorIntentCount !== undefined) setElText('ins-competitor-count', resIns.competitorIntentCount);
+          if (resIns.deliveredVideos !== undefined) setElText('ins-delivered-videos', resIns.deliveredVideos);
+          if (resIns.followRequiredCount !== undefined) setElText('ins-follow-gates', resIns.followRequiredCount);
+          if (resIns.segments && Array.isArray(resIns.segments)) {
+            renderSegmentsBreakdown(resIns.segments);
+          }
         }
 
         if (resStats && resStats.agents && resStats.agents.length > 0) {
@@ -1476,6 +1485,51 @@
         `;
       }).join('');
       if (window.lucide) lucide.createIcons();
+    }
+
+    function renderFormattedMarkdown(raw) {
+      if (!raw) return '<div class="text-slate-400 italic">No adaptive memory insights available.</div>';
+      
+      return raw
+        .replace(/^###\s*(.+)$/gm, '<h4 class="text-sm font-black text-slate-900 mt-4 mb-2 flex items-center gap-2"><span class="w-1.5 h-4 bg-indigo-600 rounded-full"></span> $1</h4>')
+        .replace(/^####\s*(.+)$/gm, '<h5 class="text-xs font-extrabold text-slate-800 mt-3 mb-1.5 uppercase font-mono tracking-wider">$1</h5>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-slate-900 font-bold">$1</strong>')
+        .replace(/^- \*\*(.+?)\*\*:\s*(.+)$/gm, '<div class="flex items-start gap-2.5 py-1.5 border-b border-slate-100 last:border-0"><span class="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 flex-shrink-0"></span><div><span class="font-bold text-slate-900 text-xs">$1:</span> <span class="text-xs text-slate-600 font-medium">$2</span></div></div>')
+        .replace(/^\d+\.\s*\*\*(.+?)\*\*:\s*(.+)$/gm, '<div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-sm space-y-1 my-2"><div class="text-xs font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span> $1</div><p class="text-xs text-slate-600 font-medium leading-relaxed">$2</p></div>');
+    }
+
+    function renderSegmentsBreakdown(segments) {
+      const container = document.getElementById('segments-breakdown-container');
+      if (!container || !segments || segments.length === 0) return;
+      const total = segments.reduce((sum, s) => sum + s.count, 0) || 1;
+
+      let topSeg = segments[0];
+      for (let s of segments) {
+        if (s.count > (topSeg ? topSeg.count : 0)) topSeg = s;
+      }
+      if (topSeg) {
+        setElText('ins-top-segment', topSeg.segment.replace('_', ' ').toUpperCase() + ` (${topSeg.count})`);
+        setElText('ins-top-score', `${topSeg.avgScore} / 10`);
+      }
+
+      container.innerHTML = segments.map(s => {
+        const pct = Math.max(4, Math.round((s.count / total) * 100));
+        const segName = s.segment.replace('_', ' ').toUpperCase();
+        return `
+          <div class="space-y-1.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/80 transition">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-600"></span> ${segName}
+                <span class="text-[10px] font-semibold text-slate-400 font-sans">(${s.count} leads)</span>
+              </span>
+              <span class="text-indigo-700 font-bold text-[11px] font-mono bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">Avg Fit: ${s.avgScore}/10 • ${pct}%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-600 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // RENDER RESEARCH TAB
