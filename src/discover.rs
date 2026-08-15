@@ -148,6 +148,10 @@ pub async fn discover_prospects(
                     let name = item["name"].as_str().unwrap_or(&handle);
                     let target_url = extract_url(text);
                     let score = calculate_lead_score(text, &handle, &target_url);
+                    if score < 7 {
+                        println!("     [SKIPPED LOW IMPACT/SCORE]: {} score {}/10 < 7", handle, score);
+                        continue;
+                    }
                     let hook = generate_pitch_hook(&handle, &target_url, text);
 
                     println!(

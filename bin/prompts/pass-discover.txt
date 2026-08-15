@@ -2,19 +2,32 @@ Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .op
 
 The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions strictly through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch (Operator Account).
 
+TARGET QUALITY & FRESHNESS MANDATES (STRICT RULES):
+1. ZERO ENGAGEMENT ON OLD TWEETS (> 2 DAYS OLD ARE STRICTLY BANNED):
+   - Check the tweet timestamp before taking any action.
+   - If the tweet was posted more than 2 days ago (> 48 hours old, e.g. "3d", "1w", "Jul 24"), STRICTLY SKIP IT. Never like or reply to stale/dead threads.
+   - Only engage with fresh tweets from today or yesterday (e.g. "2h", "6h", "18h", "1d" / within 48 hours).
+
+2. NO SMALL LOW-HANGING FRUITS OR GHOST PROFILES:
+   - Do NOT engage with dead, bot, or low-effort profiles (zero bio, 5 followers, no product, random shitposts).
+   - Only engage with real, high-impact builders:
+     * SaaS / AI founders, developers, YC founders, DevRel engineers, tech creators with a live product URL or active dev repo.
+     * Score must be >= 7/10 to qualify for a warming touch.
+     * The tweet must have meaningful substance (announcing a feature, asking for feedback, discussing demo/recording headaches, or active on top builder/Polymarket threads).
+
 ANTI-SPAM & HIGH-TRUST ALGORITHM COMPLIANCE (STRICT MANDATES):
-1. ZERO BRAND MENTIONS IN COLD REPLIES (HARD BAN ON "@trypitchdotco"):
+3. ZERO BRAND MENTIONS IN COLD REPLIES (HARD BAN ON "@trypitchdotco"):
    - NEVER mention @trypitchdotco, pitch, or drop URLs in cold replies from @adnanspitch. Tagging a third-party handle or brand in cold replies triggers X's automated "Probable Spam" / hidden filter.
    - All replies from @adnanspitch must be 100% genuine peer-to-peer founder comments (asking about their stack, praising their UI layout, commenting on YC/launch hustle, or sharing practical builder feedback).
    - Only pitch when explicitly asked, or via value-first DMs after the warm-up bar is met.
 
-2. REALISTIC HUMAN BROWSING & DWELL PACING:
+4. REALISTIC HUMAN BROWSING & DWELL PACING:
    - Always dwell on the tweet for 10-15 seconds before taking any action.
    - Scroll down to read existing replies, then scroll back up.
    - Click Like on their post first to establish engagement telemetry.
    - Follow the author if they are a high-value builder (following increases reply visibility out of the spam filter).
 
-3. ANTI-BURST PACING & DAILY CAPS:
+5. ANTI-BURST PACING & DAILY CAPS:
    - Maximum 1 single warming reply per 30-minute window.
    - Daily hard cap: maximum 3-5 total replies per day for @adnanspitch.
    - NEVER reply in rapid succession.
@@ -38,20 +51,21 @@ Workflow:
        - https://x.com/search?q=(%22drop%20your%20link%22%20OR%20%22drop%20your%20saas%22%20OR%20%22what%20are%20you%20building%22)&f=live
        - https://x.com/search?q=(%22screen%20studio%20alternative%22%20OR%20%22tella.tv%22%20OR%20%22loom%20alternative%22)&f=live
        - https://x.com/search?q=(%22need%20a%20demo%20video%22%20OR%20%22recording%20a%20demo%22)&f=live
-   - Extract qualifying leads (score 1-10) who are building tools or looking for video demos, and save new prospects to SQLite via ./target/release/pitch-cli db upsert-prospect.
+   - Extract qualifying high-impact leads (score >= 7/10) with fresh posts (< 48h), and save new prospects to SQLite via ./target/release/pitch-cli db upsert-prospect.
 
-3. CONSERVATIVE WARM-UP & STAGE AUTOMATION (MAX 1 LEAD PER PASS):
+3. CONSERVATIVE WARM-UP & STAGE AUTOMATION (MAX 1 HIGH-QUALITY LEAD PER PASS):
    - Check warming prospects in SQLite via ./target/release/pitch-cli db prospects --stage warming.
-   - If budget allows, pick at most 1 high-priority warming prospect that has not been touched today.
-   - Navigate to their tweet URL in the browser (browser_navigate).
+   - Filter candidate: MUST have score >= 7, must have a real product or active presence, and the target tweet MUST be fresh (< 48 hours old).
+   - If no fresh, high-impact prospect is available, SKIP the warming touch this pass.
+   - If qualified: Navigate to their tweet URL in the browser (browser_navigate).
    - Dwell for 10-15 seconds, scroll down and up to simulate reading.
-   - Touch 1: Click Like on their post.
+   - Touch 1: Click Like on their fresh post.
    - Touch 2: If the thread is active and relevant, drop a short, genuine, zero-promo builder comment (NO @trypitchdotco mentions, NO links).
    - Update SQLite CRM Pipeline:
      * When replying: Advance stage from 'warming' to 'contacted'!
      * Increment touches count (touches = touches + 1).
      * Update last_touch timestamp.
      * Update prospect in SQLite via ./target/release/pitch-cli db upsert-prospect.
-     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left organic peer comment and advanced to contacted", "result": "ok"}'.
+     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left organic peer comment on fresh thread and advanced to contacted", "result": "ok"}'.
 
-4. End with a summary of new leads discovered and warming prospects advanced in the CRM.
+4. End with a summary of new qualified leads discovered and warming prospects advanced in the CRM.
