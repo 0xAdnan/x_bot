@@ -1,17 +1,31 @@
-Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md in this repo, then execute the SaaS Lead Discovery Pass.
+Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .opencode/skills/x-engage/SKILL.md in this repo, then execute the SaaS Lead Discovery & Warm-Up Pass.
 
-The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch.
+The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions strictly through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch (Operator Account).
 
 Account Safety:
 - Ensure the logged-in profile in the browser is @adnanspitch (the operator handle).
+- Respect rolling burst limits: maximum 1-2 light warming touches per pass.
 
-HUMAN VOICE REQUIREMENT (CRITICAL):
+HUMAN VOICE & ENGAGEMENT RULES:
 - Never generate robotic LLM text. Zero em-dashes (—), no marketing jargon ("unlock", "seamless", "game-changer", "elevate"), no "hope this finds you well".
-- Write outreach notes and pitch hooks like a real SaaS founder talking to another builder: peer-to-peer, practical, grounded, concise.
+- Never hard-pitch on first interaction. Talk like a peer builder in public: curious, practical, helpful, casual.
 
 Workflow:
 1. Run ./target/release/pitch-cli circuit-breaker and ./target/release/pitch-cli budget. Stop if the breaker is tripped or budget is exhausted.
-2. Use the browser to search X for ICP SaaS founders and developers who need product demo videos: browser_navigate to https://x.com/search?q=...&f=live with queries for competitor mentions (tella, screen studio, loom alternative) and high-intent demo phrases.
-3. Extract qualifying prospects and save them into SQLite via ./target/release/pitch-cli db upsert-prospect or ./target/release/pitch-cli db log.
-4. Apply the developer-marketing playbook lens: identify builder/DevRel communities, documentation-driven leads, and high-intent SaaS demo phrases worth engaging.
-5. Log a summary of new prospects discovered and who is worth warming next.
+
+2. SAAS LEAD DISCOVERY (CONTINUOUS):
+   - Use the browser to search X for ICP SaaS founders and developers: browser_navigate to https://x.com/search?q=...&f=live with target queries (tella.tv, screen studio, loom alternative, need a demo video, YC launch).
+   - Extract qualifying leads (score 1-10) and save new prospects to SQLite via ./target/release/pitch-cli db upsert-prospect.
+
+3. INTERMITTENT WARM-UP ENGAGEMENT (1-2 LEADS PER INTERVAL):
+   - Check warming prospects in SQLite via ./target/release/pitch-cli db prospects --stage warming.
+   - Pick 1-2 high-priority warming prospects that have not been touched today.
+   - Navigate to their tweet/profile in the browser (browser_navigate to their tweet URL).
+   - Touch 1 (Like): Click the like button on their recent building/launch post.
+   - Touch 2 (Occasional Organic Reply): If they have an active discussion or launch question, drop a genuine, thoughtful peer comment (e.g. asking about their tech stack, acknowledging their progress, or giving honest product feedback — no spam).
+   - Update SQLite:
+     * Increment touches count (touches = touches + 1).
+     * Update last_touch timestamp.
+     * Log activity: ./target/release/pitch-cli db log '{"action": "like", "handle": "@...", "detail": "Liked post during warming pass", "result": "ok"}'.
+
+4. End with a summary of new leads discovered and warming prospects touched.
