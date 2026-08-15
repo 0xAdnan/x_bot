@@ -1,9 +1,10 @@
 export async function fetchRust(path, options = {}) {
   const candidates = [
     process.env.LOCAL_RUST_SERVER_URL,
-    "https://pitch-bot-adnan.loca.lt",
+    "https://spicy-emu-18.loca.lt",
     "https://heavy-cougar-57.loca.lt",
-    "https://perfect-termite-69.loca.lt"
+    "https://perfect-termite-69.loca.lt",
+    "https://pitch-bot-adnan.loca.lt"
   ].filter(Boolean);
 
   const sep = path.includes('?') ? '&' : '?';
@@ -12,7 +13,7 @@ export async function fetchRust(path, options = {}) {
   for (const baseUrl of candidates) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
       const resp = await fetch(`${baseUrl}${cleanPath}`, {
         ...options,
         signal: controller.signal,
