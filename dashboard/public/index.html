@@ -1254,14 +1254,22 @@
             el.innerHTML = pagedList.map(p => {
               const cleanHandle = (p.handle || '').replace('@','');
               const tweetUrl = p.url && p.url.includes('/status/') ? p.url : `https://x.com/${cleanHandle}`;
-              const firstName = (p.name && !p.name.startsWith('@')) ? p.name.split(' ')[0] : `@${cleanHandle}`;
-              const prodName = p.product_url ? p.product_url.replace('https://','').replace('http://','').replace('www.','').split('/')[0] : 'your product';
+              const firstName = (p.name && !p.name.startsWith('@')) ? p.name.split(' ')[0].toLowerCase() : cleanHandle.toLowerCase();
+              const prodName = p.product_url ? p.product_url.replace('https://','').replace('http://','').replace('www.','').split('/')[0].toLowerCase() : 'your app';
+              const notesLower = (p.notes || '').toLowerCase();
+              const whyLower = (p.why || '').toLowerCase();
               
-              let draftMessage = `Hey ${firstName}! Saw your work on ${prodName}. Created a 60s cinematic demo video for you using @trypitchdotco — thought you'd enjoy seeing it! 🎬`;
+              let draftMessage = `yo @${cleanHandle.toLowerCase()}, checked out ${prodName} on my feed. genuinely clean product. threw together a quick 60s walkthrough on @trypitchdotco to test the pacing, check it out if u want`;
               if (cleanHandle.toLowerCase() === 'okeanalysis') {
-                draftMessage = `Hey Emmanuel! Saw you built Quiro (quiro-web.vercel.app) as a Screen Studio alternative. Created a quick 60s narrated demo video of Quiro using @trypitchdotco to show how it looks — check it out! 🎬`;
+                draftMessage = `yo emmanuel, saw quiro (quiro-web.vercel.app) on my feed. super clean alternative to screen studio. threw together a 60s walkthrough on @trypitchdotco to see how it looks in action, check it out if u want`;
+              } else if (notesLower.includes('screen studio') || whyLower.includes('screen studio') || notesLower.includes('quiro')) {
+                draftMessage = `yo @${cleanHandle.toLowerCase()}, saw your post on screen recording. threw together a quick 60s walkthrough on @trypitchdotco to test the pacing, thought it looked super clean`;
+              } else if (notesLower.includes('loom') || whyLower.includes('loom')) {
+                draftMessage = `saw u were looking for a loom alt with better aesthetics. made a quick 60s video of ${prodName} on @trypitchdotco to show how the auto-zooms look, check it out if u want`;
+              } else if (notesLower.includes('launch') || whyLower.includes('launch') || notesLower.includes('yc') || whyLower.includes('yc')) {
+                draftMessage = `congrats on shipping @${cleanHandle.toLowerCase()}! cooked up a 45s launch video walkthrough of ${prodName} using @trypitchdotco, thought you might like it for your docs/feed`;
               } else if (p.why && p.why.length > 20 && !p.why.includes('Matched query')) {
-                draftMessage = `Hey ${firstName}! ${p.why} Made a quick 60s product demo using @trypitchdotco to show how it looks — check it out! 🎬`;
+                draftMessage = `hey @${cleanHandle.toLowerCase()}, saw your post about ${p.why.toLowerCase().replace(/[\.\!\?]+$/, '')}. made a quick 60s product demo using @trypitchdotco, check it out if u want`;
               }
 
               return `

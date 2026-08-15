@@ -50,16 +50,36 @@ fn calculate_lead_score(text: &str, _handle: &str, url: &str) -> i32 {
     score.min(10)
 }
 
-fn generate_pitch_hook(handle: &str, url: &str) -> String {
-    if url != "N/A" {
+fn generate_pitch_hook(handle: &str, url: &str, text_context: &str) -> String {
+    let clean_handle = handle.replace('@', "").to_lowercase();
+    let lower_context = text_context.to_lowercase();
+    let clean_url = url.replace("https://", "").replace("http://", "").replace("www.", "");
+    let domain_clean = clean_url.split('/').next().unwrap_or("your app");
+
+    if lower_context.contains("screen studio") || lower_context.contains("quiro") {
         format!(
-            "Hey {}, saw your post regarding {}! Created a 60s AI video demo walkthrough using PITCH — check it out!",
-            handle, url
+            "yo @{}, saw your post on screen recording. threw together a quick 60s walkthrough on @trypitchdotco to test the pacing, thought it looked super clean",
+            clean_handle
+        )
+    } else if lower_context.contains("loom") {
+        format!(
+            "saw u were looking for a loom alt with better aesthetics. made a quick 60s video of {} on @trypitchdotco to show how the auto-zooms look, check it out if u want",
+            domain_clean
+        )
+    } else if lower_context.contains("launch") || lower_context.contains("yc") {
+        format!(
+            "congrats on shipping @{}! cooked up a 45s launch video walkthrough of {} using @trypitchdotco, thought you might like it for your docs/feed",
+            clean_handle, domain_clean
+        )
+    } else if url != "N/A" && !url.is_empty() {
+        format!(
+            "hey @{}, checked out {} on my feed. genuinely clean product. made a quick 60s narrated demo on @trypitchdotco to see how it looks in action",
+            clean_handle, domain_clean
         )
     } else {
         format!(
-            "Hey {}, saw you discussing SaaS video demos! PITCH automatically generates 1080p narrated product walkthroughs from any URL in 60s.",
-            handle
+            "hey @{}, saw your thread about shipping. we automated the whole 60s narrated demo video headache on @trypitchdotco, let me know if u want a free walkthrough for your app",
+            clean_handle
         )
     }
 }
@@ -96,7 +116,7 @@ pub async fn discover_prospects(
                     let name = item["name"].as_str().unwrap_or(&handle);
                     let target_url = extract_url(text);
                     let score = calculate_lead_score(text, &handle, &target_url);
-                    let hook = generate_pitch_hook(&handle, &target_url);
+                    let hook = generate_pitch_hook(&handle, &target_url, text);
 
                     println!(
                         "  -> Discovered Lead: {} | Target URL: {} | Score: {}/10",
