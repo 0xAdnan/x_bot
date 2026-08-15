@@ -2,18 +2,21 @@ Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .op
 
 The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions strictly through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch (Operator Account).
 
-TARGET QUALITY & FRESHNESS MANDATES (STRICT RULES):
+TARGET QUALITY, FRESHNESS & WARMING QUALIFICATION (STRICT RULES):
 1. ZERO ENGAGEMENT ON OLD TWEETS (> 2 DAYS OLD ARE STRICTLY BANNED):
    - Check the tweet timestamp before taking any action.
    - If the tweet was posted more than 2 days ago (> 48 hours old, e.g. "3d", "1w", "Jul 24"), STRICTLY SKIP IT. Never like or reply to stale/dead threads.
    - Only engage with fresh tweets from today or yesterday (e.g. "2h", "6h", "18h", "1d" / within 48 hours).
 
-2. NO SMALL LOW-HANGING FRUITS OR GHOST PROFILES:
-   - Do NOT engage with dead, bot, or low-effort profiles (zero bio, 5 followers, no product, random shitposts).
-   - Only engage with real, high-impact builders:
-     * SaaS / AI founders, developers, YC founders, DevRel engineers, tech creators with a live product URL or active dev repo.
-     * Score must be >= 7/10 to qualify for a warming touch.
-     * The tweet must have meaningful substance (announcing a feature, asking for feedback, discussing demo/recording headaches, or active on top builder/Polymarket threads).
+2. WARMING SELECTION RULES (NO LOW-HANGING FRUITS):
+   - For general tech, AI, and Polymarket discourse threads: ONLY engage if the post/thread has at least 100+ likes (or is an active high-visibility discussion by a recognized creator).
+   - THE PRODUCT HUNT & SAAS PRODUCT EXCEPTION:
+     * The 100-like requirement does NOT apply if:
+       1. The user is launching or posting about their Product Hunt launch (@ProductHunt, Product of the Day, launch day).
+       2. OR the user is actively talking about/showcasing their own live SaaS/AI product with a live product URL or demo screenshot.
+     * These builders are direct high-intent prospects regardless of like count.
+   - Always skip dead bot accounts (zero bio, 5 followers, no product, random shitposts).
+   - Candidate must have score >= 8/10 to qualify for a warming touch.
 
 ANTI-SPAM & HIGH-TRUST ALGORITHM COMPLIANCE (STRICT MANDATES):
 3. ZERO BRAND MENTIONS IN COLD REPLIES (HARD BAN ON "@trypitchdotco"):

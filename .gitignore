@@ -39,6 +39,7 @@ expand_*.py
 extract_*.py
 fetch_*.py
 !bin/fetch_memes.py
+!bin/post_tweet_playwright.py
 deliver_*.py
 discover_*.py
 *_output*.json

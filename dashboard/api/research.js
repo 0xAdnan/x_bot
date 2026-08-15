@@ -169,11 +169,11 @@ export default async function handler(req, res) {
       }
     ],
     scoringRules: [
-      { rule: 'Founder / CEO / CTO in bio', description: 'Target ICP decision maker', points: '+3' },
-      { rule: 'Explicit demo video request', description: 'Immediate high intent', points: '+4' },
-      { rule: 'Has live product URL', description: 'Can generate automated video', points: '+3' },
-      { rule: 'Active in Polymarket / AI trend debates', description: 'High engagement viral multiplier', points: '+2' },
-      { rule: 'Influencer commenter with >500 followers', description: 'Amplification reach potential', points: '+2' }
+      { rule: 'Founder / CEO with live product URL', description: 'Direct product builder (Qualifies regardless of like count)', points: '+4' },
+      { rule: 'Product Hunt Launch / Launch Day', description: 'Active launch intent (Qualifies regardless of like count)', points: '+4' },
+      { rule: 'High-Visibility Thread (100+ Likes)', description: 'Discourse / trend thread with large audience reach', points: '+3' },
+      { rule: 'Explicit demo video request', description: 'Immediate high intent ICP prospect', points: '+4' },
+      { rule: 'Freshness < 48 Hours', description: 'Strict rule: all stale tweets (>2d) strictly banned', points: '+2' }
     ],
     contentQueue: []
   });

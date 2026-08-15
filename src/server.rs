@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 use crate::{
     config::Config,
-    db::Database,
+    db::{Activity, Database},
     inbox::process_mention_inbox,
     worker::advance_rendering_queue,
+    x_api::XApiClient,
 };
 use axum::{
     extract::{Query, State},
@@ -80,6 +81,7 @@ pub async fn run_server(port_override: Option<u16>) {
         .route("/insights", get(handle_insights))
         .route("/activity", get(handle_activity))
         .route("/research", get(handle_research))
+        .route("/publish", post(handle_publish))
         .route("/delete", post(handle_delete))
         .route("/prospect/stage", post(handle_update_stage))
         .route("/api/x", get(handle_crc).post(handle_x_webhook))
@@ -92,6 +94,7 @@ pub async fn run_server(port_override: Option<u16>) {
         .route("/api/insights", get(handle_insights))
         .route("/api/activity", get(handle_activity))
         .route("/api/research", get(handle_research))
+        .route("/api/publish", post(handle_publish))
         .route("/api/delete", post(handle_delete))
         .route("/api/prospect/stage", post(handle_update_stage))
         .route("/api/webhook/x", get(handle_crc).post(handle_x_webhook))
@@ -104,6 +107,7 @@ pub async fn run_server(port_override: Option<u16>) {
         .route("/api/webhook/insights", get(handle_insights))
         .route("/api/webhook/activity", get(handle_activity))
         .route("/api/webhook/research", get(handle_research))
+        .route("/api/webhook/publish", post(handle_publish))
         .route("/api/webhook/delete", post(handle_delete))
         .route("/api/webhook/prospect/stage", post(handle_update_stage))
         .with_state(state)
@@ -593,11 +597,11 @@ async fn handle_research() -> impl IntoResponse {
     ]);
 
     let scoring_rules = serde_json::json!([
-        { "rule": "Founder / CEO / CTO in bio", "description": "Target ICP decision maker", "points": "+3" },
-        { "rule": "Explicit demo video request", "description": "Immediate high intent", "points": "+4" },
-        { "rule": "Has live product URL", "description": "Can generate automated video", "points": "+3" },
-        { "rule": "Active in Polymarket / AI trend debates", "description": "High engagement viral multiplier", "points": "+2" },
-        { "rule": "Influencer commenter with >500 followers", "description": "Amplification reach potential", "points": "+2" }
+        { "rule": "Founder / CEO with live product URL", "description": "Direct product builder (Qualifies regardless of like count)", "points": "+4" },
+        { "rule": "Product Hunt Launch / Launch Day", "description": "Active launch intent (Qualifies regardless of like count)", "points": "+4" },
+        { "rule": "High-Visibility Thread (100+ Likes)", "description": "Discourse / trend thread with large audience reach", "points": "+3" },
+        { "rule": "Explicit demo video request", "description": "Immediate high intent ICP prospect", "points": "+4" },
+        { "rule": "Freshness < 48 Hours", "description": "Strict rule: all stale tweets (>2d) strictly banned", "points": "+2" }
     ]);
 
     let mut queue = Vec::new();
@@ -624,6 +628,93 @@ async fn handle_research() -> impl IntoResponse {
             "memes": memes_val,
             "scoringRules": scoring_rules,
             "contentQueue": queue
+        })),
+    )
+}
+
+#[derive(serde::Deserialize)]
+struct PublishPayload {
+    account: Option<String>,
+    text: String,
+    image_url: Option<String>,
+    media_path: Option<String>,
+}
+
+async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoResponse {
+    let account = payload.account.unwrap_or_else(|| "@trypitchdotco".to_string());
+    let clean_acc = if account.starts_with('@') {
+        account.clone()
+    } else {
+        format!("@{}", account)
+    };
+    let text = payload.text.trim().to_string();
+
+    if text.is_empty() {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({
+                "status": "error",
+                "message": "Tweet text cannot be empty"
+            })),
+        );
+    }
+
+    println!("[API Publish] Initiating on-demand post for {}...", clean_acc);
+
+    let mut api_success = false;
+    let mut tweet_url = format!("https://x.com/{}", clean_acc.replace('@', ""));
+
+    if clean_acc == "@trypitchdotco" && payload.image_url.is_none() && payload.media_path.is_none() {
+        let mut x_client = XApiClient::new();
+        if let Ok(id) = x_client.post_tweet(&text, None).await {
+            api_success = true;
+            tweet_url = format!("https://x.com/trypitchdotco/status/{}", id);
+            println!("[API Publish Success via X API] Tweet ID: {}", id);
+        }
+    }
+
+    if !api_success {
+        let mut cmd = std::process::Command::new("python3");
+        cmd.arg("/home/adnan/x_bot/bin/post_tweet_playwright.py")
+            .arg(&clean_acc)
+            .arg(&text);
+
+        if let Some(img) = payload.image_url.as_ref().or(payload.media_path.as_ref()) {
+            cmd.arg(img);
+        }
+
+        match cmd.output() {
+            Ok(output) => {
+                let out_str = String::from_utf8_lossy(&output.stdout);
+                println!("[API Publish Playwright Output]: {}", out_str);
+            }
+            Err(e) => {
+                println!("[API Publish Playwright Error]: {}", e);
+            }
+        }
+    }
+
+    if let Ok(db) = Database::open() {
+        let _ = db.log_activity(&Activity {
+            id: None,
+            ts: None,
+            action: "post".to_string(),
+            handle: Some(clean_acc.clone()),
+            segment: None,
+            variant: Some("on_demand_meme".to_string()),
+            detail: Some(text.clone()),
+            result: Some("ok".to_string()),
+        });
+    }
+
+    (
+        StatusCode::OK,
+        Json(serde_json::json!({
+            "status": "ok",
+            "account": clean_acc,
+            "text": text,
+            "message": format!("Tweet posted successfully as {}!", clean_acc),
+            "url": tweet_url
         })),
     )
 }
