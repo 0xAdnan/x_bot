@@ -1979,7 +1979,13 @@
           }
           const memeTitle = m.title || m.template || 'Visual Tech Meme';
           const memeSource = m.source || m.format || 'Live Scraped';
-          const sourceBadgeColor = memeSource.includes('4chan') ? 'bg-amber-100 text-amber-900 border-amber-300' : (memeSource.includes('Reddit') || memeSource.includes('r/') ? 'bg-orange-100 text-orange-900 border-orange-300' : 'bg-pink-100 text-pink-800 border-pink-200');
+          const sourceBadgeColor = (memeSource.includes('X / Tech') || memeSource.includes('Twitter'))
+            ? 'bg-slate-900 text-white border-slate-700 font-bold'
+            : (memeSource.includes('4chan') 
+               ? 'bg-amber-100 text-amber-900 border-amber-300' 
+               : (memeSource.includes('Reddit') || memeSource.includes('r/') 
+                  ? 'bg-orange-100 text-orange-900 border-orange-300' 
+                  : 'bg-pink-100 text-pink-800 border-pink-200'));
           return `
             <div class="p-4 bg-pink-50/40 rounded-xl border border-pink-200/80 space-y-2.5 shadow-sm">
               <div class="flex justify-between items-start">
