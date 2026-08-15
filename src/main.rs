@@ -368,21 +368,31 @@ async fn main() {
         },
 
         Commands::Inbox { dry, no_ack } => {
-            let _ = inbox::process_mention_inbox(dry, no_ack).await;
+            if let Err(e) = inbox::process_mention_inbox(dry, no_ack).await {
+                eprintln!("[Inbox Error]: {}", e);
+            }
         }
 
         Commands::Worker { dry, limit } => {
-            let _ = worker::advance_rendering_queue(dry, limit).await;
+            if let Err(e) = worker::advance_rendering_queue(dry, limit).await {
+                eprintln!("[Worker Error]: {}", e);
+            }
         }
 
         Commands::Discover { dry, max } => {
-            let _ = discover::discover_prospects(max, dry).await;
+            if let Err(e) = discover::discover_prospects(max, dry).await {
+                eprintln!("[Discover Error]: {}", e);
+            }
         }
 
         Commands::Trigger { dry, no_ack } => {
             println!("⚡ [EXECUTING UNIFIED RUST TRIGGER PASS]");
-            let _ = inbox::process_mention_inbox(dry, no_ack).await;
-            let _ = worker::advance_rendering_queue(dry, 10).await;
+            if let Err(e) = inbox::process_mention_inbox(dry, no_ack).await {
+                eprintln!("[Inbox Error]: {}", e);
+            }
+            if let Err(e) = worker::advance_rendering_queue(dry, 10).await {
+                eprintln!("[Worker Error]: {}", e);
+            }
             print_sync_summary();
         }
 

@@ -443,7 +443,7 @@
         <div class="flex flex-wrap items-center gap-3">
           <div class="relative">
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
-            <input id="search-mention-jobs" oninput="renderFilteredData()" type="text" placeholder="Search by handle or product URL..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-purple-600 w-64 md:w-80 transition font-medium">
+            <input id="search-mention-jobs" oninput="renderFilteredData()" type="text" placeholder="Search by handle or product URL..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-purple-600 w-60 md:w-72 transition font-medium">
           </div>
 
           <div class="flex items-center gap-1.5 text-xs">
@@ -456,6 +456,16 @@
               <option value="no_url_found">📝 No URL Mention</option>
             </select>
           </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Per Page:</span>
+            <select id="select-mention-page-size" onchange="changeMentionsPageSize(this.value)" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="10" selected>10 Jobs</option>
+              <option value="25">25 Jobs</option>
+              <option value="50">50 Jobs</option>
+              <option value="9999">Show All</option>
+            </select>
+          </div>
         </div>
 
         <div class="text-xs text-slate-500 font-mono">
@@ -465,10 +475,10 @@
 
       <!-- Mention Jobs Table Container -->
       <div class="panel-card overflow-hidden bg-white shadow-sm border-slate-200">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
           <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
+            <thead class="sticky top-0 z-10">
+              <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
                 <th class="p-3.5">User Handle</th>
                 <th class="p-3.5">Mention Tweet</th>
                 <th class="p-3.5">Target Product URL</th>
@@ -483,6 +493,16 @@
               <tr><td colspan="8" class="p-8 text-center text-slate-400 italic font-medium">Loading mention jobs from SQLite...</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Mentions Pagination Footer -->
+      <div id="mentions-pagination-footer" class="flex flex-wrap items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-sm text-xs font-mono text-slate-500">
+        <div>Showing <strong id="mentions-page-info" class="text-slate-900">0 of 0</strong> jobs</div>
+        <div class="flex items-center gap-2">
+          <button onclick="changeMentionsPage(-1)" id="btn-mentions-prev" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition font-bold text-slate-700">‹ Prev</button>
+          <span id="mentions-page-num" class="font-bold text-slate-900 px-1">Page 1 / 1</span>
+          <button onclick="changeMentionsPage(1)" id="btn-mentions-next" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition font-bold text-slate-700">Next ›</button>
         </div>
       </div>
     </section>
@@ -544,7 +564,7 @@
         <div class="flex flex-wrap items-center gap-3">
           <div class="relative">
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
-            <input id="search-activity" oninput="renderFilteredData()" type="text" placeholder="Search activity..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-teal-600 w-64 md:w-80 transition font-medium">
+            <input id="search-activity" oninput="renderFilteredData()" type="text" placeholder="Search activity..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-teal-600 w-60 md:w-72 transition font-medium">
           </div>
 
           <div class="flex items-center gap-1.5 text-xs">
@@ -557,19 +577,29 @@
               <option value="likes">❤️ Likes</option>
             </select>
           </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Per Page:</span>
+            <select id="select-act-page-size" onchange="changeActivityPageSize(this.value)" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="25" selected>25 Entries</option>
+              <option value="50">50 Entries</option>
+              <option value="100">100 Entries</option>
+              <option value="9999">Show All</option>
+            </select>
+          </div>
         </div>
 
         <div class="text-xs text-slate-500 font-mono">
-          Showing <strong id="cnt-filtered-activity" class="text-teal-700">0</strong> log entries
+          Total: <strong id="cnt-filtered-activity" class="text-teal-700">0</strong> log entries
         </div>
       </div>
 
       <!-- Activity Log Table -->
       <div class="panel-card overflow-hidden bg-white shadow-sm border-slate-200">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
           <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
+            <thead class="sticky top-0 z-10">
+              <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
                 <th class="p-3.5">Timestamp (UTC)</th>
                 <th class="p-3.5">Action</th>
                 <th class="p-3.5">Target Handle</th>
@@ -582,6 +612,16 @@
               <tr><td colspan="6" class="p-8 text-center text-slate-400 italic font-medium">Loading session activity log...</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Activity Pagination Footer -->
+      <div id="activity-pagination-footer" class="flex flex-wrap items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-sm text-xs font-mono text-slate-500">
+        <div>Showing <strong id="activity-page-info" class="text-slate-900">0 of 0</strong> entries</div>
+        <div class="flex items-center gap-2">
+          <button onclick="changeActivityPage(-1)" id="btn-act-prev" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition font-bold text-slate-700">‹ Prev</button>
+          <span id="activity-page-num" class="font-bold text-slate-900 px-1">Page 1 / 1</span>
+          <button onclick="changeActivityPage(1)" id="btn-act-next" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none transition font-bold text-slate-700">Next ›</button>
         </div>
       </div>
 
@@ -1193,19 +1233,68 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    let mentionsCurrentPage = 1;
+    let mentionsPageSize = 10;
+
+    let activityCurrentPage = 1;
+    let activityPageSize = 25;
+
+    function changeMentionsPage(delta) {
+      mentionsCurrentPage = Math.max(1, mentionsCurrentPage + delta);
+      lastMentionsHash = '';
+      renderFilteredData();
+    }
+
+    function changeMentionsPageSize(val) {
+      mentionsPageSize = parseInt(val) || 10;
+      mentionsCurrentPage = 1;
+      lastMentionsHash = '';
+      renderFilteredData();
+    }
+
+    function changeActivityPage(delta) {
+      activityCurrentPage = Math.max(1, activityCurrentPage + delta);
+      lastActivityHash = '';
+      renderFilteredData();
+    }
+
+    function changeActivityPageSize(val) {
+      activityPageSize = parseInt(val) || 25;
+      activityCurrentPage = 1;
+      lastActivityHash = '';
+      renderFilteredData();
+    }
+
     // RENDER MENTION JOBS TABLE
     function renderMentionJobs(jobs) {
-      const currentHash = JSON.stringify(jobs);
+      const currentHash = JSON.stringify(jobs) + '_' + mentionsCurrentPage + '_' + mentionsPageSize;
       if (currentHash === lastMentionsHash) return;
       lastMentionsHash = currentHash;
 
       const tbody = document.getElementById('mention-jobs-table-body');
       if (!tbody) return;
-      if (!jobs || jobs.length === 0) {
+      
+      const total = jobs.length;
+      const maxPage = Math.max(1, Math.ceil(total / mentionsPageSize));
+      mentionsCurrentPage = Math.min(mentionsCurrentPage, maxPage);
+
+      const startIdx = (mentionsCurrentPage - 1) * mentionsPageSize;
+      const endIdx = Math.min(total, mentionsCurrentPage * mentionsPageSize);
+      const pagedJobs = jobs.slice(startIdx, endIdx);
+
+      // Update footer pagination
+      setElText('mentions-page-info', total > 0 ? `${startIdx + 1}-${endIdx} of ${total}` : '0 of 0');
+      setElText('mentions-page-num', `Page ${mentionsCurrentPage} / ${maxPage}`);
+      const prevBtn = document.getElementById('btn-mentions-prev');
+      const nextBtn = document.getElementById('btn-mentions-next');
+      if (prevBtn) prevBtn.disabled = mentionsCurrentPage <= 1;
+      if (nextBtn) nextBtn.disabled = mentionsCurrentPage >= maxPage;
+
+      if (total === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-slate-400 italic font-medium">No mention video jobs match your filter</td></tr>';
         return;
       }
-      tbody.innerHTML = jobs.map(j => {
+      tbody.innerHTML = pagedJobs.map(j => {
         const cleanHandle = (j.user_handle || '').replace('@','');
         const cleanTweetId = (j.tweet_id || '').replace(/_\w+$/, '');
         const tweetUrl = j.tweet_url || (/^\d+$/.test(cleanTweetId) ? `https://x.com/i/status/${cleanTweetId}` : `https://x.com/${cleanHandle}`);
@@ -1315,17 +1404,34 @@
 
     // RENDER ACTIVITY LOG
     function renderActivity(activities) {
-      const currentHash = JSON.stringify(activities);
+      const currentHash = JSON.stringify(activities) + '_' + activityCurrentPage + '_' + activityPageSize;
       if (currentHash === lastActivityHash) return;
       lastActivityHash = currentHash;
 
       const tbody = document.getElementById('activity-table-body');
       if (!tbody) return;
-      if (!activities || activities.length === 0) {
+      
+      const total = activities.length;
+      const maxPage = Math.max(1, Math.ceil(total / activityPageSize));
+      activityCurrentPage = Math.min(activityCurrentPage, maxPage);
+
+      const startIdx = (activityCurrentPage - 1) * activityPageSize;
+      const endIdx = Math.min(total, activityCurrentPage * activityPageSize);
+      const pagedActivities = activities.slice(startIdx, endIdx);
+
+      // Update footer pagination
+      setElText('activity-page-info', total > 0 ? `${startIdx + 1}-${endIdx} of ${total}` : '0 of 0');
+      setElText('activity-page-num', `Page ${activityCurrentPage} / ${maxPage}`);
+      const prevBtn = document.getElementById('btn-act-prev');
+      const nextBtn = document.getElementById('btn-act-next');
+      if (prevBtn) prevBtn.disabled = activityCurrentPage <= 1;
+      if (nextBtn) nextBtn.disabled = activityCurrentPage >= maxPage;
+
+      if (total === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 italic font-medium">No session activities logged yet</td></tr>';
         return;
       }
-      tbody.innerHTML = activities.map(a => `
+      tbody.innerHTML = pagedActivities.map(a => `
         <tr class="hover:bg-slate-50/80 transition">
           <td class="p-3.5 font-mono text-slate-500 text-[11px]">${a.ts || '—'}</td>
           <td class="p-3.5">
