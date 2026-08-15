@@ -134,6 +134,11 @@ while true; do
     python3 "$REPO_DIR/bin/fetch_memes.py" >/dev/null 2>&1 &
   fi
 
+  # Refresh influencer radar & early infiltration targets every 3 minutes
+  if [ ! -f "$REPO_DIR/data/influencer_radar.json" ] || [ $(($(date +%s) - $(stat -c %Y "$REPO_DIR/data/influencer_radar.json" 2>/dev/null || echo 0))) -gt 180 ]; then
+    python3 "$REPO_DIR/bin/orbit_monitor.py" >/dev/null 2>&1 &
+  fi
+
   start_pass pass-mention  "$MENTION_INTERVAL"  pass-mention.txt
   start_pass pass-discover "$DISCOVER_INTERVAL" pass-discover.txt
   start_pass pass-content  "$CONTENT_INTERVAL"  pass-content.txt

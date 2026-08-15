@@ -14,15 +14,18 @@ export default async function handler(req, res) {
   const account = body.account || '@trypitchdotco';
   const text = body.text || '';
   const image_url = body.image_url || null;
+  const quote_url = body.quote_url || null;
+  const reply_to_url = body.reply_to_url || null;
+  const thread = body.thread || null;
 
-  if (!text.trim()) {
-    return res.status(400).json({ error: 'Tweet text is required' });
+  if (!text.trim() && (!thread || thread.length === 0)) {
+    return res.status(400).json({ error: 'Tweet text or thread is required' });
   }
 
   const resRust = await fetchRust('/api/publish', {
     method: 'POST',
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ account, text, image_url })
+    body: JSON.stringify({ account, text, image_url, quote_url, reply_to_url, thread })
   });
 
   if (resRust.ok) {

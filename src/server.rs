@@ -669,6 +669,15 @@ async fn handle_research() -> impl IntoResponse {
         }
     }
 
+    let mut radar_val = serde_json::json!([]);
+    if let Ok(content) = std::fs::read_to_string("data/influencer_radar.json") {
+        if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&content) {
+            if parsed.is_array() {
+                radar_val = parsed;
+            }
+        }
+    }
+
     (
         StatusCode::OK,
         Json(serde_json::json!({
@@ -677,6 +686,7 @@ async fn handle_research() -> impl IntoResponse {
             "aiTechTakes": ai_tech_takes,
             "rageBaitTakes": rage_bait_takes,
             "influencers": influencers,
+            "influencerRadar": radar_val,
             "curatedLists": curated_lists,
             "memes": memes_val,
             "scoringRules": scoring_rules,
@@ -688,9 +698,12 @@ async fn handle_research() -> impl IntoResponse {
 #[derive(serde::Deserialize)]
 struct PublishPayload {
     account: Option<String>,
-    text: String,
+    text: Option<String>,
     image_url: Option<String>,
     media_path: Option<String>,
+    reply_to_url: Option<String>,
+    quote_url: Option<String>,
+    thread: Option<Vec<String>>,
 }
 
 async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoResponse {
@@ -700,8 +713,53 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
     } else {
         format!("@{}", account)
     };
-    let text = payload.text.trim().to_string();
 
+    println!("[API Publish] Initiating on-demand post for {}...", clean_acc);
+
+    // Thread Mode
+    if let Some(thread_tweets) = payload.thread.as_ref() {
+        if !thread_tweets.is_empty() {
+            println!("[API Publish Thread] Publishing {}-tweet thread for {}...", thread_tweets.len(), clean_acc);
+            let thread_json = serde_json::to_string(thread_tweets).unwrap_or_default();
+            let mut cmd = std::process::Command::new("python3");
+            cmd.arg("/home/adnan/x_bot/bin/post_tweet_playwright.py")
+                .arg(&clean_acc)
+                .arg("--thread")
+                .arg(&thread_json);
+
+            let out_str = match cmd.output() {
+                Ok(output) => String::from_utf8_lossy(&output.stdout).to_string(),
+                Err(e) => format!("Error: {}", e),
+            };
+
+            if let Ok(db) = Database::open() {
+                let _ = db.log_activity(&Activity {
+                    id: None,
+                    ts: None,
+                    action: "thread_post".to_string(),
+                    handle: Some(clean_acc.clone()),
+                    segment: None,
+                    variant: Some("thread".to_string()),
+                    detail: Some(format!("Published {}-tweet thread: {}", thread_tweets.len(), thread_tweets[0].chars().take(80).collect::<String>())),
+                    result: Some("ok".to_string()),
+                });
+            }
+
+            return (
+                StatusCode::OK,
+                Json(serde_json::json!({
+                    "status": "ok",
+                    "account": clean_acc,
+                    "type": "thread",
+                    "total_tweets": thread_tweets.len(),
+                    "message": format!("Thread of {} tweets posted successfully as {}!", thread_tweets.len(), clean_acc),
+                    "url": format!("https://x.com/{}", clean_acc.replace('@', ""))
+                })),
+            );
+        }
+    }
+
+    let text = payload.text.unwrap_or_default().trim().to_string();
     if text.is_empty() {
         return (
             StatusCode::BAD_REQUEST,
@@ -712,12 +770,10 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
         );
     }
 
-    println!("[API Publish] Initiating on-demand post for {}...", clean_acc);
-
     let mut api_success = false;
     let mut tweet_url = format!("https://x.com/{}", clean_acc.replace('@', ""));
 
-    if clean_acc == "@trypitchdotco" && payload.image_url.is_none() && payload.media_path.is_none() {
+    if clean_acc == "@trypitchdotco" && payload.image_url.is_none() && payload.media_path.is_none() && payload.reply_to_url.is_none() && payload.quote_url.is_none() {
         let mut x_client = XApiClient::new();
         if let Ok(id) = x_client.post_tweet(&text, None).await {
             api_success = true;
@@ -730,11 +786,10 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
         let mut cmd = std::process::Command::new("python3");
         cmd.arg("/home/adnan/x_bot/bin/post_tweet_playwright.py")
             .arg(&clean_acc)
-            .arg(&text);
-
-        if let Some(img) = payload.image_url.as_ref().or(payload.media_path.as_ref()) {
-            cmd.arg(img);
-        }
+            .arg(&text)
+            .arg(payload.image_url.as_deref().or(payload.media_path.as_deref()).unwrap_or("null"))
+            .arg(payload.reply_to_url.as_deref().unwrap_or("null"))
+            .arg(payload.quote_url.as_deref().unwrap_or("null"));
 
         match cmd.output() {
             Ok(output) => {
@@ -748,13 +803,14 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
     }
 
     if let Ok(db) = Database::open() {
+        let action_name = if payload.quote_url.is_some() { "quote_tweet" } else if payload.reply_to_url.is_some() { "reply" } else { "post" };
         let _ = db.log_activity(&Activity {
             id: None,
             ts: None,
-            action: "post".to_string(),
+            action: action_name.to_string(),
             handle: Some(clean_acc.clone()),
             segment: None,
-            variant: Some("on_demand_meme".to_string()),
+            variant: Some("on_demand".to_string()),
             detail: Some(text.clone()),
             result: Some("ok".to_string()),
         });
@@ -766,6 +822,7 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
             "status": "ok",
             "account": clean_acc,
             "text": text,
+            "type": if payload.quote_url.is_some() { "quote" } else if payload.reply_to_url.is_some() { "reply" } else { "post" },
             "message": format!("Tweet posted successfully as {}!", clean_acc),
             "url": tweet_url
         })),
