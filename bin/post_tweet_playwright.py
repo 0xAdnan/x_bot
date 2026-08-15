@@ -97,7 +97,19 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
 
                 if await reply_btn.count() > 0:
                     await reply_btn.click()
-                    await page.wait_for_timeout(4000)
+                    await page.wait_for_timeout(3000)
+                    
+                    # Extract toast link if available
+                    reply_url_out = f"https://x.com/{clean_handle}"
+                    try:
+                        toast = page.locator('div[data-testid="toast"] a[href*="/status/"]').first
+                        if await toast.count() > 0:
+                            href = await toast.get_attribute("href")
+                            if href:
+                                reply_url_out = f"https://x.com{href}" if href.startswith('/') else href
+                    except Exception:
+                        pass
+
                     await browser.close()
                     return {
                         "success": True,
@@ -105,7 +117,7 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
                         "text": final_text,
                         "type": "reply",
                         "message": f"Successfully replied as {account}!",
-                        "url": f"https://x.com/{clean_handle}"
+                        "url": reply_url_out
                     }
         
         # Standard Compose / Quote Tweet
@@ -147,8 +159,18 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
         if await post_btn.count() > 0:
             print("[Publish] Clicking Post button...")
             await post_btn.click()
-            await page.wait_for_timeout(4000)
+            await page.wait_for_timeout(3000)
             
+            post_url_out = f"https://x.com/{clean_handle}"
+            try:
+                toast = page.locator('div[data-testid="toast"] a[href*="/status/"]').first
+                if await toast.count() > 0:
+                    href = await toast.get_attribute("href")
+                    if href:
+                        post_url_out = f"https://x.com{href}" if href.startswith('/') else href
+            except Exception:
+                pass
+
             await browser.close()
             return {
                 "success": True,
@@ -156,7 +178,7 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
                 "text": final_text,
                 "type": "quote" if quote_url else "post",
                 "message": f"Successfully published {'quote tweet' if quote_url else 'post'} as {account}!",
-                "url": f"https://x.com/{clean_handle}"
+                "url": post_url_out
             }
         else:
             await browser.close()

@@ -795,9 +795,31 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
             Ok(output) => {
                 let out_str = String::from_utf8_lossy(&output.stdout);
                 println!("[API Publish Playwright Output]: {}", out_str);
+                if let Ok(res_json) = serde_json::from_str::<serde_json::Value>(&out_str) {
+                    if let Some(u) = res_json["url"].as_str() {
+                        tweet_url = u.to_string();
+                    }
+                }
             }
             Err(e) => {
                 println!("[API Publish Playwright Error]: {}", e);
+            }
+        }
+    }
+
+    if let Some(target_u) = payload.quote_url.as_ref().or(payload.reply_to_url.as_ref()) {
+        if let Ok(content) = std::fs::read_to_string("data/influencer_radar.json") {
+            if let Ok(mut items) = serde_json::from_str::<Vec<serde_json::Value>>(&content) {
+                for item in items.iter_mut() {
+                    if item["tweetUrl"].as_str().map(|u| target_u.contains(u) || u.contains(target_u)).unwrap_or(false) {
+                        item["interacted"] = serde_json::json!(true);
+                        item["ourAction"] = serde_json::json!(if payload.quote_url.is_some() { "quote" } else { "reply" });
+                        item["ourAccount"] = serde_json::json!(clean_acc);
+                        item["ourTweetUrl"] = serde_json::json!(tweet_url);
+                        item["ourTimestamp"] = serde_json::json!(chrono::Utc::now().format("%Y-%m-%d %H:%M").to_string());
+                    }
+                }
+                let _ = std::fs::write("data/influencer_radar.json", serde_json::to_string_pretty(&items).unwrap_or_default());
             }
         }
     }
