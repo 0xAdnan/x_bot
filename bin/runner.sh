@@ -128,6 +128,12 @@ while true; do
   start_server
   start_tunnel
   start_tunnelsync
+
+  # Refresh real tech & developer memes from 4chan /g/ and Reddit periodically
+  if [ ! -f "$REPO_DIR/data/fetched_memes.json" ] || [ $(($(date +%s) - $(stat -c %Y "$REPO_DIR/data/fetched_memes.json" 2>/dev/null || echo 0))) -gt 3600 ]; then
+    python3 "$REPO_DIR/bin/fetch_memes.py" >/dev/null 2>&1 &
+  fi
+
   start_pass pass-mention  "$MENTION_INTERVAL"  pass-mention.txt
   start_pass pass-discover "$DISCOVER_INTERVAL" pass-discover.txt
   start_pass pass-content  "$CONTENT_INTERVAL"  pass-content.txt
