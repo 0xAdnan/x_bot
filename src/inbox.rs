@@ -306,9 +306,9 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
                 } else if lower_text.contains("thank") || lower_text.contains("nice") || lower_text.contains("cool") || lower_text.contains("awesome") || lower_text.contains("fire") || lower_text.contains("love") {
                     format!("appreciate the love @{}. let us know anytime if you want a quick walkthrough for anything you're shipping", clean_user)
                 } else if lower_text.contains("how") || lower_text.contains("what") || lower_text.contains("stack") || lower_text.contains("tech") {
-                    format!("hey @{}, we turn written walkthroughs into 1080p narrated video demos using automated browser recording + voiceover. test it out on trypitch.co anytime", clean_user)
+                    format!("hey @{}, we turn written walkthroughs into 1080p narrated video demos using automated browser recording + voiceover. just mention @trypitchdotco make a demo for example.com to try it out", clean_user)
                 } else {
-                    format!("hey @{}, good to see you on the timeline. let us know if you ever need a video demo for something you're building", clean_user)
+                    format!("hey @{}, good to see you on the timeline. whenever you need a demo or launch video, just mention @trypitchdotco make a demo for example.com and we got you", clean_user)
                 };
 
                 if !dry_run {
