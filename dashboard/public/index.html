@@ -1219,6 +1219,7 @@
     let lastResearchHash = '';
 
     // CORE DATA FETCHING (STALE-WHILE-REVALIDATE WITH ZERO FLASHING)
+    window.fetchDashboardData = () => fetchData();
     async function fetchData() {
       const spinIcon = document.querySelector('#btn-refresh i');
       if (spinIcon) spinIcon.classList.add('animate-spin');
@@ -2306,7 +2307,7 @@
       }
       try {
         await fetch('/api/research');
-        await fetchDashboardData();
+        if (typeof fetchData === 'function') await fetchData();
       } catch (e) {
       } finally {
         if (btn) {
@@ -2457,7 +2458,9 @@
               </div>
             `;
           }
-          setTimeout(fetchDashboardData, 2000);
+          if (typeof fetchData === 'function') {
+            setTimeout(fetchData, 1500);
+          }
         } else {
           if (statusEl) {
             statusEl.className = 'text-xs p-3 rounded-xl bg-red-50 text-red-800 border border-red-200 block';
