@@ -7,13 +7,16 @@ use regex::Regex;
 const DEFAULT_QUERIES: &[&str] = &[
     "(@ProductHunt OR \"Product Hunt\") (launching OR \"launching soon\" OR \"live today\" OR \"product of the day\")",
     "(\"launching on product hunt\" OR \"launching next week\" OR \"launch day\") (SaaS OR AI OR devtool)",
-    "tella.tv",
-    "screen.studio",
-    "loom.com alternative",
-    "need a product demo video",
-    "how to make a product demo video",
+    "(@Polymarket OR Polymarket) (AI OR LLM OR \"vibe coding\" OR founder OR startup)",
+    "(@levelsio OR @rowancheung OR @swyx OR @bindureddy OR @karpathy) (demo OR building OR shipping OR tool)",
+    "(\"drop your link\" OR \"drop your saas\" OR \"what are you building\" OR \"rate my landing page\")",
+    "tella.tv OR \"tella alternative\"",
+    "screen.studio OR \"screen studio alternative\"",
+    "loom.com alternative OR \"loom alternative\"",
+    "need a product demo video OR \"need a demo video\"",
+    "how to make a product demo video OR \"recording a demo\"",
     "(\"launching today\" OR \"just launched\") (SaaS OR AI OR devtool)",
-    "(\"YC S26\" OR \"YC W26\" OR \"YC S25\")",
+    "(\"YC S26\" OR \"YC W26\" OR \"YC S25\") (demo OR launch OR link)",
     "(\"building in public\" OR \"indie hacker\") (demo OR launch OR video)",
 ];
 
@@ -64,7 +67,23 @@ fn generate_pitch_hook(handle: &str, url: &str, text_context: &str) -> String {
     let clean_url = url.replace("https://", "").replace("http://", "").replace("www.", "");
     let domain_clean = clean_url.split('/').next().unwrap_or("your app");
 
-    if lower_context.contains("product hunt") || lower_context.contains("producthunt") {
+    if lower_context.contains("polymarket") || lower_context.contains("odds") {
+        format!(
+            "polymarket 90% odds that founders spend more time re-recording 2-minute product demos than writing code. @trypitchdotco renders clean narrated walkthroughs in 60s from your url/prompt",
+        )
+    } else if lower_context.contains("drop your") || lower_context.contains("rate my") {
+        if url != "N/A" && !url.is_empty() {
+            format!(
+                "checked out {} from the thread. looks super solid @{}. generated a quick 60s narrated demo with @trypitchdotco to show how the auto-zooms look",
+                domain_clean, clean_handle
+            )
+        } else {
+            format!(
+                "love checking builder threads @{}. whenever you need a clean 60s product demo for your feed/landing page, drop your link to @trypitchdotco and we'll generate one",
+                clean_handle
+            )
+        }
+    } else if lower_context.contains("product hunt") || lower_context.contains("producthunt") {
         format!(
             "congrats on the product hunt launch @{}. if you need a quick 45s launch video walkthrough for {}, tag @trypitchdotco with your link and we'll render one for you",
             clean_handle, domain_clean

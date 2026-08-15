@@ -1,4 +1,4 @@
-Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .opencode/skills/x-engage/SKILL.md in this repo, then execute the SaaS Lead Discovery & Warm-Up Pass.
+Read the skill at .opencode/skills/developer-marketing-playbook/SKILL.md and .opencode/skills/x-engage/SKILL.md in this repo, then execute the SaaS Lead Discovery & 24/7 AI Trend Research Pass.
 
 The X API has no credits. Do NOT use pitch-cli x-api search. Drive ALL X actions strictly through the Playwright browser MCP tools (browser_navigate, browser_snapshot, browser_click, browser_type). The browser is logged in as @adnanspitch (Operator Account).
 
@@ -10,28 +10,35 @@ Account Safety & Anti-Ban Pacing (STRICT MANDATE):
 
 HUMAN & GEN-Z SAAS FOUNDER VOICE (CRITICAL):
 - Strictly NO robotic AI writing. Zero em-dashes (—), no corporate jargon ("unlock", "seamless", "game-changer", "elevate"), no "hope this finds you well".
-- Write in casual, punchy Gen-Z founder style (all lowercase where natural, curious, direct, peer-to-peer builder tone).
+- Write in casual, punchy Gen-Z founder style (all lowercase where natural, curious, direct, peer-to-peer builder tone, spicy/sarcastic takes allowed).
 - Example: "yo @handle, saw quiro on my feed. super clean alternative to screen studio. threw together a 60s walkthrough on @trypitchdotco to see how it looks in action, check it out if u want"
+- Polymarket/Trend Example: "polymarket 90% odds that founders spend more time re-recording 2-minute product demos than writing code. @trypitchdotco renders clean narrated walkthroughs in 60s"
 
 Workflow:
 1. Run ./target/release/pitch-cli circuit-breaker and ./target/release/pitch-cli budget. Stop if the breaker is tripped or budget is exhausted.
 
-2. SAAS LEAD DISCOVERY (PRIMARY FOCUS):
-   - Use the browser to search X for ICP SaaS founders and developers: browser_navigate to https://x.com/search?q=...&f=live with target queries (tella.tv, screen studio, loom alternative, need a demo video, YC launch).
-   - Extract qualifying leads (score 1-10) and save new prospects to SQLite via ./target/release/pitch-cli db upsert-prospect.
+2. SAAS LEAD & TREND DISCOVERY (PRIMARY FOCUS):
+   - Use the browser to search X for ICP SaaS founders, AI developers, Polymarket debates, and influencer threads:
+     * Search Queries:
+       - https://x.com/search?q=(%40Polymarket%20OR%20Polymarket)%20(AI%20OR%20LLM%20OR%20vibe%20coding)&f=live
+       - https://x.com/search?q=(%40levelsio%20OR%20%40rowancheung%20OR%20%40swyx%20OR%20%40bindureddy)%20(demo%20OR%20building)&f=live
+       - https://x.com/search?q=(%22drop%20your%20link%22%20OR%20%22drop%20your%20saas%22%20OR%20%22what%20are%20you%20building%22)&f=live
+       - https://x.com/search?q=(%22screen%20studio%20alternative%22%20OR%20%22tella.tv%22%20OR%20%22loom%20alternative%22)&f=live
+       - https://x.com/search?q=(%22need%20a%20demo%20video%22%20OR%20%22recording%20a%20demo%22)&f=live
+   - Extract qualifying leads (score 1-10) who are building tools or looking for video demos, and save new prospects to SQLite via ./target/release/pitch-cli db upsert-prospect.
 
 3. CONSERVATIVE WARM-UP & STAGE AUTOMATION (MAX 1 LEAD PER PASS):
    - Check warming prospects in SQLite via ./target/release/pitch-cli db prospects --stage warming.
-   - If budget allows, pick at most 1 high-priority warming prospect that has not been touched today.
+   - If budget allows, pick at most 1 high-priority warming prospect or active commenter under an AI influencer/Polymarket thread that has not been touched today.
    - Navigate to their tweet/profile in the browser (browser_navigate to their tweet URL).
    - Wait 5 seconds to simulate natural reading.
    - Touch 1 (Like): Click like on their building/launch post.
-   - Touch 2 (Occasional Organic Reply - only if thread is relevant): Drop a short, natural, all-lowercase builder comment.
+   - Touch 2 (Occasional Organic Reply / Spicy Banter - only if thread is relevant): Drop a short, natural, all-lowercase builder comment or witty sarcastic counter-take bridging to automated video demos on @trypitchdotco.
    - Update SQLite CRM Pipeline:
      * When replying: Advance stage from 'warming' to 'contacted'!
      * Increment touches count (touches = touches + 1).
      * Update last_touch timestamp.
      * Update prospect in SQLite via ./target/release/pitch-cli db upsert-prospect.
-     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left casual founder comment and advanced to contacted", "result": "ok"}'.
+     * Log activity via ./target/release/pitch-cli db log '{"action": "organic_reply", "handle": "@...", "detail": "Left casual founder reply and advanced to contacted", "result": "ok"}'.
 
-4. End with a summary of new leads discovered and warming prospects advanced in the CRM.
+4. End with a summary of new leads discovered, trend signals captured, and warming prospects advanced in the CRM.

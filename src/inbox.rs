@@ -151,7 +151,7 @@ pub async fn process_mention_inbox(dry_run: bool, no_ack: bool) -> Result<(usize
 
                 if !no_ack && !dry_run {
                     let ack_text = format!(
-                        "on it @{}. cooking up a launch video for {} right now, will drop the video right here when it's done",
+                        "on it @{}. cooking up a launch video for {} right now, will drop the link right here when it's done",
                         clean_user, clean_domain
                     );
                     match x_client.post_tweet(&ack_text, Some(&tweet_id)).await {
