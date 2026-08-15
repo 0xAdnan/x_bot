@@ -1811,62 +1811,118 @@
       // Trends Radar
       const tContainer = document.getElementById('research-trends-container');
       if (tContainer && rawResearchData.trends) {
-        tContainer.innerHTML = rawResearchData.trends.map(t => `
-          <div class="p-4 bg-orange-50/40 rounded-xl border border-orange-200/80 space-y-2.5 shadow-sm">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 font-bold border border-orange-200">${t.type}</span>
-                <h4 class="text-xs font-bold text-slate-900 mt-1.5">${t.topic}</h4>
+        tContainer.innerHTML = rawResearchData.trends.map((t, idx) => {
+          const cardId = `trend_${idx}`;
+          return `
+            <div id="trend-card-${cardId}" class="p-4 bg-white rounded-xl border border-orange-200/90 space-y-3 shadow-sm hover:border-orange-400 transition-all duration-200">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 font-bold border border-orange-200">${t.type}</span>
+                  <h4 class="text-xs font-bold text-slate-900 mt-1.5">${t.topic}</h4>
+                </div>
+                <span class="text-[10px] font-mono font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200">${t.volume}</span>
               </div>
-              <span class="text-[10px] font-mono font-bold text-orange-700 bg-white px-2 py-0.5 rounded-md border border-orange-200">${t.volume}</span>
-            </div>
-            <div class="text-[11px] text-slate-700 bg-white/90 p-2.5 rounded-lg border border-orange-100 font-mono italic leading-relaxed">
-              "${t.take}"
-            </div>
-            <div class="flex items-center justify-between pt-1 text-[10px]">
-              <span class="text-slate-500 font-medium font-sans">Sentiment: <span class="font-bold text-slate-700">${t.sentiment}</span></span>
-              <div class="flex items-center gap-1.5">
-                <button onclick="loadIntoComposer(\`${t.take.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@trypitchdotco')" class="px-2.5 py-1 text-[9px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-md border border-purple-200 transition flex items-center gap-1 cursor-pointer">
-                  ✨ Use in Composer
-                </button>
-                <button onclick="copyTextToClipboard(\`${t.take.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2.5 py-1 text-[9px] bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1 cursor-pointer">
-                  <i data-lucide="copy" class="w-3 h-3"></i> Copy
-                </button>
+              
+              <!-- Proposed Take Content -->
+              <div class="p-2.5 bg-orange-50/70 rounded-xl border border-orange-200/80 space-y-1 shadow-sm">
+                <div class="flex items-center justify-between text-[9px] font-bold uppercase font-mono text-orange-900">
+                  <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-orange-600"></i> Proposed Viral / Prediction Take</span>
+                  <span class="text-orange-600 bg-white px-1.5 py-0.5 rounded border border-orange-200 text-[8px]">Ready to Approve</span>
+                </div>
+                <div id="trend-text-${cardId}" class="text-xs text-orange-950 font-medium italic bg-white/90 p-2.5 rounded-lg border border-orange-100 leading-relaxed font-sans">
+                  "${t.take}"
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] text-slate-500 font-medium font-sans pt-0.5">
+                <span>Sentiment: <b class="text-slate-700">${t.sentiment}</b></span>
+              </div>
+
+              <!-- 1-Click Approve / Reroll Actions -->
+              <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button onclick="directApprovePost('${cardId}', document.getElementById('trend-text-${cardId}').innerText, '@trypitchdotco', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    ✅ Approve & Post (@trypitchdotco)
+                  </button>
+                  <button onclick="directApprovePost('${cardId}', document.getElementById('trend-text-${cardId}').innerText, '@adnanspitch', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg border border-indigo-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    👤 Post as @adnanspitch
+                  </button>
+                  <button onclick="rerollTrendTake('${cardId}')" class="px-2.5 py-1.5 text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg border border-amber-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🔄 Reroll Better Take
+                  </button>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="loadIntoComposer(document.getElementById('trend-text-${cardId}').innerText, null, '@trypitchdotco')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-orange-700 hover:bg-orange-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="dismissRadarItem('${cardId}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
 
       // Influencers Roster
       const iContainer = document.getElementById('research-influencers-container');
       if (iContainer && rawResearchData.influencers) {
-        iContainer.innerHTML = rawResearchData.influencers.map(inf => {
+        iContainer.innerHTML = rawResearchData.influencers.map((inf, idx) => {
           const cleanH = inf.handle.replace('@','');
+          const cardId = `inf_${cleanH}_${idx}`;
           return `
-            <div class="p-4 bg-indigo-50/40 rounded-xl border border-indigo-200/80 space-y-2.5 shadow-sm">
+            <div id="inf-card-${cardId}" class="p-4 bg-white rounded-xl border border-indigo-200/90 space-y-3 shadow-sm hover:border-indigo-400 transition-all duration-200">
               <div class="flex justify-between items-start">
-                <div>
-                  <a href="https://x.com/${cleanH}" target="_blank" class="text-xs font-bold text-indigo-700 hover:underline flex items-center gap-1">
-                    ${inf.handle} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
-                  </a>
-                  <div class="text-[11px] text-slate-800 font-semibold">${inf.name}</div>
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white text-xs shadow-sm">
+                    ${cleanH.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs font-bold text-slate-900">${inf.name}</span>
+                      <a href="https://x.com/${cleanH}" target="_blank" class="text-[11px] font-mono font-semibold text-indigo-600 hover:underline">@${cleanH}</a>
+                    </div>
+                    <span class="text-[9px] text-slate-400 font-mono">${inf.followers} • ${inf.niche}</span>
+                  </div>
                 </div>
-                <span class="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">${inf.followers}</span>
+                <span class="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 uppercase">Target VIP</span>
               </div>
-              <div class="text-[10px] text-indigo-900 bg-white/80 p-2 rounded-lg border border-indigo-100">
-                <span class="font-bold uppercase font-mono text-[9px] text-indigo-600">Bait Angle:</span> ${inf.baitAngle}
+
+              <!-- Context / Bait Angle -->
+              <div class="text-[10px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                <span class="font-bold uppercase font-mono text-[9px] text-indigo-600">Thread Context:</span> ${inf.baitAngle}
               </div>
-              <div class="text-[11px] text-slate-700 bg-white/90 p-2 rounded-lg border border-indigo-100 font-sans italic leading-snug">
-                "${inf.warmupHook}"
+
+              <!-- Suggested Sarcastic / Cool Reply -->
+              <div class="p-2.5 bg-purple-50/70 rounded-xl border border-purple-200/80 space-y-1 shadow-sm">
+                <div class="flex items-center justify-between text-[9px] font-bold uppercase font-mono text-purple-900">
+                  <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-purple-600"></i> Proposed Witty / Sarcastic Reply</span>
+                  <span class="text-purple-600 bg-white px-1.5 py-0.5 rounded border border-purple-200 text-[8px]">Ready to Approve</span>
+                </div>
+                <div class="text-xs text-purple-950 font-medium italic bg-white/90 p-2 rounded-lg border border-purple-100 leading-snug">
+                  "${inf.warmupHook}"
+                </div>
               </div>
-              <div class="flex justify-end gap-1.5 pt-1">
-                <button onclick="loadIntoComposer(\`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@adnanspitch')" class="px-2 py-1 text-[9px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-md border border-purple-200 transition flex items-center gap-1 cursor-pointer">
-                  ✨ Use in Composer
-                </button>
-                <button onclick="copyTextToClipboard(\`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2 py-1 text-[9px] bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1 cursor-pointer">
-                  <i data-lucide="message-square" class="w-3 h-3"></i> Copy Hook
-                </button>
+
+              <!-- 1-Click Approve & Reply Actions -->
+              <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button onclick="directApproveReply('${cardId}', 'https://x.com/${cleanH}', \`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'reply', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    ⚡ Approve & Reply (@adnanspitch)
+                  </button>
+                  <button onclick="directApproveReply('${cardId}', 'https://x.com/${cleanH}', \`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@trypitchdotco', 'reply', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🚀 Reply as Pitch
+                  </button>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="loadIntoComposer(\`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@adnanspitch', 'https://x.com/${cleanH}', 'reply')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="dismissRadarItem('${cardId}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
             </div>
           `;
@@ -1880,7 +1936,7 @@
           rContainer.innerHTML = '<div class="col-span-2 text-center text-xs text-slate-400 py-6 italic font-medium">Scanning for fresh influencer tweets... Click "Scan Radar Now" above.</div>';
         } else {
           rContainer.innerHTML = rawResearchData.influencerRadar.map(r => `
-            <div class="p-4 bg-white rounded-xl border border-indigo-200/90 space-y-3 shadow-sm hover:border-indigo-400 transition">
+            <div id="radar-card-${r.id}" class="p-4 bg-white rounded-xl border border-indigo-200/90 space-y-3 shadow-sm hover:border-indigo-400 transition-all duration-200">
               <div class="flex justify-between items-start">
                 <div class="flex items-center gap-2">
                   <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white text-xs shadow-sm">
@@ -1900,8 +1956,22 @@
               </div>
 
               <!-- Original Tweet Text -->
-              <div class="p-2.5 bg-slate-900 text-slate-100 rounded-lg text-xs leading-relaxed font-sans border border-slate-800 shadow-inner">
-                "${r.text}"
+              <div class="space-y-1">
+                <div class="text-[9px] font-mono uppercase font-bold text-slate-400">Their Tweet:</div>
+                <div class="p-2.5 bg-slate-950 text-slate-100 rounded-xl text-xs leading-relaxed font-sans border border-slate-800 shadow-inner">
+                  "${r.text}"
+                </div>
+              </div>
+
+              <!-- Proposed Sarcastic / Cool Reply -->
+              <div class="p-2.5 bg-purple-50/70 rounded-xl border border-purple-200/80 space-y-1 shadow-sm">
+                <div class="flex items-center justify-between text-[9px] font-bold uppercase font-mono text-purple-900">
+                  <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-purple-600"></i> Proposed Witty / Sarcastic Take</span>
+                  <span class="text-purple-600 bg-white px-1.5 py-0.5 rounded border border-purple-200 text-[8px]">Ready to Approve</span>
+                </div>
+                <div class="text-xs text-purple-950 font-medium italic bg-white/90 p-2 rounded-lg border border-purple-100 leading-snug">
+                  "${r.earlyReplyTake}"
+                </div>
               </div>
 
               ${r.interacted || r.ourTweetUrl ? `
@@ -1923,18 +1993,25 @@
                 </div>
               ` : ''}
 
-              <!-- Instant Infiltration Actions -->
-              <div class="space-y-1.5 pt-1">
-                <div class="text-[9px] font-mono uppercase font-bold text-slate-400">Instant Infiltration Actions:</div>
-                <div class="flex flex-wrap gap-1.5">
-                  <button onclick="quoteInfluencerTweet(\`${r.tweetUrl}\`, \`${r.quoteTweetTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`)" class="px-2 py-1 text-[9px] bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1 cursor-pointer">
-                    ⚡ Quote Tweet (@adnanspitch)
+              <!-- 1-Click Approve & Infiltration Actions -->
+              <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.earlyReplyTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'reply', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    ⚡ Approve & Reply (@adnanspitch)
                   </button>
-                  <button onclick="replyInfluencerTweet(\`${r.tweetUrl}\`, \`${r.earlyReplyTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch')" class="px-2 py-1 text-[9px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-md border border-indigo-200 transition flex items-center gap-1 cursor-pointer">
-                    💬 Early Reply (@adnanspitch)
+                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.brandBridge.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@trypitchdotco', 'reply', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🚀 Reply as Pitch
                   </button>
-                  <button onclick="replyInfluencerTweet(\`${r.tweetUrl}\`, \`${r.brandBridge.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@trypitchdotco')" class="px-2 py-1 text-[9px] bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-md border border-blue-200 transition flex items-center gap-1 cursor-pointer">
-                    🚀 Pitch Reply (@trypitchdotco)
+                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.quoteTweetTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'quote', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg border border-purple-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🔥 Quote Tweet
+                  </button>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="loadIntoComposer(\`${r.earlyReplyTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@adnanspitch', '${r.tweetUrl}', 'reply')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="dismissRadarItem('${r.id}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
               </div>
@@ -1946,39 +2023,66 @@
       // Curated Lists Matrix
       const lContainer = document.getElementById('research-lists-container');
       if (lContainer && rawResearchData.curatedLists) {
-        lContainer.innerHTML = rawResearchData.curatedLists.map(lst => `
-          <div class="p-4 bg-teal-50/40 rounded-xl border border-teal-200/80 space-y-2.5 shadow-sm">
-            <div class="flex justify-between items-start">
-              <div>
-                <a href="${lst.url}" target="_blank" class="text-xs font-bold text-teal-800 hover:underline flex items-center gap-1">
-                  ${lst.name} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
-                </a>
-                <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold border border-teal-200 mt-1 inline-block">${lst.category}</span>
+        lContainer.innerHTML = rawResearchData.curatedLists.map((lst, idx) => {
+          const cardId = `list_${idx}`;
+          return `
+            <div id="list-card-${cardId}" class="p-4 bg-white rounded-xl border border-teal-200/90 space-y-3 shadow-sm hover:border-teal-400 transition-all duration-200">
+              <div class="flex justify-between items-start">
+                <div>
+                  <a href="${lst.url}" target="_blank" class="text-xs font-bold text-teal-800 hover:underline flex items-center gap-1">
+                    ${lst.name} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+                  </a>
+                  <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold border border-teal-200 mt-1 inline-block">${lst.category}</span>
+                </div>
+                <span class="text-[10px] font-mono font-bold text-teal-700 bg-white px-2 py-0.5 rounded-md border border-teal-200">${lst.members}</span>
               </div>
-              <span class="text-[10px] font-mono font-bold text-teal-700 bg-white px-2 py-0.5 rounded-md border border-teal-200">${lst.members}</span>
+              <div class="text-[10px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                <span class="font-bold uppercase font-mono text-[9px] text-teal-600">List Tactical Angle:</span> ${lst.angle}
+              </div>
+              
+              <!-- Proposed Post Content -->
+              <div class="p-2.5 bg-teal-50/70 rounded-xl border border-teal-200/80 space-y-1 shadow-sm">
+                <div class="flex items-center justify-between text-[9px] font-bold uppercase font-mono text-teal-900">
+                  <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-teal-600"></i> Proposed Listicle / Stack Post</span>
+                  <span class="text-teal-600 bg-white px-1.5 py-0.5 rounded border border-teal-200 text-[8px]">Ready to Approve</span>
+                </div>
+                <div id="list-text-${cardId}" class="text-xs text-teal-950 font-medium italic bg-white/90 p-2.5 rounded-lg border border-teal-100 leading-relaxed font-sans">
+                  "${lst.sampleHook}"
+                </div>
+              </div>
+
+              <!-- 1-Click Approve / Reroll Actions -->
+              <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button onclick="directApprovePost('${cardId}', document.getElementById('list-text-${cardId}').innerText, '@trypitchdotco', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    ✅ Approve & Post (@trypitchdotco)
+                  </button>
+                  <button onclick="directApprovePost('${cardId}', document.getElementById('list-text-${cardId}').innerText, '@adnanspitch', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg border border-indigo-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    👤 Post as @adnanspitch
+                  </button>
+                  <button onclick="rerollListTake('${cardId}')" class="px-2.5 py-1.5 text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg border border-amber-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🔄 Reroll Better Take
+                  </button>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="loadIntoComposer(document.getElementById('list-text-${cardId}').innerText, null, '@trypitchdotco')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-teal-700 hover:bg-teal-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="dismissRadarItem('${cardId}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="text-[10px] text-teal-900 bg-white/80 p-2 rounded-lg border border-teal-100">
-              <span class="font-bold uppercase font-mono text-[9px] text-teal-600">List Tactical Angle:</span> ${lst.angle}
-            </div>
-            <div class="text-[11px] text-slate-700 bg-white/90 p-2.5 rounded-lg border border-teal-100 font-sans italic leading-relaxed">
-              "${lst.sampleHook}"
-            </div>
-            <div class="flex justify-end gap-1.5 pt-1">
-              <button onclick="loadIntoComposer(\`${lst.sampleHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@trypitchdotco')" class="px-2.5 py-1 text-[9px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-md border border-purple-200 transition flex items-center gap-1 cursor-pointer">
-                ✨ Use in Composer
-              </button>
-              <button onclick="copyTextToClipboard(\`${lst.sampleHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2.5 py-1 text-[9px] bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1 cursor-pointer">
-                <i data-lucide="copy" class="w-3 h-3"></i> Copy List Post
-              </button>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
 
       // Memes Matrix
       const memContainer = document.getElementById('research-memes-container');
       if (memContainer && rawResearchData.memes) {
-        memContainer.innerHTML = rawResearchData.memes.map(m => {
+        memContainer.innerHTML = rawResearchData.memes.map((m, idx) => {
+          const cardId = `meme_${idx}`;
           let visualDetail = '';
           if (m.imageUrl) {
             visualDetail = `
@@ -2006,7 +2110,7 @@
                   ? 'bg-orange-100 text-orange-900 border-orange-300' 
                   : 'bg-pink-100 text-pink-800 border-pink-200'));
           return `
-            <div class="p-4 bg-pink-50/40 rounded-xl border border-pink-200/80 space-y-2.5 shadow-sm">
+            <div id="meme-card-${cardId}" class="p-4 bg-white rounded-xl border border-pink-200/90 space-y-3 shadow-sm hover:border-pink-400 transition-all duration-200">
               <div class="flex justify-between items-start">
                 <div class="space-y-0.5">
                   <h4 class="text-xs font-bold text-slate-900 leading-snug">${memeTitle}</h4>
@@ -2015,17 +2119,37 @@
                 <span class="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full ${sourceBadgeColor} border">${memeSource}</span>
               </div>
               ${visualDetail}
-              <div class="text-[11px] text-slate-800 bg-white p-2 rounded-lg border border-pink-100 font-medium italic leading-relaxed">
-                "${m.caption}"
+              
+              <!-- Proposed Meme Caption -->
+              <div class="p-2.5 bg-pink-50/70 rounded-xl border border-pink-200/80 space-y-1 shadow-sm">
+                <div class="flex items-center justify-between text-[9px] font-bold uppercase font-mono text-pink-900">
+                  <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-pink-600"></i> Proposed Meme Caption</span>
+                  <span class="text-pink-600 bg-white px-1.5 py-0.5 rounded border border-pink-200 text-[8px]">Ready to Approve</span>
+                </div>
+                <div id="meme-caption-${cardId}" class="text-xs text-pink-950 font-medium italic bg-white/90 p-2.5 rounded-lg border border-pink-100 leading-relaxed font-sans">
+                  "${m.caption}"
+                </div>
               </div>
-              <div class="flex justify-between items-center pt-1 text-[10px]">
-                <span class="text-slate-500 font-mono">${m.ups ? `🔥 ${m.ups} heat score` : 'Real Scraped Meme'}</span>
-                <div class="flex items-center gap-1.5">
-                  <button onclick="loadIntoComposer(\`${m.caption.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '${m.imageUrl || ''}', '@trypitchdotco')" class="px-2.5 py-1 text-[9px] bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-md shadow-sm transition flex items-center gap-1 cursor-pointer">
-                    ✨ Load in Composer
+
+              <!-- 1-Click Approve / Reroll Actions -->
+              <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <button onclick="directApprovePost('${cardId}', document.getElementById('meme-caption-${cardId}').innerText, '@trypitchdotco', this, '${m.imageUrl || ''}')" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    ✅ Approve & Post Meme (@trypitchdotco)
                   </button>
-                  <button onclick="copyTextToClipboard(\`${m.caption.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2.5 py-1 text-[9px] bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold rounded-md border border-pink-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
-                    <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                  <button onclick="directApprovePost('${cardId}', document.getElementById('meme-caption-${cardId}').innerText, '@adnanspitch', this, '${m.imageUrl || ''}')" class="px-2.5 py-1.5 text-[10px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg border border-indigo-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    👤 Post as @adnanspitch
+                  </button>
+                  <button onclick="rerollMemeCaption('${cardId}')" class="px-2.5 py-1.5 text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg border border-amber-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🔄 Reroll Caption
+                  </button>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="loadIntoComposer(document.getElementById('meme-caption-${cardId}').innerText, '${m.imageUrl || ''}', '@trypitchdotco')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-pink-700 hover:bg-pink-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="dismissRadarItem('${cardId}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
               </div>
@@ -2262,6 +2386,210 @@
         statusEl.innerText = '';
       }
       updateComposerPreview();
+    }
+
+    async function directApproveReply(cardId, tweetUrl, replyText, account, actionType, btnEl) {
+      if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.innerHTML = '<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Posting to X...';
+      }
+
+      try {
+        const payload = {
+          account: account,
+          text: replyText,
+          reply_to_url: actionType === 'reply' ? tweetUrl : null,
+          quote_url: actionType === 'quote' ? tweetUrl : null
+        };
+
+        const resp = await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+        if (data.status === 'ok' || data.success) {
+          const card = document.getElementById(`radar-card-${cardId}`) || document.getElementById(`inf-card-${cardId}`);
+          if (card) {
+            const liveUrl = data.url || tweetUrl;
+            const existingBadge = card.querySelector('.interacted-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            const badgeHtml = `
+              <div class="interacted-badge p-2.5 bg-emerald-50 rounded-xl border border-emerald-300 text-xs text-emerald-950 space-y-1 shadow-sm mt-2">
+                <div class="flex items-center justify-between font-bold">
+                  <span class="flex items-center gap-1.5 font-mono text-[11px]">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>${actionType === 'quote' ? '⚡ Quote Tweeted' : '💬 Replied'} via <b class="text-indigo-700">${account}</b></span>
+                  </span>
+                  <span class="text-[9px] text-slate-400 font-mono font-medium">Just now</span>
+                </div>
+                <div class="flex items-center justify-between pt-0.5">
+                  <a href="${liveUrl}" target="_blank" class="text-[11px] font-mono text-emerald-700 hover:text-emerald-900 underline font-bold flex items-center gap-1">
+                    🔗 View our ${actionType === 'quote' ? 'Quote Tweet' : 'Reply'} on X <i data-lucide="external-link" class="w-3 h-3"></i>
+                  </a>
+                  <span class="text-[9px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">LIVE ON FEED</span>
+                </div>
+              </div>
+            `;
+            card.insertAdjacentHTML('beforeend', badgeHtml);
+          }
+          if (btnEl) {
+            btnEl.className = 'px-3 py-1.5 text-[10px] font-bold bg-emerald-600 text-white rounded-lg shadow-sm flex items-center gap-1 cursor-default';
+            btnEl.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Sent to X!';
+          }
+          if (typeof fetchData === 'function') setTimeout(fetchData, 2000);
+        } else {
+          alert(`Error posting: ${data.message || data.error || 'Failed'}`);
+          if (btnEl) {
+            btnEl.disabled = false;
+            btnEl.innerHTML = '⚡ Retry';
+          }
+        }
+      } catch (err) {
+        alert(`Network Error: ${err.message}`);
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.innerHTML = '⚡ Retry';
+        }
+      } finally {
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    async function directApprovePost(cardId, postText, account, btnEl, imageUrl = null) {
+      if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.innerHTML = '<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Posting to X...';
+      }
+
+      try {
+        const cleanText = postText.replace(/^"|"$/g, '').trim();
+        const resp = await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            account: account,
+            text: cleanText,
+            image_url: imageUrl || null
+          })
+        });
+
+        const data = await resp.json();
+        if (data.status === 'ok' || data.success) {
+          const card = document.getElementById(`list-card-${cardId}`) || document.getElementById(`trend-card-${cardId}`) || document.getElementById(`meme-card-${cardId}`) || document.getElementById(`inf-card-${cardId}`);
+          if (card) {
+            const liveUrl = data.url || `https://x.com/${account.replace('@','')}`;
+            const existingBadge = card.querySelector('.interacted-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            const badgeHtml = `
+              <div class="interacted-badge p-2.5 bg-emerald-50 rounded-xl border border-emerald-300 text-xs text-emerald-950 space-y-1 shadow-sm mt-2">
+                <div class="flex items-center justify-between font-bold">
+                  <span class="flex items-center gap-1.5 font-mono text-[11px]">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>✅ Tweet Posted Live via <b class="text-indigo-700">${account}</b></span>
+                  </span>
+                  <span class="text-[9px] text-slate-400 font-mono font-medium">Just now</span>
+                </div>
+                <div class="flex items-center justify-between pt-0.5">
+                  <a href="${liveUrl}" target="_blank" class="text-[11px] font-mono text-emerald-700 hover:text-emerald-900 underline font-bold flex items-center gap-1">
+                    🔗 View Live Post on X <i data-lucide="external-link" class="w-3 h-3"></i>
+                  </a>
+                  <span class="text-[9px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">LIVE ON FEED</span>
+                </div>
+              </div>
+            `;
+            card.insertAdjacentHTML('beforeend', badgeHtml);
+          }
+          if (btnEl) {
+            btnEl.className = 'px-3 py-1.5 text-[10px] font-bold bg-emerald-600 text-white rounded-lg shadow-sm flex items-center gap-1 cursor-default';
+            btnEl.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Posted Live!';
+          }
+          if (typeof fetchData === 'function') setTimeout(fetchData, 2000);
+        } else {
+          alert(`Error posting: ${data.message || data.error || 'Failed'}`);
+          if (btnEl) {
+            btnEl.disabled = false;
+            btnEl.innerHTML = '⚡ Retry';
+          }
+        }
+      } catch (err) {
+        alert(`Network Error: ${err.message}`);
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.innerHTML = '⚡ Retry';
+        }
+      } finally {
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    const alternateListTakes = [
+      "the modern yc launch stack: nextjs + tailwind + stripe + @trypitchdotco for your demo video walkthrough. stop paying agencies $3,000 for a 45s clip",
+      "5 tools that save modern vibe coders 20 hours every week:\n1. cursor (coding)\n2. v0 (frontend)\n3. supabase (db)\n4. @trypitchdotco (60s automated video demos)\n5. posthog (analytics)\nwhat is in your stack?",
+      "ranking every product demo tool by founder friction:\n• loom: raw, zero visual polish\n• screen studio: beautiful but 40 takes\n• premiere: 3 days of editing\n• @trypitchdotco: 1 prompt -> 60s narrated video in 1 min",
+      "top 4 devtools that actually speed up shipping in 2026:\n1. claude 3.7 / cursor\n2. shadcn UI\n3. resend (transactional email)\n4. @trypitchdotco (instant product demo videos)",
+      "how solo founders ship at 10x agency speed:\n• build with cursor\n• style with v0\n• demo with @trypitchdotco\n• launch on PH/X\nno bloated team required"
+    ];
+
+    const alternateTrendTakes = [
+      "polymarket 95% probability that devs vibe-code an entire saas in 20 mins with claude then spend 4 days struggling to record a 60s demo video. stop recording manually.",
+      "spending $20M training a frontier reasoning model just for people to use it to write cover letters and regex.",
+      "vibe coding has turned software engineering into high-stakes prompt poetry. 1 typo and your supabase schema is in the shadow realm.",
+      "polymarket 92% chance the next YC batch is 80% wrapper agents and 20% founders complaining about cloud GPU bills.",
+      "the best code is no code. the second best code is code generated by claude that you pretend you understand in the pr review.",
+      "90% of prompt engineering is just asking the model 'are you sure' until it gaslights itself into changing its answer.",
+      "gpu clusters heating entire data centers just to generate 4-paragraph linkedin thought leadership posts about synergy."
+    ];
+
+    const alternateMemeCaptions = [
+      "my production backend held together by 3 edge functions, zero error handling, and sheer vibes",
+      "bro has 0 public commits and just deployed a $40k mrr app to production",
+      "pushing directly to main at 4:59 pm on a friday and immediately closing the laptop",
+      "spending 10 mins vibe-coding an entire app with claude then spending 4 days sweating through 50 demo video retakes",
+      "me explaining to investors that our proprietary neural agent is doing deep multi-step reasoning (it is literally a while loop with an api key)",
+      "paying $1,800 for a phone just to check stripe dashboard and argue with strangers on tech twitter"
+    ];
+
+    function rerollListTake(cardId) {
+      const el = document.getElementById(`list-text-${cardId}`);
+      if (el) {
+        const randomTake = alternateListTakes[Math.floor(Math.random() * alternateListTakes.length)];
+        el.innerText = `"${randomTake}"`;
+        el.parentElement.classList.add('ring-2', 'ring-teal-400');
+        setTimeout(() => el.parentElement.classList.remove('ring-2', 'ring-teal-400'), 500);
+      }
+    }
+
+    function rerollTrendTake(cardId) {
+      const el = document.getElementById(`trend-text-${cardId}`);
+      if (el) {
+        const randomTake = alternateTrendTakes[Math.floor(Math.random() * alternateTrendTakes.length)];
+        el.innerText = `"${randomTake}"`;
+        el.parentElement.classList.add('ring-2', 'ring-orange-400');
+        setTimeout(() => el.parentElement.classList.remove('ring-2', 'ring-orange-400'), 500);
+      }
+    }
+
+    function rerollMemeCaption(cardId) {
+      const el = document.getElementById(`meme-caption-${cardId}`);
+      if (el) {
+        const randomCaption = alternateMemeCaptions[Math.floor(Math.random() * alternateMemeCaptions.length)];
+        el.innerText = `"${randomCaption}"`;
+        el.parentElement.classList.add('ring-2', 'ring-pink-400');
+        setTimeout(() => el.parentElement.classList.remove('ring-2', 'ring-pink-400'), 500);
+      }
+    }
+
+    function dismissRadarItem(cardId) {
+      const card = document.getElementById(`radar-card-${cardId}`) || document.getElementById(`inf-card-${cardId}`) || document.getElementById(`list-card-${cardId}`) || document.getElementById(`trend-card-${cardId}`) || document.getElementById(`meme-card-${cardId}`);
+      if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        setTimeout(() => card.remove(), 250);
+      }
     }
 
     function loadIntoComposer(text, imageUrl = null, account = null, targetUrl = null, targetType = 'quote') {
