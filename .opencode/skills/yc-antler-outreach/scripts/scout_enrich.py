@@ -186,6 +186,12 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
         
         print(f"\n[{idx+1}/{len(raw_startups)}] Candidate: {name} ({batch})...")
 
+        # Fast DB check before expensive enrichment
+        clean_name_handle = f"@{re.sub(r'[^a-zA-Z0-9_]', '', name.lower())}"
+        if is_already_in_db(conn, clean_name_handle, website):
+            print(f"    [ALREADY IN CRM]: Skipping {name}")
+            continue
+
         # Founder details from YC profile if available
         founders = []
         if source_type == "yc" and s.get("slug"):
@@ -239,9 +245,10 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
         if drafts["validation_email"] or drafts["validation_dm"]:
             print(f"    [WARNING] Anti-AI validation warnings: {drafts['validation_email']} {drafts['validation_dm']}")
 
+        founder_display = founders[0].get("full_name") if founders else ""
         prospect_record = {
             "handle": primary_handle,
-            "name": founders[0].get("full_name") if founders else name,
+            "name": name,
             "url": f"https://x.com/{primary_handle.replace('@', '')}" if primary_handle.startswith("@") else website,
             "segment": source_type,
             "score": 9,
@@ -251,7 +258,7 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
             "email": primary_email,
             "batch": batch,
             "notes": f"Email Subj: {drafts['email_subject']}\nEmail Body:\n{drafts['email_body']}\n\nX DM (≤280 chars):\n{drafts['x_dm']}\n\nPublic Tweet (≤280 chars):\n{drafts['public_tweet']}",
-            "why": f"Upcoming {batch} batch startup. Product: {startup_payload['one_liner']}"
+            "why": f"Upcoming {batch} batch startup. Product: {startup_payload['one_liner']}" + (f" (Founder: {founder_display})" if founder_display else "")
         }
 
         print(f"    + Discovered: {name}")

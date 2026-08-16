@@ -2023,9 +2023,33 @@
         const isContactedOrInConvo = p.stage === 'contacted' || p.stage === 'in_convo' || (p.touches && p.touches > 0);
         const stageColor = p.stage === 'contacted' ? 'bg-blue-50 text-blue-700 border-blue-200' : (p.stage === 'in_convo' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200');
 
-        const firstName = (p.name && !p.name.startsWith('@')) ? p.name.split(' ')[0] : (cleanHandle || 'there');
         const batchName = p.batch || 'your cohort';
         const contactDate = p.last_touch ? (p.last_touch.includes('T') ? p.last_touch.split('T')[0] : p.last_touch.split(' ')[0]) : 'Recently';
+
+        // 1. Resolve Company / Product Name (never a person's full name)
+        let compName = p.name || '';
+        const companyKeywords = ['inc', 'labs', 'ai', 'technologies', 'ltd', 'app', 'os', 'energy', 'markets', 'robot', 'systems', 'health', 'bio'];
+        if (!compName || (compName.split(' ').length >= 2 && !companyKeywords.some(kw => compName.toLowerCase().includes(kw)))) {
+          if (p.product_url) {
+            let dom = p.product_url.replace('https://','').replace('http://','').replace('www.','').split('/')[0].split('.')[0];
+            if (dom.startsWith('try') && dom.length > 3) dom = dom.substring(3);
+            if (dom.startsWith('get') && dom.length > 3) dom = dom.substring(3);
+            if (dom.length > 2) compName = dom.charAt(0).toUpperCase() + dom.slice(1);
+          }
+        }
+        if (!compName) compName = cleanHandle || 'your startup';
+
+        // 2. Resolve Founder First Name
+        let firstName = '';
+        if (p.why && p.why.includes('Founder: ')) {
+          firstName = p.why.split('Founder: ')[1].replace(')', '').trim().split(' ')[0];
+        } else if (p.notes && p.notes.includes('Hey ')) {
+          const match = p.notes.match(/Hey\s+([A-Za-z]+),/);
+          if (match) firstName = match[1];
+        } else if (p.name && p.name.split(' ').length >= 2 && !companyKeywords.some(kw => p.name.toLowerCase().includes(kw))) {
+          firstName = p.name.split(' ')[0];
+        }
+        if (!firstName) firstName = (cleanHandle && !cleanHandle.startsWith('startup')) ? cleanHandle : compName;
 
         // Follow-up email template
         const followUpDraft = `Hey ${firstName},
@@ -2039,8 +2063,6 @@ Adnan
 Co-Founder, Pitch
 adnan@trypitch.co`;
         const safeFollowUpDraft = followUpDraft.replace(/`/g, "\\`").replace(/'/g, "\\'");
-
-        const compName = p.name || cleanHandle;
         const prodOneLiner = (p.why || 'your product').replace('Upcoming ', '').replace(' batch startup. Product: ', '').replace(batchName, '').toLowerCase().trim().replace(/[\.\!\?]+$/, '');
 
         const openerGift = isYc 
@@ -2090,6 +2112,38 @@ adnan@trypitch.co`;
         const dmCharCount = xDmDraft.length;
         const tweetCharCount = publicTweetDraft.length;
         const tweetIntentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(publicTweetDraft)}`;
+
+        const cleanProd = compName.toLowerCase();
+        let shortBatch = 'the batch';
+        const bLower = (p.batch || '').toLowerCase();
+        if (bLower.includes('winter 2026') || bLower.includes('w26')) shortBatch = 'w26';
+        else if (bLower.includes('summer 2025') || bLower.includes('s25')) shortBatch = 's25';
+        else if (bLower.includes('winter 2025') || bLower.includes('w25')) shortBatch = 'w25';
+        else if (bLower.includes('fall 2024') || bLower.includes('f24')) shortBatch = 'f24';
+        else if (bLower.includes('summer 2024') || bLower.includes('s24')) shortBatch = 's24';
+        else if (bLower.includes('antler uk')) shortBatch = 'antler uk';
+        else if (bLower.includes('antler singapore') || bLower.includes('antler sg')) shortBatch = 'antler sg';
+        else if (bLower.includes('antler us')) shortBatch = 'antler us';
+        else if (bLower.includes('antler germany')) shortBatch = 'antler germany';
+        else if (bLower.includes('antler')) shortBatch = 'antler';
+        else if (bLower.includes('yc')) shortBatch = 'yc';
+
+        const subjectOptions = [
+          `saw ${cleanProd} in ${shortBatch}`,
+          `${cleanProd} demo walkthrough`,
+          `${firstName.toLowerCase()} / ${cleanProd}`,
+          `idea for ${cleanProd} demo`,
+          `${firstName.toLowerCase()}, quick question`
+        ];
+
+        let defaultSubject = subjectOptions[0];
+        if (p.notes && p.notes.includes('Email Subj:')) {
+          const lines = p.notes.split('\n');
+          const subjLine = lines.find(l => l.startsWith('Email Subj:'));
+          if (subjLine) {
+            defaultSubject = subjLine.replace('Email Subj:', '').trim();
+          }
+        }
 
         const cardKey = p.id || cleanHandle;
 
