@@ -100,14 +100,45 @@ def generate_outreach_drafts(startup: Dict[str, Any]) -> Dict[str, Any]:
     ]
     email_subject = subject_options[0] # Default to high-converting trigger-specific subject line
     
+    # Contextual Openers (NO icons, clean human text)
     if any(k in batch for k in ["Winter", "Summer", "Fall", "Spring", "W26", "S25", "W25", "S24", "W24"]):
-        opener = f"Hey {greeting_name},\n\nI saw {name} in the {batch} batch. {desc_clean.lower()} is a super sharp concept."
+        opener_gift = f"Hey {greeting_name},\n\nSaw {name} in the {batch} batch. {desc_clean.lower()} is super sharp."
+        opener_consult = f"Hey {greeting_name},\n\nI saw {name} in the {batch} batch. {desc_clean.lower()} is a super sharp concept."
     elif "Antler" in batch:
-        opener = f"Hey {greeting_name},\n\nI saw {name} in {batch}. {desc_clean.lower()} is a super sharp concept."
+        opener_gift = f"Hey {greeting_name},\n\nSaw {name} in {batch}. {desc_clean.lower()} is super sharp."
+        opener_consult = f"Hey {greeting_name},\n\nI saw {name} in {batch}. {desc_clean.lower()} is a super sharp concept."
     else:
-        opener = f"Hey {greeting_name},\n\nI checked out {name}. {desc_clean.lower()} is a super sharp concept."
+        opener_gift = f"Hey {greeting_name},\n\nChecked out {name}. {desc_clean.lower()} is super sharp."
+        opener_consult = f"Hey {greeting_name},\n\nI checked out {name}. {desc_clean.lower()} is a super sharp concept."
         
-    email_body = f"""{opener}
+    # Variant 1: Done-For-You Gift (~65 words, highest reply rate)
+    email_body_gift = clean_anti_ai_text(f"""{opener_gift}
+
+Recording launch videos or onboarding walkthroughs usually takes hours of retakes. I work on https://trypitch.co, which renders studio-quality narrated demo MP4s from text in minutes.
+
+I put together a quick 30s video walkthrough of {name} for your launch. Mind if I send the video link over?
+
+Best,
+Adnan 
+Co-Founder, Pitch
+adnan@trypitch.co""")
+
+    # Variant 2: 50-Word Quick Spear (Under 55 words)
+    email_body_spear = clean_anti_ai_text(f"""Hey {greeting_name},
+
+Saw {name} in {batch}. Love what you are building with {desc_clean.lower()}.
+
+If you need a crisp 45s product demo or launch video for your landing page without spending days on screen recording, we automated the whole pipeline at https://trypitch.co.
+
+Want me to spin up a quick walkthrough video for {name}?
+
+Best,
+Adnan 
+Co-Founder, Pitch
+adnan@trypitch.co""")
+
+    # Variant 3: Founder Consultative (~75 words)
+    email_body_consultative = clean_anti_ai_text(f"""{opener_consult}
 
 prepping launch videos, demo day clips, or onboarding walkthroughs usually eats hours of manual recording and retakes.
 
@@ -118,9 +149,10 @@ happy to put together a demo walkthrough of {name} if you want one for your laun
 Best,
 Adnan 
 Co-Founder, Pitch
-adnan@trypitch.co"""
+adnan@trypitch.co""")
 
-    email_body = clean_anti_ai_text(email_body)
+    # Default to Done-For-You Gift variant
+    email_body = email_body_gift
 
     # 2. X DM Draft (Strictly <= 280 characters)
     x_dm = f"hey {greeting_name.lower()}, congrats on {name} in {batch}. i work on @trypitchdotco. we turn written walkthroughs into studio demo videos in minutes, saves days during launch weeks. want me to make a quick 30s demo of {name} for your launch? or try it at trypitch.co"
@@ -154,6 +186,11 @@ adnan@trypitch.co"""
         "email_subject": email_subject,
         "subject_options": subject_options,
         "email_body": email_body,
+        "email_variants": {
+            "gift": email_body_gift,
+            "spear": email_body_spear,
+            "consultative": email_body_consultative
+        },
         "x_dm": x_dm,
         "public_tweet": public_tweet,
         "char_count_dm": len(x_dm),
