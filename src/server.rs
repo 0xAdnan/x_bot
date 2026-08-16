@@ -898,12 +898,15 @@ async fn handle_delete(Json(payload): Json<DeletePayload>) -> impl IntoResponse 
 struct StagePayload {
     id: Option<String>,
     stage: Option<String>,
+    notes: Option<String>,
+    increment_touches: Option<bool>,
 }
 
 async fn handle_update_stage(Json(payload): Json<StagePayload>) -> impl IntoResponse {
     if let (Some(id), Some(stage)) = (payload.id, payload.stage) {
         if let Ok(db) = Database::open() {
-            let _ = db.update_prospect_stage(&id, &stage);
+            let inc = payload.increment_touches.unwrap_or(false) || stage == "contacted";
+            let _ = db.update_prospect_stage_full(&id, &stage, payload.notes.as_deref(), inc);
             return (
                 StatusCode::OK,
                 Json(serde_json::json!({ "status": "ok", "updated": true, "id": id, "stage": stage })),

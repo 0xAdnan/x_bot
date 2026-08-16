@@ -328,17 +328,48 @@ impl Database {
     }
 
     pub fn update_prospect_stage(&self, id_or_handle: &str, new_stage: &str) -> SqlResult<bool> {
+        self.update_prospect_stage_full(id_or_handle, new_stage, None, false)
+    }
+
+    pub fn update_prospect_stage_full(
+        &self,
+        id_or_handle: &str,
+        new_stage: &str,
+        notes: Option<&str>,
+        increment_touches: bool,
+    ) -> SqlResult<bool> {
+        let touch_clause = if increment_touches {
+            ", touches = touches + 1, last_touch = DATE('now')"
+        } else {
+            ""
+        };
+        let notes_clause = if notes.is_some() {
+            ", notes = ?3"
+        } else {
+            ""
+        };
+
         if let Ok(num_id) = id_or_handle.parse::<i64>() {
-            let count = self.conn.execute(
-                "UPDATE prospects SET stage = ?1, updated_at = CURRENT_TIMESTAMP WHERE id = ?2",
-                params![new_stage, num_id],
-            )?;
+            let sql = format!(
+                "UPDATE prospects SET stage = ?1, updated_at = CURRENT_TIMESTAMP{}{notes_clause} WHERE id = ?2",
+                touch_clause
+            );
+            let count = if let Some(n) = notes {
+                self.conn.execute(&sql, params![new_stage, num_id, n])?
+            } else {
+                self.conn.execute(&sql, params![new_stage, num_id])?
+            };
             Ok(count > 0)
         } else {
-            let count = self.conn.execute(
-                "UPDATE prospects SET stage = ?1, updated_at = CURRENT_TIMESTAMP WHERE LOWER(handle) = LOWER(?2)",
-                params![new_stage, id_or_handle],
-            )?;
+            let sql = format!(
+                "UPDATE prospects SET stage = ?1, updated_at = CURRENT_TIMESTAMP{}{notes_clause} WHERE LOWER(handle) = LOWER(?2)",
+                touch_clause
+            );
+            let count = if let Some(n) = notes {
+                self.conn.execute(&sql, params![new_stage, id_or_handle, n])?
+            } else {
+                self.conn.execute(&sql, params![new_stage, id_or_handle])?
+            };
             Ok(count > 0)
         }
     }

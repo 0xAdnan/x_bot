@@ -142,6 +142,43 @@
     </div>
   </div>
 
+  <!-- LOG FOLLOW-UP MODAL -->
+  <div id="log-followup-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="panel-card p-6 w-full max-w-md space-y-4 bg-white shadow-2xl rounded-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="message-square" class="text-indigo-600 w-4 h-4"></i> Log Cohort Follow-Up / Touch
+        </h3>
+        <button onclick="closeFollowupModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleFollowupSubmit(event)" class="space-y-3">
+        <input id="followup-id" type="hidden">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">Startup / Handle</label>
+          <input id="followup-target" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-700 font-bold outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">New Stage</label>
+          <select id="followup-stage" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-indigo-600 outline-none font-mono">
+            <option value="contacted">📬 Contacted (Outbound Sent)</option>
+            <option value="in_convo" selected>💬 In Conversation / Founder Replied</option>
+            <option value="trial">🎬 Free Demo Delivered (Pitch MCP)</option>
+            <option value="customer">🏆 Converted Customer</option>
+            <option value="do-not-contact">🚫 Do Not Contact</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 font-mono">Interaction / Follow-Up Note *</label>
+          <textarea id="followup-notes" rows="3" required placeholder="Founder replied asking for 30s onboarding demo walkthrough..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:border-indigo-600 outline-none"></textarea>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2">
+          <i data-lucide="check" class="w-4 h-4"></i> Save Follow-Up & Update Pipeline
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- MAIN DASHBOARD CONTENT -->
   <div id="dashboard-content" class="hidden space-y-6">
 
@@ -356,6 +393,18 @@
           </div>
 
           <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Year:</span>
+            <select id="filter-crm-year" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="all">All Years</option>
+              <option value="2027">2027</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
             <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Score:</span>
             <select id="filter-score" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
               <option value="all">All Scores</option>
@@ -525,12 +574,44 @@
         </div>
       </div>
 
+      <!-- Pipeline Stage Sub-Tabs -->
+      <div class="flex flex-wrap items-center gap-2 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm">
+        <button onclick="setYcStageSubTab('all')" id="yc-subtab-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> All Cohort Leads (<span id="yc-cnt-all">0</span>)
+        </button>
+        <button onclick="setYcStageSubTab('researched')" id="yc-subtab-researched" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i> Researched & Ready (<span id="yc-cnt-researched">0</span>)
+        </button>
+        <button onclick="setYcStageSubTab('contacted')" id="yc-subtab-contacted" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="send" class="w-3.5 h-3.5 text-blue-600"></i> Outbound Contacted (<span id="yc-cnt-contacted">0</span>)
+        </button>
+        <button onclick="setYcStageSubTab('in_convo')" id="yc-subtab-in_convo" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5 text-purple-600"></i> Followed Up / In Convo (<span id="yc-cnt-in_convo">0</span>)
+        </button>
+        <button onclick="setYcStageSubTab('customer')" id="yc-subtab-customer" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="trophy" class="w-3.5 h-3.5 text-emerald-600"></i> Converted Customers (<span id="yc-cnt-customer">0</span>)
+        </button>
+      </div>
+
       <!-- Cohort Filter Bar -->
       <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
         <div class="flex flex-wrap items-center gap-3">
           <div class="relative">
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
             <input id="search-yc-antler" oninput="renderYcAntlerTab()" type="text" placeholder="Search startup, founder, email, batch..." class="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-indigo-600 w-60 md:w-72 transition font-medium">
+          </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Cohort Year:</span>
+            <select id="filter-yc-year" onchange="renderYcAntlerTab()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="all">All Years</option>
+              <option value="2027">2027 (Upcoming)</option>
+              <option value="2026">2026 (Current)</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022 & Older</option>
+            </select>
           </div>
 
           <div class="flex items-center gap-1.5 text-xs">
@@ -1500,6 +1581,10 @@
       if (segmentFilter !== 'all') {
         filteredProspects = filteredProspects.filter(p => (p.segment || '').toLowerCase() === segmentFilter.toLowerCase());
       }
+      const crmYear = document.getElementById('filter-crm-year')?.value || 'all';
+      if (crmYear !== 'all') {
+        filteredProspects = filteredProspects.filter(p => (p.batch || '').includes(crmYear) || (p.why || '').includes(crmYear) || (p.notes || '').includes(crmYear));
+      }
 
       // 2. Mentions Filter
       const mSearch = (document.getElementById('search-mention-jobs')?.value || '').toLowerCase().trim();
@@ -1826,10 +1911,21 @@
     let ycCurrentPage = 1;
     let ycPageSize = 12;
     let lastYcHash = '';
+    let ycActiveStageSubTab = 'all';
 
-    function changeYcPage(delta) {
-      ycCurrentPage = Math.max(1, ycCurrentPage + delta);
-      lastYcHash = '';
+    function setYcStageSubTab(stage) {
+      ycActiveStageSubTab = stage;
+      ['all', 'researched', 'contacted', 'in_convo', 'customer'].forEach(s => {
+        const btn = document.getElementById('yc-subtab-' + s);
+        if (btn) {
+          if (s === stage) {
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm transition cursor-pointer flex items-center gap-1.5';
+          } else {
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1.5';
+          }
+        }
+      });
+      ycCurrentPage = 1;
       renderYcAntlerTab();
     }
 
@@ -1842,13 +1938,25 @@
       const antlerTotal = cohortLeads.filter(p => p.segment === 'antler' || (p.batch && p.batch.includes('Antler'))).length;
       const emailsTotal = cohortLeads.filter(p => p.email && p.email.length > 3).length;
 
+      const researchedCount = cohortLeads.filter(p => p.stage === 'researched' || (!p.stage || p.stage === 'new')).length;
+      const contactedCount = cohortLeads.filter(p => p.stage === 'contacted').length;
+      const inConvoCount = cohortLeads.filter(p => p.stage === 'in_convo').length;
+      const customerCount = cohortLeads.filter(p => p.stage === 'customer' || p.stage === 'trial').length;
+
       setElText('yc-stat-total', cohortLeads.length);
       setElText('yc-stat-yc', ycTotal);
       setElText('yc-stat-antler', antlerTotal);
       setElText('yc-stat-emails', emailsTotal);
       setElText('tab-badge-yc_antler', cohortLeads.length);
 
+      setElText('yc-cnt-all', cohortLeads.length);
+      setElText('yc-cnt-researched', researchedCount);
+      setElText('yc-cnt-contacted', contactedCount);
+      setElText('yc-cnt-in_convo', inConvoCount);
+      setElText('yc-cnt-customer', customerCount);
+
       const qSearch = (document.getElementById('search-yc-antler')?.value || '').toLowerCase().trim();
+      const yearFilter = document.getElementById('filter-yc-year')?.value || 'all';
       const batchFilter = document.getElementById('filter-yc-batch')?.value || 'all';
       const channelFilter = document.getElementById('filter-yc-channel')?.value || 'all';
 
@@ -1865,6 +1973,17 @@
         );
       }
 
+      if (yearFilter !== 'all') {
+        if (yearFilter === '2022') {
+          filtered = filtered.filter(p => {
+            const b = (p.batch || '') + ' ' + (p.why || '');
+            return b.includes('2022') || b.includes('2021') || b.includes('2020') || b.includes('2019') || b.includes('2018');
+          });
+        } else {
+          filtered = filtered.filter(p => (p.batch || '').includes(yearFilter) || (p.why || '').includes(yearFilter));
+        }
+      }
+
       if (batchFilter !== 'all') {
         filtered = filtered.filter(p => (p.batch || '').toLowerCase().includes(batchFilter.toLowerCase()));
       }
@@ -1874,6 +1993,16 @@
         else if (channelFilter === 'has_handle') filtered = filtered.filter(p => p.handle && !p.handle.startsWith('@startup'));
         else if (channelFilter === 'contacted') filtered = filtered.filter(p => p.stage === 'contacted' || p.touches > 0);
         else if (channelFilter === 'uncontacted') filtered = filtered.filter(p => p.stage !== 'contacted' && (!p.touches || p.touches === 0));
+      }
+
+      if (ycActiveStageSubTab === 'researched') {
+        filtered = filtered.filter(p => p.stage === 'researched' || (!p.stage || p.stage === 'new'));
+      } else if (ycActiveStageSubTab === 'contacted') {
+        filtered = filtered.filter(p => p.stage === 'contacted');
+      } else if (ycActiveStageSubTab === 'in_convo') {
+        filtered = filtered.filter(p => p.stage === 'in_convo');
+      } else if (ycActiveStageSubTab === 'customer') {
+        filtered = filtered.filter(p => p.stage === 'customer' || p.stage === 'trial');
       }
 
       setElText('cnt-filtered-yc', filtered.length);
@@ -1905,7 +2034,22 @@
           : '<span class="px-2.5 py-0.5 text-[9px] font-mono font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-200">ANTLER GLOBAL</span>';
         
         const batchBadge = p.batch ? `<span class="px-2 py-0.5 text-[9px] font-mono font-bold rounded-full bg-purple-50 text-purple-700 border border-purple-200">${p.batch}</span>` : '';
-        const stageColor = p.stage === 'contacted' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        const isContactedOrInConvo = p.stage === 'contacted' || p.stage === 'in_convo' || (p.touches && p.touches > 0);
+        const stageColor = p.stage === 'contacted' ? 'bg-blue-50 text-blue-700 border-blue-200' : (p.stage === 'in_convo' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200');
+
+        const firstName = (p.name && !p.name.startsWith('@')) ? p.name.split(' ')[0] : (cleanHandle || 'there');
+        const batchName = p.batch || 'your cohort';
+        const contactDate = p.last_touch ? (p.last_touch.includes('T') ? p.last_touch.split('T')[0] : p.last_touch.split(' ')[0]) : 'Recently';
+
+        // Follow-up email template
+        const followUpDraft = `hey ${firstName.toLowerCase()}, quick follow up on this. know you are busy shipping for ${batchName}.
+
+if you ever need to turn a feature walkthrough or changelog into a clean narrated demo video in 2 minutes, trypitch.co is always free to try.
+
+cheers,
+adnan
+trypitch.co`;
+        const safeFollowUpDraft = followUpDraft.replace(/`/g, "\\`").replace(/'/g, "\\'");
 
         let coldEmailDraft = '';
         let xDmDraft = '';
@@ -1922,7 +2066,7 @@
 
         return `
           <div class="panel-card p-5 space-y-3.5 bg-white border border-slate-200/90 hover:border-indigo-300 transition-all duration-200 shadow-sm flex flex-col justify-between">
-            <div class="space-y-2">
+            <div class="space-y-2.5">
               <div class="flex justify-between items-start gap-2">
                 <div class="space-y-0.5">
                   <h4 class="text-sm font-black text-slate-900 flex items-center gap-1.5">${p.name || cleanHandle}</h4>
@@ -1969,19 +2113,51 @@
                 `}
               </div>
 
-              <!-- Anti-AI Outreach Draft Box -->
-              ${coldEmailDraft ? `
-                <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-200/80 space-y-2 shadow-sm">
-                  <div class="flex items-center justify-between text-[10px] font-bold text-indigo-900 uppercase font-mono">
-                    <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> Researched Pitch (Anti-AI)</span>
-                    <div class="flex items-center gap-1">
-                      <button onclick="copyTextToClipboard(\`${safeColdEmail}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-indigo-100 text-indigo-700 font-bold rounded border border-indigo-200 shadow-sm transition">Copy Email</button>
-                      ${xDmDraft ? `<button onclick="copyTextToClipboard(\`${safeXDm}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-purple-100 text-purple-700 font-bold rounded border border-purple-200 shadow-sm transition">Copy DM</button>` : ''}
-                    </div>
+              ${isContactedOrInConvo ? `
+                <!-- Dedicated Contacted & Follow-Up Section -->
+                <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-200 space-y-2.5 shadow-sm">
+                  <div class="flex justify-between items-center text-[10px] font-mono font-bold uppercase text-blue-900">
+                    <span class="flex items-center gap-1.5 text-blue-700">
+                      <i data-lucide="send" class="w-3.5 h-3.5 text-blue-600"></i>
+                      Outbound Sent: ${contactDate} (Touch #${p.touches || 1})
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-[9px] font-bold">Follow-Up Ready</span>
                   </div>
-                  <div class="text-[11px] text-slate-700 font-mono bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-wrap max-h-36 overflow-y-auto leading-relaxed">${coldEmailDraft}</div>
+
+                  <!-- Follow-Up Email Hook -->
+                  <div class="space-y-1">
+                    <div class="flex justify-between items-center text-[9px] font-mono uppercase font-bold text-slate-500">
+                      <span>Day 4 Follow-Up Email:</span>
+                      <button onclick="copyTextToClipboard(\`${safeFollowUpDraft}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-blue-100 text-blue-700 font-bold rounded border border-blue-200 shadow-sm transition">Copy Follow-Up</button>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-600 bg-white/80 p-2 rounded-lg border border-blue-100 whitespace-pre-wrap leading-tight max-h-24 overflow-y-auto">${followUpDraft}</div>
+                  </div>
+
+                  <!-- Action Buttons for Follow-up / Move -->
+                  <div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-blue-200/60">
+                    <button onclick="openFollowupModal('${p.id || cleanHandle}', '${(p.name || cleanHandle).replace(/'/g, "\\'")}', '${p.stage || 'contacted'}', '${(p.notes || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 text-[10px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                      <i data-lucide="message-square-plus" class="w-3 h-3"></i> Log Follow-Up / Touch
+                    </button>
+                    <button onclick="markStartupStage('${p.id || cleanHandle}', 'in_convo')" class="px-2.5 py-1 text-[10px] font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg border border-purple-200 transition flex items-center gap-1 cursor-pointer">
+                      <i data-lucide="message-circle" class="w-3 h-3 text-purple-600"></i> Founder Replied
+                    </button>
+                  </div>
                 </div>
-              ` : ''}
+              ` : `
+                <!-- Anti-AI Outreach Draft Box -->
+                ${coldEmailDraft ? `
+                  <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-200/80 space-y-2 shadow-sm">
+                    <div class="flex items-center justify-between text-[10px] font-bold text-indigo-900 uppercase font-mono">
+                      <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> Researched Pitch (Anti-AI)</span>
+                      <div class="flex items-center gap-1">
+                        <button onclick="copyTextToClipboard(\`${safeColdEmail}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-indigo-100 text-indigo-700 font-bold rounded border border-indigo-200 shadow-sm transition">Copy Email</button>
+                        ${xDmDraft ? `<button onclick="copyTextToClipboard(\`${safeXDm}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-purple-100 text-purple-700 font-bold rounded border border-purple-200 shadow-sm transition">Copy DM</button>` : ''}
+                      </div>
+                    </div>
+                    <div class="text-[11px] text-slate-700 font-mono bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-wrap max-h-36 overflow-y-auto leading-relaxed">${coldEmailDraft}</div>
+                  </div>
+                ` : ''}
+              `}
             </div>
 
             <!-- Bottom Action Row -->
@@ -1990,9 +2166,11 @@
                 ${p.product_url ? `<a href="${p.product_url}" target="_blank" class="px-2.5 py-1 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 transition flex items-center gap-1">
                   <i data-lucide="globe" class="w-3 h-3 text-blue-600"></i> Website
                 </a>` : ''}
-                <button onclick="markStartupContacted('${p.id || cleanHandle}')" class="px-2.5 py-1 text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg border border-emerald-200 transition flex items-center gap-1">
-                  <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Mark Contacted
-                </button>
+                ${!isContactedOrInConvo ? `
+                  <button onclick="markStartupContacted('${p.id || cleanHandle}')" class="px-2.5 py-1 text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg border border-emerald-200 transition flex items-center gap-1">
+                    <i data-lucide="send" class="w-3 h-3 text-emerald-600"></i> Mark Contacted
+                  </button>
+                ` : ''}
               </div>
 
               <select onchange="updateProspectStage('${p.id || cleanHandle}', this.value)" class="text-[10px] font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 rounded px-2 py-1 outline-none cursor-pointer">
@@ -2007,6 +2185,50 @@
         `;
       }).join('');
       if (window.lucide) lucide.createIcons();
+    }
+
+    function openFollowupModal(id, targetName, stage, notes) {
+      document.getElementById('followup-id').value = id;
+      document.getElementById('followup-target').value = targetName;
+      document.getElementById('followup-stage').value = stage || 'in_convo';
+      document.getElementById('followup-notes').value = '';
+      document.getElementById('log-followup-modal').classList.remove('hidden');
+      document.getElementById('log-followup-modal').classList.add('flex');
+    }
+
+    function closeFollowupModal() {
+      document.getElementById('log-followup-modal').classList.add('hidden');
+      document.getElementById('log-followup-modal').classList.remove('flex');
+    }
+
+    async function handleFollowupSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('followup-id').value;
+      const stage = document.getElementById('followup-stage').value;
+      const notes = document.getElementById('followup-notes').value.trim();
+
+      closeFollowupModal();
+
+      try {
+        await fetch('/api/prospect/stage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id,
+            stage,
+            notes,
+            increment_touches: true
+          })
+        });
+        fetchData();
+      } catch (err) {
+        console.error('Failed to update stage:', err);
+      }
+    }
+
+    async function markStartupStage(id, stage) {
+      await updateProspectStage(id, stage);
+      fetchData();
     }
 
     async function triggerYcAntlerScoutNow(btn) {
