@@ -2028,13 +2028,16 @@
         const contactDate = p.last_touch ? (p.last_touch.includes('T') ? p.last_touch.split('T')[0] : p.last_touch.split(' ')[0]) : 'Recently';
 
         // Follow-up email template
-        const followUpDraft = `hey ${firstName.toLowerCase()}, quick follow up on this. know you are busy shipping for ${batchName}.
+        const followUpDraft = `Hey ${firstName},
 
-if you ever need to turn a feature walkthrough or changelog into a clean narrated demo video in 2 minutes, trypitch.co is always free to try.
+quick follow up on this. know you are busy shipping for ${batchName}.
 
-cheers,
-adnan
-trypitch.co`;
+if you ever need to turn a feature walkthrough or changelog into a clean narrated demo video in 2 minutes, https://trypitch.co is always free to try.
+
+Best,
+Adnan 
+Co-Founder, Pitch
+adnan@trypitch.co`;
         const safeFollowUpDraft = followUpDraft.replace(/`/g, "\\`").replace(/'/g, "\\'");
 
         let coldEmailDraft = '';
@@ -2183,14 +2186,20 @@ trypitch.co`;
 
             <!-- Bottom Action Row -->
             <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
-              <div class="flex items-center gap-1.5">
+              <div class="flex items-center gap-1.5 flex-wrap">
                 ${p.product_url ? `<a href="${p.product_url}" target="_blank" class="px-2.5 py-1 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 transition flex items-center gap-1">
                   <i data-lucide="globe" class="w-3 h-3 text-blue-600"></i> Website
                 </a>` : ''}
                 ${!isContactedOrInConvo ? `
-                  <button onclick="markStartupContacted('${p.id || cleanHandle}')" class="px-2.5 py-1 text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg border border-emerald-200 transition flex items-center gap-1">
-                    <i data-lucide="send" class="w-3 h-3 text-emerald-600"></i> Mark Contacted
-                  </button>
+                  ${p.email ? `
+                    <button onclick="sendBusinessEmailNow('${p.id || cleanHandle}', '${p.email}', '${(p.name || cleanHandle).replace(/'/g, "\\'")}', \`${safeColdEmail}\`, '@${cleanHandle}', this)" class="px-3 py-1 text-[10px] font-bold bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                      <i data-lucide="send" class="w-3 h-3"></i> Send Business Email
+                    </button>
+                  ` : `
+                    <button onclick="markStartupContacted('${p.id || cleanHandle}')" class="px-2.5 py-1 text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg border border-emerald-200 transition flex items-center gap-1">
+                      <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Mark Contacted
+                    </button>
+                  `}
                 ` : ''}
               </div>
 
@@ -2205,6 +2214,64 @@ trypitch.co`;
           </div>
         `;
       }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function sendBusinessEmailNow(id, toEmail, companyName, coldEmailText, handle, btn) {
+      if (!toEmail) return;
+
+      let subject = `quick demo video for ${companyName.toLowerCase()}`;
+      let body = coldEmailText;
+
+      if (coldEmailText.includes('Email Subj:')) {
+        const lines = coldEmailText.split('\n');
+        const subjLine = lines.find(l => l.startsWith('Email Subj:'));
+        if (subjLine) subject = subjLine.replace('Email Subj:', '').trim();
+        const bodyIdx = coldEmailText.indexOf('Email Body:\n');
+        if (bodyIdx !== -1) {
+          body = coldEmailText.substring(bodyIdx + 12).trim();
+        }
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Sending...';
+        if (window.lucide) lucide.createIcons();
+      }
+
+      try {
+        const res = await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to_email: toEmail,
+            subject,
+            body,
+            handle
+          })
+        }).then(r => r.json());
+
+        if (res.status === 'ok') {
+          if (btn) {
+            btn.className = 'px-3 py-1 text-[10px] font-bold bg-emerald-600 text-white rounded-lg shadow-sm flex items-center gap-1';
+            btn.innerHTML = '<i data-lucide="check-circle" class="w-3 h-3"></i> Sent!';
+          }
+          await updateProspectStage(id, 'contacted');
+          setTimeout(fetchData, 1200);
+        } else {
+          alert(`Email error: ${res.message || res.error || 'Failed to send'}`);
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="send" class="w-3 h-3"></i> Send Business Email';
+          }
+        }
+      } catch (err) {
+        alert(`Failed to send email: ${err.message}. Please verify SMTP credentials in .env.`);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="send" class="w-3 h-3"></i> Send Business Email';
+        }
+      }
       if (window.lucide) lucide.createIcons();
     }
 

@@ -73,20 +73,25 @@ def generate_outreach_drafts(startup: Dict[str, Any]) -> Dict[str, Any]:
     # 1. Cold Email Draft
     email_subject = f"quick demo video for {name.lower()}"
     
-    if "Winter 2026" in batch or "W26" in batch or "S25" in batch:
-        opener = f"hey {greeting_name.lower()}, saw {name} in the {batch} batch. {desc_clean.lower()} is a super sharp concept."
+    if "Winter 2026" in batch or "W26" in batch or "S25" in batch or "Winter 2025" in batch:
+        opener = f"Hey {greeting_name},\n\nI saw {name} in the {batch} batch. {desc_clean.lower()} is a super sharp concept."
     elif "Antler" in batch:
-        opener = f"hey {greeting_name.lower()}, came across {name} in {batch}. {desc_clean.lower()} caught my eye."
+        opener = f"Hey {greeting_name},\n\nI saw {name} in {batch}. {desc_clean.lower()} is a super sharp concept."
     else:
-        opener = f"hey {greeting_name.lower()}, checked out {name}. really clean work on {desc_clean.lower()}."
+        opener = f"Hey {greeting_name},\n\nI checked out {name}. {desc_clean.lower()} is a super sharp concept."
         
     email_body = f"""{opener}
 
 prepping launch videos, demo day clips, or onboarding walkthroughs usually eats hours of manual recording and retakes.
 
-i work on trypitch.co. you give it a plain written walkthrough or prompt and it renders a studio-quality, narrated demo mp4 in minutes, so you can iterate on videos whenever product features change.
+i work on https://trypitch.co. you give it a plain written walkthrough or prompt and it renders a studio-quality, narrated demo mp4 in minutes, so you can iterate on videos whenever product features change.
 
-happy to put together a free 30s demo walkthrough of {name} if you want one for your launch, or you can test it directly at trypitch.co. no pressure either way, best of luck with the build."""
+happy to put together a demo walkthrough of {name} if you want one for your launch, or you can test it directly at https://trypitch.co. no pressure either way, best of luck with the build.
+
+Best,
+Adnan 
+Co-Founder, Pitch
+adnan@trypitch.co"""
 
     email_body = clean_anti_ai_text(email_body)
 
