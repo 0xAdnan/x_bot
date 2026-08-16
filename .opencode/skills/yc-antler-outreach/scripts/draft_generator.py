@@ -36,8 +36,8 @@ def clean_anti_ai_text(text: str) -> str:
     text = re.sub(r" +", " ", text)
     return text.strip()
 
-def validate_draft(text: str) -> list[str]:
-    """Check for any violations of human-writing anti-AI rules."""
+def validate_draft(text: str, max_chars: int = 0) -> list[str]:
+    """Check for any violations of human-writing anti-AI rules and character limits."""
     violations = []
     if "—" in text or "–" in text:
         violations.append("Contains em-dash or en-dash")
@@ -47,11 +47,13 @@ def validate_draft(text: str) -> list[str]:
     for w in BANNED_WORDS:
         if w in lower:
             violations.append(f"Contains banned AI word: '{w}'")
+    if max_chars > 0 and len(text) > max_chars:
+        violations.append(f"Exceeds max character limit ({len(text)} > {max_chars})")
     return violations
 
 def generate_outreach_drafts(startup: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Generate tailored cold email and X DM for a startup.
+    Generate tailored cold email, concise 280-char X DM, and public mention tweet.
     Uses company name, founder name, product tagline/description, batch, and website.
     """
     name = startup.get("name", "there").strip()
@@ -88,31 +90,44 @@ happy to put together a free 30s demo walkthrough of {name} if you want one for 
 
     email_body = clean_anti_ai_text(email_body)
 
-    # 2. X DM Draft
-    x_dm = f"hey {greeting_name.lower()}, congrats on {name} in {batch}. i work on @trypitchdotco. we turn written walkthroughs into studio-quality narrated demo videos in minutes, which saves a ton of time during launch weeks. want me to make a quick 30s demo of {name} for your launch? or feel free to try it yourself at trypitch.co"
+    # 2. X DM Draft (Strictly <= 280 characters)
+    x_dm = f"hey {greeting_name.lower()}, congrats on {name} in {batch}. i work on @trypitchdotco. we turn written walkthroughs into studio demo videos in minutes, saves days during launch weeks. want me to make a quick 30s demo of {name} for your launch? or try it at trypitch.co"
     x_dm = clean_anti_ai_text(x_dm)
+    
+    if len(x_dm) > 280:
+        # Compact fallback format
+        x_dm = f"hey {greeting_name.lower()}, saw {name} in {batch}. i work on @trypitchdotco. we turn written walkthroughs into studio demo videos in minutes. want me to spin up a free 30s demo of {name} for your launch? or test it at trypitch.co"
+        x_dm = clean_anti_ai_text(x_dm)
 
-    # 3. Public X Reply / Hook
+    # 3. Public X Mention / Tweet Hook (Strictly <= 280 characters, for when DMs are disabled)
     clean_handle = startup.get("primary_handle", "").replace("@", "")
     if clean_handle:
         handle_tag = f"@{clean_handle}"
     else:
         handle_tag = name
 
-    x_reply = f"congrats on shipping {handle_tag}. if you need a quick 45s launch video walkthrough for {name}, tag @trypitchdotco with your link and we will render one in minutes"
-    x_reply = clean_anti_ai_text(x_reply)
+    public_tweet = f"congrats on shipping {handle_tag}. if you need a quick 45s launch video walkthrough for {name}, tag @trypitchdotco with your link and we will render one in minutes"
+    public_tweet = clean_anti_ai_text(public_tweet)
 
-    # Check validation
+    if len(public_tweet) > 280:
+        public_tweet = f"congrats on shipping {handle_tag}. need a 45s launch video for {name}? tag @trypitchdotco with your link and we will render a demo in minutes"
+        public_tweet = clean_anti_ai_text(public_tweet)
+
+    # Check validations
     v_email = validate_draft(email_body)
-    v_dm = validate_draft(x_dm)
+    v_dm = validate_draft(x_dm, max_chars=280)
+    v_tweet = validate_draft(public_tweet, max_chars=280)
     
     return {
         "email_subject": email_subject,
         "email_body": email_body,
         "x_dm": x_dm,
-        "x_reply": x_reply,
+        "public_tweet": public_tweet,
+        "char_count_dm": len(x_dm),
+        "char_count_tweet": len(public_tweet),
         "validation_email": v_email,
-        "validation_dm": v_dm
+        "validation_dm": v_dm,
+        "validation_tweet": v_tweet
     }
 
 if __name__ == "__main__":

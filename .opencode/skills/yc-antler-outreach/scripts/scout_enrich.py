@@ -153,11 +153,12 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
     print(f"=== [STARTUP SCOUT: Source={source.upper()} | Limit={limit} | DryRun={dry_run}] ===")
     conn = get_db_connection()
     raw_startups = []
+    fetch_limit = max(limit * 5, 50)
 
     if source in ["yc", "all"]:
         yc_batches = batches or ["Winter 2026", "Winter 2025", "Summer 2025"]
         print(f"[*] Querying YC directory for batches: {yc_batches}...")
-        yc_hits = fetch_yc_companies(batches=yc_batches, limit=limit)
+        yc_hits = fetch_yc_companies(batches=yc_batches, limit=fetch_limit)
         print(f"[+] Retrieved {len(yc_hits)} YC startups")
         for hit in yc_hits:
             hit["source"] = "yc"
@@ -165,7 +166,7 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
 
     if source in ["antler", "all"]:
         print(f"[*] Querying Antler Global Portfolio...")
-        antler_hits = fetch_antler_companies(limit=limit)
+        antler_hits = fetch_antler_companies(limit=fetch_limit)
         print(f"[+] Retrieved {len(antler_hits)} Antler startups")
         for hit in antler_hits:
             hit["source"] = "antler"
@@ -174,13 +175,16 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
     results = []
     saved_count = 0
 
-    for idx, s in enumerate(raw_startups[:limit]):
+    for idx, s in enumerate(raw_startups):
+        if len(results) >= limit:
+            break
+
         name = s.get("name", "Unknown")
         website = s.get("website", "")
         batch = s.get("batch", "Upcoming")
         source_type = s.get("source", "yc")
         
-        print(f"\n[{idx+1}/{min(len(raw_startups), limit)}] Processing {name} ({batch})...")
+        print(f"\n[{idx+1}/{len(raw_startups)}] Candidate: {name} ({batch})...")
 
         # Founder details from YC profile if available
         founders = []
@@ -246,7 +250,7 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
             "product_url": website,
             "email": primary_email,
             "batch": batch,
-            "notes": f"Email Subj: {drafts['email_subject']}\nEmail Body:\n{drafts['email_body']}\n\nX DM:\n{drafts['x_dm']}",
+            "notes": f"Email Subj: {drafts['email_subject']}\nEmail Body:\n{drafts['email_body']}\n\nX DM (≤280 chars):\n{drafts['x_dm']}\n\nPublic Tweet (≤280 chars):\n{drafts['public_tweet']}",
             "why": f"Upcoming {batch} batch startup. Product: {startup_payload['one_liner']}"
         }
 
@@ -254,7 +258,8 @@ def run_scout(source: str = "all", batches: Optional[List[str]] = None, limit: i
         print(f"      Handle: {primary_handle} | Email: {primary_email or 'N/A'}")
         print(f"      Product: {startup_payload['one_liner']}")
         print(f"      Email Subject: {drafts['email_subject']}")
-        print(f"      X DM: {drafts['x_dm']}")
+        print(f"      X DM ({drafts['char_count_dm']}c): {drafts['x_dm']}")
+        print(f"      Public Tweet ({drafts['char_count_tweet']}c): {drafts['public_tweet']}")
 
         if not dry_run:
             save_prospect_to_db(conn, prospect_record)

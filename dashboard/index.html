@@ -2039,16 +2039,37 @@ trypitch.co`;
 
         let coldEmailDraft = '';
         let xDmDraft = '';
+        let publicTweetDraft = '';
+
         if (p.notes && p.notes.includes('Email Subj:')) {
-          const parts = p.notes.split('\n\nX DM:\n');
-          coldEmailDraft = parts[0].trim();
-          if (parts[1]) xDmDraft = parts[1].trim();
+          const emailParts = p.notes.split('\n\nX DM');
+          coldEmailDraft = emailParts[0].trim();
+          if (emailParts[1]) {
+            const tweetParts = emailParts[1].split('\n\nPublic Tweet');
+            xDmDraft = tweetParts[0].replace(/^[^:]*:\n?/, '').trim();
+            if (tweetParts[1]) {
+              publicTweetDraft = tweetParts[1].replace(/^[^:]*:\n?/, '').trim();
+            }
+          }
         } else {
           coldEmailDraft = p.notes || '';
         }
 
+        // Fallbacks if not present in notes
+        if (!xDmDraft) {
+          xDmDraft = `hey ${firstName.toLowerCase()}, congrats on ${p.name || cleanHandle} in ${batchName}. i work on @trypitchdotco. we turn written walkthroughs into studio demo videos in minutes, saves days during launch weeks. want me to make a quick 30s demo of ${p.name || cleanHandle} for your launch? or try it at trypitch.co`;
+        }
+        if (!publicTweetDraft) {
+          const tag = cleanHandle ? `@${cleanHandle}` : (p.name || 'there');
+          publicTweetDraft = `congrats on shipping ${tag}. if you need a quick 45s launch video walkthrough for ${p.name || cleanHandle}, tag @trypitchdotco with your link and we will render one in minutes`;
+        }
+
         const safeColdEmail = coldEmailDraft.replace(/`/g, "\\`").replace(/'/g, "\\'");
         const safeXDm = xDmDraft.replace(/`/g, "\\`").replace(/'/g, "\\'");
+        const safePublicTweet = publicTweetDraft.replace(/`/g, "\\`").replace(/'/g, "\\'");
+        const dmCharCount = xDmDraft.length;
+        const tweetCharCount = publicTweetDraft.length;
+        const tweetIntentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(publicTweetDraft)}`;
 
         return `
           <div class="panel-card p-5 space-y-3.5 bg-white border border-slate-200/90 hover:border-indigo-300 transition-all duration-200 shadow-sm flex flex-col justify-between">
@@ -2130,17 +2151,31 @@ trypitch.co`;
                   </div>
                 </div>
               ` : `
-                <!-- Anti-AI Outreach Draft Box -->
+                <!-- Anti-AI Outreach Draft Box (Email + 280-char DM + Public Tweet) -->
                 ${coldEmailDraft ? `
-                  <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-200/80 space-y-2 shadow-sm">
+                  <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-200/80 space-y-2.5 shadow-sm">
                     <div class="flex items-center justify-between text-[10px] font-bold text-indigo-900 uppercase font-mono">
-                      <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> Researched Pitch (Anti-AI)</span>
-                      <div class="flex items-center gap-1">
+                      <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> Researched Outreach (≤280c)</span>
+                      <div class="flex items-center gap-1 flex-wrap">
                         <button onclick="copyTextToClipboard(\`${safeColdEmail}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-indigo-100 text-indigo-700 font-bold rounded border border-indigo-200 shadow-sm transition">Copy Email</button>
-                        ${xDmDraft ? `<button onclick="copyTextToClipboard(\`${safeXDm}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-purple-100 text-purple-700 font-bold rounded border border-purple-200 shadow-sm transition">Copy DM</button>` : ''}
+                        <button onclick="copyTextToClipboard(\`${safeXDm}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-purple-100 text-purple-700 font-bold rounded border border-purple-200 shadow-sm transition" title="${dmCharCount}/280 characters">Copy DM (${dmCharCount}c)</button>
+                        <button onclick="copyTextToClipboard(\`${safePublicTweet}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-pink-100 text-pink-700 font-bold rounded border border-pink-200 shadow-sm transition" title="${tweetCharCount}/280 characters">Copy Tweet (${tweetCharCount}c)</button>
                       </div>
                     </div>
-                    <div class="text-[11px] text-slate-700 font-mono bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-wrap max-h-36 overflow-y-auto leading-relaxed">${coldEmailDraft}</div>
+
+                    <div class="space-y-1.5">
+                      <div class="text-[11px] text-slate-700 font-mono bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-wrap max-h-32 overflow-y-auto leading-relaxed">${coldEmailDraft}</div>
+                      
+                      <!-- Public Tweet / Closed DM Fallback Strip -->
+                      <div class="p-2 bg-pink-50/80 rounded-lg border border-pink-200/80 flex items-center justify-between gap-2 text-[10px]">
+                        <div class="truncate text-pink-950 font-mono">
+                          <span class="font-bold text-pink-700">If DMs Closed:</span> "${publicTweetDraft}"
+                        </div>
+                        <a href="${tweetIntentUrl}" target="_blank" class="px-2 py-0.5 bg-slate-900 hover:bg-black text-white font-bold rounded flex items-center gap-1 flex-shrink-0 transition">
+                          <i data-lucide="twitter" class="w-2.5 h-2.5"></i> Tweet Now
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 ` : ''}
               `}

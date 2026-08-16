@@ -40,19 +40,21 @@ if you want, i can generate a free 30s video walkthrough of {{company_name}} for
 
 ---
 
-## 3. X Direct Message (DM) — Value-First Free Demo Offer
+## 3. X Direct Message (DM) — Value-First Free Demo Offer (≤ 280 Chars)
 
 ```
-hey {{founder_first_name}}, congrats on {{company_name}} in {{batch}}. i work on @trypitchdotco. we turn written walkthroughs into studio-quality narrated demo videos in minutes, which saves a ton of time during launch weeks. want me to make a quick 30s demo of {{company_name}} for your launch? or feel free to try it yourself at trypitch.co
+hey {{founder_first_name}}, congrats on {{company_name}} in {{batch}}. i work on @trypitchdotco. we turn written walkthroughs into studio demo videos in minutes, saves days during launch weeks. want me to make a quick 30s demo of {{company_name}} for your launch? or try it at trypitch.co
 ```
+*(Length: ~240 characters)*
 
 ---
 
-## 4. Public X Launch Post / Show HN Reply
+## 4. Public X Launch Mention / Tweet Hook (≤ 280 Chars, if DMs are closed)
 
 ```
 congrats on shipping @{{founder_handle}}. if you need a quick 45s launch video walkthrough for {{company_name}}, tag @trypitchdotco with your link and we will render one in minutes
 ```
+*(Length: ~165 characters)*
 
 ---
 
