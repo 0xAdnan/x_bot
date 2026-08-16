@@ -1704,26 +1704,6 @@
       });
       if (window.lucide) lucide.createIcons();
     }
-                    <option value="contacted" ${p.stage === 'contacted' ? 'selected' : ''}>Contacted</option>
-                    <option value="in_convo" ${p.stage === 'in_convo' ? 'selected' : ''}>In Convo</option>
-                    <option value="customer" ${p.stage === 'customer' ? 'selected' : ''}>Customer</option>
-                    <option value="do-not-contact" ${p.stage === 'do-not-contact' ? 'selected' : ''}>DNC</option>
-                  </select>
-                </div>
-
-                <div class="flex justify-between items-center text-[10px] text-slate-500 pt-0.5 font-mono">
-                  <span>Score: <strong class="text-slate-800">${p.score || 0}</strong></span>
-                  <span>Touches: <strong class="text-slate-800">${p.touches || 0}</strong></span>
-                </div>
-              </div>
-            `;
-            }).join('');
-          }
-          el.scrollTop = prevScroll;
-        }
-      });
-      if (window.lucide) lucide.createIcons();
-    }
 
     let mentionsCurrentPage = 1;
     let mentionsPageSize = 10;
@@ -1934,8 +1914,19 @@
       }).join('');
     }
 
+    function handleMemeImageError(imgEl, title, source) {
+      if (!imgEl || !imgEl.parentElement) return;
+      imgEl.parentElement.innerHTML = `
+        <div class="p-6 text-center text-xs font-mono text-pink-300 bg-slate-950/90 rounded-xl space-y-1.5 w-full">
+          <i data-lucide="image" class="w-6 h-6 mx-auto text-pink-400"></i>
+          <p class="font-bold text-slate-200">${title || 'Visual Developer Meme'}</p>
+          <p class="text-[10px] text-pink-400">${source || 'Live Community Scraped'}</p>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+    }
+
     // RENDER RESEARCH TAB
-    let lastResearchHash = '';
     function renderResearchTab() {
       const currentHash = JSON.stringify(rawResearchData);
       if (currentHash === lastResearchHash) return;
@@ -2217,11 +2208,16 @@
       if (memContainer && rawResearchData.memes) {
         memContainer.innerHTML = rawResearchData.memes.map((m, idx) => {
           const cardId = `meme_${idx}`;
+          const memeTitle = m.title || m.template || 'Visual Tech Meme';
+          const memeSource = m.source || m.format || 'Live Scraped';
+          const cleanTitle = memeTitle.replace(/'/g, "\\'");
+          const cleanSource = memeSource.replace(/'/g, "\\'");
+
           let visualDetail = '';
           if (m.imageUrl) {
             visualDetail = `
               <div class="relative group overflow-hidden rounded-xl border border-pink-200/80 bg-slate-900 shadow-inner flex items-center justify-center min-h-[160px]">
-                <img src="${m.imageUrl}" alt="${m.title || 'Tech Meme'}" referrerpolicy="no-referrer" class="w-full max-h-56 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'p-6 text-center text-xs font-mono text-pink-300 bg-slate-950/90 rounded-xl space-y-1.5 w-full\\'><i data-lucide=\\'image\\' class=\\'w-6 h-6 mx-auto text-pink-400\\'></i><p class=\\'font-bold text-slate-200\\'>${(m.title || 'Visual Developer Meme').replace(/'/g, \"\\\\'\")}</p><p class=\\'text-[10px] text-pink-400\\'>${m.source || 'Live Community Scraped'}</p></div>'; if(window.lucide)lucide.createIcons();">
+                <img src="${m.imageUrl}" alt="${cleanTitle}" referrerpolicy="no-referrer" class="w-full max-h-56 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="handleMemeImageError(this, '${cleanTitle}', '${cleanSource}')">
               </div>
             `;
           } else if (m.stages) {
@@ -2234,8 +2230,6 @@
               </div>
             `;
           }
-          const memeTitle = m.title || m.template || 'Visual Tech Meme';
-          const memeSource = m.source || m.format || 'Live Scraped';
           const sourceBadgeColor = (memeSource.includes('X / Tech') || memeSource.includes('Twitter'))
             ? 'bg-slate-900 text-white border-slate-700 font-bold'
             : (memeSource.includes('4chan') 
