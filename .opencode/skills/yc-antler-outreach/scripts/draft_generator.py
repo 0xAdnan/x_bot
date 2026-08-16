@@ -51,6 +51,23 @@ def validate_draft(text: str, max_chars: int = 0) -> list[str]:
         violations.append(f"Exceeds max character limit ({len(text)} > {max_chars})")
     return violations
 
+def get_short_batch_code(batch: str) -> str:
+    """Convert verbose batch strings to punchy 2-3 letter codes for mobile subject lines."""
+    b = batch.lower()
+    if "winter 2026" in b or "w26" in b: return "w26"
+    if "summer 2025" in b or "s25" in b: return "s25"
+    if "winter 2025" in b or "w25" in b: return "w25"
+    if "fall 2024" in b or "f24" in b: return "f24"
+    if "summer 2024" in b or "s24" in b: return "s24"
+    if "winter 2024" in b or "w24" in b: return "w24"
+    if "antler uk" in b: return "antler uk"
+    if "antler singapore" in b or "antler sg" in b: return "antler sg"
+    if "antler us" in b: return "antler us"
+    if "antler germany" in b: return "antler germany"
+    if "antler" in b: return "antler"
+    if "yc" in b: return "yc"
+    return "the batch"
+
 def generate_outreach_drafts(startup: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generate tailored cold email, concise 280-char X DM, and public mention tweet.
@@ -70,16 +87,18 @@ def generate_outreach_drafts(startup: Dict[str, Any]) -> Dict[str, Any]:
     desc = startup.get("one_liner") or startup.get("description") or "your product"
     desc_clean = desc.strip().rstrip(".")
     
-    # 1. Cold Email Draft — Data-Backed 2-4 Word Subject Lines (Lemlist & ZoomInfo 80%+ Open Rate Study)
-    # Rules from 5.5M email analysis: 2-4 words, under 35 characters, trigger-based or conversational
+    # 1. Cold Email Draft — Product-Tailored, Mobile-Safe 2-4 Word Subject Lines (< 35 chars)
+    short_batch = get_short_batch_code(batch)
+    clean_prod = name.lower()
+
     subject_options = [
-        "quick question",
-        f"{greeting_name.lower()}, thoughts?",
-        f"saw {name.lower()} in {batch.lower()}" if len(f"saw {name.lower()} in {batch.lower()}") <= 35 else f"saw {name.lower()}",
-        f"idea for {name.lower()} demo",
-        f"{name.lower()} demo"
+        f"saw {clean_prod} in {short_batch}" if len(f"saw {clean_prod} in {short_batch}") <= 32 else f"saw {clean_prod}",
+        f"{clean_prod} demo walkthrough" if len(f"{clean_prod} demo walkthrough") <= 32 else f"{clean_prod} demo",
+        f"{greeting_name.lower()} / {clean_prod}" if len(f"{greeting_name.lower()} / {clean_prod}") <= 32 else f"{clean_prod} demo",
+        f"idea for {clean_prod} demo" if len(f"idea for {clean_prod} demo") <= 32 else f"idea for {clean_prod}",
+        f"{greeting_name.lower()}, quick question" if len(f"{greeting_name.lower()}, quick question") <= 32 else "quick question"
     ]
-    email_subject = subject_options[0] # Default to top-performing "quick question"
+    email_subject = subject_options[0] # Default to high-converting trigger-specific subject line
     
     if any(k in batch for k in ["Winter", "Summer", "Fall", "Spring", "W26", "S25", "W25", "S24", "W24"]):
         opener = f"Hey {greeting_name},\n\nI saw {name} in the {batch} batch. {desc_clean.lower()} is a super sharp concept."
