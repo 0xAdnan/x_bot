@@ -2769,14 +2769,14 @@ adnan@trypitch.co`;
                 </div>
               </div>
 
-              <!-- Proposed Sarcastic / Cool Reply -->
-              <div class="p-2.5 bg-purple-50/70 rounded-xl border border-purple-200/80 space-y-1 shadow-sm">
+              <!-- Proposed Contextual Quote-Tweet Take (@adnanspitch) -->
+              <div class="p-3 bg-purple-50/70 rounded-xl border border-purple-200/80 space-y-1.5 shadow-sm">
                 <div class="flex items-center justify-between text-[9px] font-bold uppercase font-mono text-purple-900">
-                  <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-purple-600"></i> Proposed Witty / Sarcastic Take</span>
-                  <span class="text-purple-600 bg-white px-1.5 py-0.5 rounded border border-purple-200 text-[8px]">Ready to Approve</span>
+                  <span class="flex items-center gap-1"><i data-lucide="repeat" class="w-3 h-3 text-purple-600"></i> Contextual Quote-Tweet Take (@adnanspitch)</span>
+                  <span class="text-purple-700 bg-white px-2 py-0.5 rounded border border-purple-200 text-[9px] font-bold">${(r.quoteTweetTake || '').length} / 280c</span>
                 </div>
-                <div class="text-xs text-purple-950 font-medium italic bg-white/90 p-2 rounded-lg border border-purple-100 leading-snug">
-                  "${r.earlyReplyTake}"
+                <div id="radar-take-${r.id}" class="text-xs text-purple-950 font-medium italic bg-white/90 p-2.5 rounded-lg border border-purple-100 leading-relaxed font-sans">
+                  "${r.quoteTweetTake || r.earlyReplyTake}"
                 </div>
               </div>
 
@@ -2802,18 +2802,18 @@ adnan@trypitch.co`;
               <!-- 1-Click Approve & Infiltration Actions -->
               <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
                 <div class="flex flex-wrap items-center gap-1.5">
-                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.earlyReplyTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'reply', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
-                    ⚡ Approve & Reply (@adnanspitch)
+                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', document.getElementById('radar-take-${r.id}').innerText.replace(/^\"|\"$/g, ''), '@adnanspitch', 'quote', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🔥 Quote Tweet (@adnanspitch)
                   </button>
-                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.brandBridge.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@trypitchdotco', 'reply', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
-                    🚀 Reply as Pitch
+                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.earlyReplyTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'reply', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg border border-indigo-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    💬 Reply as @adnanspitch
                   </button>
-                  <button onclick="directApproveReply('${r.id}', '${r.tweetUrl}', \`${r.quoteTweetTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'quote', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg border border-purple-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
-                    🔥 Quote Tweet
+                  <button onclick="rerollRadarTake('${r.id}')" class="px-2.5 py-1.5 text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg border border-amber-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                    🔄 Reroll Angle
                   </button>
                 </div>
                 <div class="flex items-center gap-1">
-                  <button onclick="loadIntoComposer(\`${r.earlyReplyTake.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@adnanspitch', '${r.tweetUrl}', 'reply')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-md transition cursor-pointer">
+                  <button onclick="loadIntoComposer(document.getElementById('radar-take-${r.id}').innerText.replace(/^\"|\"$/g, ''), null, '@adnanspitch', '${r.tweetUrl}', 'quote')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-md transition cursor-pointer">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                   </button>
                   <button onclick="dismissRadarItem('${r.id}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">
@@ -3264,6 +3264,31 @@ adnan@trypitch.co`;
         }
       } finally {
         if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function rerollRadarTake(radarId) {
+      if (!rawResearchData || !rawResearchData.influencerRadar) return;
+      const item = rawResearchData.influencerRadar.find(r => r.id === radarId);
+      if (!item) return;
+
+      const takeEl = document.getElementById(`radar-take-${radarId}`);
+      if (!takeEl) return;
+
+      const alts = item.alternativeTakes || [];
+      if (alts.length > 0) {
+        const currentText = takeEl.innerText.replace(/^"|"$/g, '').trim();
+        let nextTake = alts.find(t => t !== currentText);
+        if (!nextTake) nextTake = alts[Math.floor(Math.random() * alts.length)];
+        takeEl.innerText = `"${nextTake}"`;
+      } else {
+        const fallbacks = [
+          "the gap between models generating full code in seconds and founders spending days recording 1-minute video demos is where all developer friction lives now",
+          "seeing reasoning models output full full-stack architectures in one prompt makes it clear that distribution and visual video storytelling are the only remaining moats",
+          "founders spend 10 mins vibe-coding an app with claude then spend 4 days sweating through 40 screen recorder retakes. the bottleneck moved completely to video"
+        ];
+        const randomTake = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        takeEl.innerText = `"${randomTake}"`;
       }
     }
 
