@@ -11,6 +11,7 @@ Generates punchy, ultra-sarcastic developer & founder commentary (ZERO robotic A
 import os
 import sys
 import json
+import time
 import urllib.request
 import re
 import asyncio
@@ -27,6 +28,26 @@ os.makedirs(MEME_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+def cleanup_old_memes(max_age_hours=24):
+    """Delete downloaded meme images older than max_age_hours (default 24h) to avoid disk bloat."""
+    if not os.path.exists(MEME_DIR):
+        return
+    now = time.time()
+    cutoff = now - (max_age_hours * 3600)
+    deleted_count = 0
+    for filename in os.listdir(MEME_DIR):
+        file_path = os.path.join(MEME_DIR, filename)
+        if os.path.isfile(file_path):
+            try:
+                mtime = os.path.getmtime(file_path)
+                if mtime < cutoff:
+                    os.remove(file_path)
+                    deleted_count += 1
+            except Exception:
+                pass
+    if deleted_count > 0:
+        print(f"[Cleanup] Deleted {deleted_count} meme images older than {max_age_hours} hours from assets/memes/")
 
 def generate_sarcastic_ragebait_caption(title, source="reddit", tweet_text=""):
     raw = (tweet_text if tweet_text and len(tweet_text) > len(title) else title).lower()
@@ -275,6 +296,9 @@ def download_meme_images(memes):
 
 async def main():
     print("=== [MULTI-SOURCE VIRAL TECH MEME SCRAPER] ===")
+    
+    # 0. Clean up images older than 24 hours
+    cleanup_old_memes(max_age_hours=24)
     
     # 1. Fetch from X / Tech Twitter
     x_memes = await fetch_x_tech_memes(limit=4)

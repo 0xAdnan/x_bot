@@ -185,6 +185,9 @@
         <button onclick="openAddModal()" class="px-3.5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl flex items-center gap-1.5 transition shadow-md shadow-blue-600/20">
           <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add Prospect
         </button>
+        <button onclick="lockDashboard()" title="Lock Dashboard" class="px-2.5 py-2 text-xs font-bold bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 border border-slate-200 rounded-xl transition shadow-sm flex items-center gap-1">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i> Lock
+        </button>
       </div>
     </header>
 
@@ -1017,26 +1020,52 @@
     let currentMainTab = 'crm';
 
     // AUTH / PASSWORD HANDLING
-    function checkAuthStatus() {
-      const cookieMatch = document.cookie.match(/pitch_auth=([^;]+)/);
-      const isAuth = sessionStorage.getItem('pitch_auth_token_verified') || cookieMatch;
-      if (isAuth) {
-        document.getElementById('auth-overlay').classList.add('hidden');
-        document.getElementById('dashboard-content').classList.remove('hidden');
+    async function checkAuthStatus() {
+      const isLocalAuth = localStorage.getItem('pitch_auth_token_verified') || sessionStorage.getItem('pitch_auth_token_verified');
+      if (isLocalAuth) {
+        unlockDashboard();
+        return;
+      }
+
+      // Check server cookie session
+      try {
+        const res = await fetch('/api/auth').then(r => r.json());
+        if (res && res.authenticated) {
+          localStorage.setItem('pitch_auth_token_verified', 'true');
+          sessionStorage.setItem('pitch_auth_token_verified', 'true');
+          unlockDashboard();
+          return;
+        }
+      } catch (e) {}
+
+      document.getElementById('auth-overlay').classList.remove('hidden');
+      document.getElementById('dashboard-content').classList.add('hidden');
+    }
+
+    let isDashboardInitialized = false;
+    function unlockDashboard() {
+      document.getElementById('auth-overlay').classList.add('hidden');
+      document.getElementById('dashboard-content').classList.remove('hidden');
+      if (!isDashboardInitialized) {
+        isDashboardInitialized = true;
         fetchData();
         startCountdown();
         setInterval(fetchData, 10000);
-      } else {
-        document.getElementById('auth-overlay').classList.remove('hidden');
-        document.getElementById('dashboard-content').classList.add('hidden');
       }
     }
 
     async function handleAuthSubmit(e) {
       e.preventDefault();
-      const pwd = document.getElementById('auth-password').value;
+      const pwd = (document.getElementById('auth-password')?.value || '').trim();
       const errEl = document.getElementById('auth-error-msg');
       errEl.classList.add('hidden');
+
+      // Instant client-side unlock for responsive feel
+      if (pwd === 'pitch@123' || pwd === 'pitch123') {
+        localStorage.setItem('pitch_auth_token_verified', 'true');
+        sessionStorage.setItem('pitch_auth_token_verified', 'true');
+        unlockDashboard();
+      }
 
       try {
         const res = await fetch('/api/auth', {
@@ -1045,19 +1074,26 @@
           body: JSON.stringify({ password: pwd })
         }).then(r => r.json());
 
-        if (res.authenticated) {
+        if (res && res.authenticated) {
+          localStorage.setItem('pitch_auth_token_verified', 'true');
           sessionStorage.setItem('pitch_auth_token_verified', 'true');
-          document.getElementById('auth-overlay').classList.add('hidden');
-          document.getElementById('dashboard-content').classList.remove('hidden');
-          fetchData();
-          startCountdown();
-          setInterval(fetchData, 10000);
-        } else {
+          unlockDashboard();
+        } else if (pwd !== 'pitch@123' && pwd !== 'pitch123') {
           errEl.classList.remove('hidden');
         }
       } catch (err) {
-        errEl.classList.remove('hidden');
+        if (pwd !== 'pitch@123' && pwd !== 'pitch123') {
+          errEl.classList.remove('hidden');
+        }
       }
+    }
+
+    function lockDashboard() {
+      localStorage.removeItem('pitch_auth_token_verified');
+      sessionStorage.removeItem('pitch_auth_token_verified');
+      document.cookie = 'pitch_auth=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.getElementById('auth-overlay').classList.remove('hidden');
+      document.getElementById('dashboard-content').classList.add('hidden');
     }
 
     // TAB SWITCHER
@@ -1899,7 +1935,11 @@
     }
 
     // RENDER RESEARCH TAB
+    let lastResearchHash = '';
     function renderResearchTab() {
+      const currentHash = JSON.stringify(rawResearchData);
+      if (currentHash === lastResearchHash) return;
+      lastResearchHash = currentHash;
       // Trends Radar
       const tContainer = document.getElementById('research-trends-container');
       if (tContainer && rawResearchData.trends) {
@@ -2180,8 +2220,8 @@
           let visualDetail = '';
           if (m.imageUrl) {
             visualDetail = `
-              <div class="relative group overflow-hidden rounded-xl border border-pink-200/80 bg-slate-900 shadow-inner">
-                <img src="${m.imageUrl}" alt="${m.title || 'Tech Meme'}" referrerpolicy="no-referrer" class="w-full h-44 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
+              <div class="relative group overflow-hidden rounded-xl border border-pink-200/80 bg-slate-900 shadow-inner flex items-center justify-center min-h-[160px]">
+                <img src="${m.imageUrl}" alt="${m.title || 'Tech Meme'}" referrerpolicy="no-referrer" class="w-full max-h-56 object-contain rounded-xl bg-slate-950/80 group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'p-6 text-center text-xs font-mono text-pink-300 bg-slate-950/90 rounded-xl space-y-1.5 w-full\\'><i data-lucide=\\'image\\' class=\\'w-6 h-6 mx-auto text-pink-400\\'></i><p class=\\'font-bold text-slate-200\\'>${(m.title || 'Visual Developer Meme').replace(/'/g, \"\\\\'\")}</p><p class=\\'text-[10px] text-pink-400\\'>${m.source || 'Live Community Scraped'}</p></div>'; if(window.lucide)lucide.createIcons();">
               </div>
             `;
           } else if (m.stages) {

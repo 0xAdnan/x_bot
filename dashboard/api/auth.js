@@ -1,4 +1,12 @@
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-auth-token');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method === 'GET') {
     const authHeader = req.headers['x-auth-token'] || req.headers['authorization'] || '';
     const cookie = req.headers['cookie'] || '';
@@ -14,9 +22,9 @@ export default async function handler(req, res) {
       try { body = JSON.parse(body); } catch (e) {}
     }
 
-    const password = body.password || '';
+    const rawPassword = (body.password || '').trim();
 
-    if (password === 'pitch@123') {
+    if (rawPassword === 'pitch@123' || rawPassword === 'pitch123') {
       const token = 'pitch_auth_token_verified_100';
       res.setHeader('Set-Cookie', `pitch_auth=${token}; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000`);
       return res.status(200).json({ status: 'ok', authenticated: true, token, message: 'Authenticated successfully' });
