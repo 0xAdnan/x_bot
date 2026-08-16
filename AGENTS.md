@@ -31,7 +31,13 @@ real browser and the X API v2 (via the `xmcp` MCP server).
   flow skills dispatched by the orchestrator. `x-outreach/dm-templates.md` is a reference
   file. Flow skills reference shared files via project-root paths like
   `.opencode/skills/x-growth/safety.md`.
-- **`.opencode/agent/x-growth.md`** — primary agent definition; declares the skills + tools.
+- **`.opencode/skills/yc-antler-outreach/`** — YC & Antler startup discovery, email/social
+  enrichment, and anti-AI value-first demo/launch video outreach skill. Scripts live in
+  `.opencode/skills/yc-antler-outreach/scripts/` (`scout_enrich.py`, `scrape_yc.py`,
+  `scrape_antler.py`, `contact_enricher.py`, `draft_generator.py`, `send_outreach.py`).
+- **`.opencode/agent/x-growth.md`** — primary X growth agent definition; declares the skills + tools.
+- **`.opencode/agent/yc-antler-outreach.md`** — primary startup outreach agent definition for
+  batch-focused YC and Antler outbound acquisition.
 - **`.opencode/skills/agent-webbridge/SKILL.md`** — drives the user's REAL Chrome (profile
   `Testing`, router `127.0.0.1:10086`) via agent-webbridge; full setup/install/diagnose is
   in this file (see Browser automation below). **All X writes go through webbridge**

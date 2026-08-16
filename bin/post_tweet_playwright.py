@@ -100,7 +100,7 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
                     await page.wait_for_timeout(3000)
                     
                     # Extract toast link if available
-                    reply_url_out = f"https://x.com/{clean_handle}"
+                    reply_url_out = None
                     try:
                         toast = page.locator('div[data-testid="toast"] a[href*="/status/"]').first
                         if await toast.count() > 0:
@@ -109,6 +109,21 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
                                 reply_url_out = f"https://x.com{href}" if href.startswith('/') else href
                     except Exception:
                         pass
+
+                    if not reply_url_out:
+                        try:
+                            await page.goto(f"https://x.com/{clean_handle}/with_replies", wait_until="domcontentloaded")
+                            await page.wait_for_timeout(2500)
+                            first_tweet = page.locator('article[data-testid="tweet"] a[href*="/status/"]').first
+                            if await first_tweet.count() > 0:
+                                href = await first_tweet.get_attribute("href")
+                                if href:
+                                    reply_url_out = f"https://x.com{href}" if href.startswith('/') else href
+                        except Exception:
+                            pass
+
+                    if not reply_url_out:
+                        reply_url_out = f"https://x.com/{clean_handle}"
 
                     await browser.close()
                     return {
@@ -161,7 +176,7 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
             await post_btn.click()
             await page.wait_for_timeout(3000)
             
-            post_url_out = f"https://x.com/{clean_handle}"
+            post_url_out = None
             try:
                 toast = page.locator('div[data-testid="toast"] a[href*="/status/"]').first
                 if await toast.count() > 0:
@@ -170,6 +185,21 @@ async def publish_tweet(account, text, image_url=None, reply_to_url=None, quote_
                         post_url_out = f"https://x.com{href}" if href.startswith('/') else href
             except Exception:
                 pass
+
+            if not post_url_out:
+                try:
+                    await page.goto(f"https://x.com/{clean_handle}", wait_until="domcontentloaded")
+                    await page.wait_for_timeout(2500)
+                    first_tweet = page.locator('article[data-testid="tweet"] a[href*="/status/"]').first
+                    if await first_tweet.count() > 0:
+                        href = await first_tweet.get_attribute("href")
+                        if href:
+                            post_url_out = f"https://x.com{href}" if href.startswith('/') else href
+                except Exception:
+                    pass
+
+            if not post_url_out:
+                post_url_out = f"https://x.com/{clean_handle}"
 
             await browser.close()
             return {

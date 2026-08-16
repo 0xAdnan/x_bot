@@ -242,7 +242,7 @@
     </section>
 
     <!-- LIVE METRICS GRID -->
-    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
       
       <div class="panel-card p-4 space-y-1 bg-white">
         <div class="flex justify-between items-center">
@@ -250,7 +250,16 @@
           <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
         </div>
         <div id="stat-total-prospects" class="text-2xl lg:text-3xl font-black text-slate-900 font-mono">0</div>
-        <div class="text-[11px] text-slate-500 font-medium">Discovered on X</div>
+        <div class="text-[11px] text-slate-500 font-medium">Discovered on X & Cohorts</div>
+      </div>
+
+      <div class="panel-card p-4 space-y-1 border-indigo-200 bg-indigo-50/30">
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-widest font-mono">YC & Antler</span>
+          <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600"></i>
+        </div>
+        <div id="stat-researched" class="text-2xl lg:text-3xl font-black text-indigo-600 font-mono">0</div>
+        <div class="text-[11px] text-indigo-700/80 font-medium">Researched Cohorts</div>
       </div>
 
       <div class="panel-card p-4 space-y-1 border-amber-200 bg-amber-50/30">
@@ -330,6 +339,16 @@
           </div>
 
           <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Segment:</span>
+            <select id="filter-segment" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
+              <option value="all">All Segments</option>
+              <option value="yc">🚀 YC Startups</option>
+              <option value="antler">🌐 Antler Global</option>
+              <option value="founder">🛠️ X Founders / SaaS</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5 text-xs">
             <span class="font-bold text-slate-500 text-[11px] uppercase font-mono">Score:</span>
             <select id="filter-score" onchange="renderFilteredData()" class="bg-slate-50 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer">
               <option value="all">All Scores</option>
@@ -368,6 +387,18 @@
           </div>
           <div id="col-new" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
           <div id="foot-new" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-slate-200 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
+        </div>
+
+        <!-- Column 2: Researched (YC & Antler Outbound) -->
+        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-indigo-50/20 border border-indigo-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center p-3 border-b border-indigo-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-indigo-600">
+            <span class="text-[11px] font-extrabold text-indigo-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span> YC & Antler Leads
+            </span>
+            <span id="cnt-researched" class="text-xs font-mono font-bold bg-indigo-50 text-indigo-800 px-2.5 py-0.5 rounded-full border border-indigo-300">0</span>
+          </div>
+          <div id="col-researched" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
+          <div id="foot-researched" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-indigo-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
         <!-- Column 2: Warming -->
@@ -1288,12 +1319,16 @@
       // 1. Prospect Filter
       const pSearch = (document.getElementById('search-prospects')?.value || '').toLowerCase().trim();
       const scoreFilter = document.getElementById('filter-score')?.value || 'all';
+      const segmentFilter = document.getElementById('filter-segment')?.value || 'all';
 
       let filteredProspects = rawProspects;
       if (pSearch) {
         filteredProspects = filteredProspects.filter(p =>
           (p.handle || '').toLowerCase().includes(pSearch) ||
           (p.name || '').toLowerCase().includes(pSearch) ||
+          (p.email || '').toLowerCase().includes(pSearch) ||
+          (p.batch || '').toLowerCase().includes(pSearch) ||
+          (p.segment || '').toLowerCase().includes(pSearch) ||
           (p.notes || '').toLowerCase().includes(pSearch) ||
           (p.product_url || '').toLowerCase().includes(pSearch) ||
           (p.why || '').toLowerCase().includes(pSearch)
@@ -1307,6 +1342,9 @@
         } else if (scoreFilter === 'low') {
           filteredProspects = filteredProspects.filter(p => (p.score || 0) < 7);
         }
+      }
+      if (segmentFilter !== 'all') {
+        filteredProspects = filteredProspects.filter(p => (p.segment || '').toLowerCase() === segmentFilter.toLowerCase());
       }
 
       // 2. Mentions Filter
@@ -1359,6 +1397,7 @@
 
       // Update KPI Counter Cards directly from live datasets without flashing
       setElText('stat-total-prospects', rawProspects.length);
+      setElText('stat-researched', rawProspects.filter(p => p.stage === 'researched' || p.segment === 'yc' || p.segment === 'antler').length);
       setElText('stat-warming', rawProspects.filter(p => p.stage === 'warming').length);
       setElText('stat-contacted', rawProspects.filter(p => p.stage === 'contacted' || p.stage === 'in_convo').length);
       setElText('stat-mention-jobs', rawMentionJobs.filter(j => j.status === 'delivered' || j.s3_video_url).length);
@@ -1372,7 +1411,8 @@
       setElText('tab-badge-activity', rawActivities.length);
 
       const stages = {
-        new: filteredProspects.filter(p => p.stage === 'new' || !p.stage || p.stage === ''),
+        new: filteredProspects.filter(p => (p.stage === 'new' || !p.stage || p.stage === '') && p.stage !== 'researched'),
+        researched: filteredProspects.filter(p => p.stage === 'researched'),
         warming: filteredProspects.filter(p => p.stage === 'warming'),
         contacted: filteredProspects.filter(p => p.stage === 'contacted'),
         in_convo: filteredProspects.filter(p => p.stage === 'in_convo'),
@@ -1387,6 +1427,7 @@
 
     let columnPages = {
       'new': 1,
+      'researched': 1,
       'warming': 1,
       'contacted': 1,
       'in_convo': 1,
@@ -1417,6 +1458,7 @@
 
       const stageMap = {
         'new': 'col-new',
+        'researched': 'col-researched',
         'warming': 'col-warming',
         'contacted': 'col-contacted',
         'in_convo': 'col-in_convo',
@@ -1426,6 +1468,7 @@
 
       const footMap = {
         'new': 'foot-new',
+        'researched': 'foot-researched',
         'warming': 'foot-warming',
         'contacted': 'foot-contacted',
         'in_convo': 'foot-in_convo',
@@ -1514,6 +1557,15 @@
               const contactSnippet = (p.notes && p.notes.length > 8) ? p.notes : `Engaged with @${cleanHandle.toLowerCase()} via ${contactChannel}`;
               const followUpMessage = `yo @${cleanHandle.toLowerCase()}, following up on that walkthrough link. let me know if u want any custom zoom edits or script tweaks on it`;
 
+              // Segment styling
+              const seg = (p.segment || 'founder').toLowerCase();
+              let segBadge = 'bg-slate-100 text-slate-600 border-slate-200';
+              if (seg === 'yc') segBadge = 'bg-orange-100 text-orange-800 border-orange-200';
+              else if (seg === 'antler') segBadge = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+
+              // Parse custom pitch if in notes
+              const isAntiAiDraft = p.notes && (p.notes.includes('Email Subj') || p.notes.includes('X DM'));
+
               return `
               <div class="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-200 shadow-sm space-y-2.5">
                 <div class="flex justify-between items-start">
@@ -1521,12 +1573,21 @@
                     @${cleanHandle} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
                   </a>
                   <div class="flex items-center gap-1">
-                    <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 font-semibold">${p.segment || 'founder'}</span>
+                    <span class="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full ${segBadge} border font-semibold">${p.segment || 'founder'}</span>
                     <button onclick="deleteEntry('prospect', '${p.id || cleanHandle}')" title="Delete Prospect" class="text-slate-400 hover:text-red-600 p-1 transition"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
                   </div>
                 </div>
 
-                ${p.name ? `<div class="text-xs text-slate-800 font-bold">${p.name}</div>` : ''}
+                ${p.name ? `<div class="text-xs text-slate-800 font-bold flex items-center gap-1.5">${p.name} ${p.batch ? `<span class="text-[9px] font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">${p.batch}</span>` : ''}</div>` : ''}
+
+                ${p.email ? `
+                  <div class="flex items-center justify-between p-1.5 bg-indigo-50/60 rounded-lg border border-indigo-100 text-[10px]">
+                    <a href="mailto:${p.email}" class="font-mono text-indigo-700 hover:underline flex items-center gap-1">
+                      <i data-lucide="mail" class="w-3 h-3 text-indigo-500"></i> ${p.email}
+                    </a>
+                    <button onclick="copyTextToClipboard('${p.email}', this)" class="px-1.5 py-0.5 text-[9px] bg-white text-indigo-700 rounded border border-indigo-200 font-bold hover:bg-indigo-50 transition">Copy</button>
+                  </div>
+                ` : ''}
                 
                 ${isContacted ? `
                   <!-- Contacted History Badge & Action Detail -->
@@ -1550,32 +1611,63 @@
                     </div>
                   </div>
                 ` : `
-                  ${p.notes ? `<div class="text-[11px] text-slate-600 bg-slate-50/80 p-2 rounded-lg border border-slate-200 leading-snug">${p.notes}</div>` : ''}
-                  
-                  <!-- Potential Message Callout -->
-                  <div class="p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200/80 space-y-1 shadow-sm">
-                    <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800 uppercase font-mono">
-                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3 text-emerald-600"></i> Suggested Outreach</span>
-                      <button onclick="copyTextToClipboard(\`${draftMessage.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-emerald-100 text-emerald-700 font-bold rounded-md border border-emerald-200 shadow-sm transition">Copy</button>
+                  ${isAntiAiDraft ? `
+                    <div class="p-2.5 bg-indigo-50/60 rounded-xl border border-indigo-200/80 space-y-1.5 shadow-sm">
+                      <div class="flex justify-between items-center text-[10px] font-bold text-indigo-900 uppercase font-mono">
+                        <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> Researched Pitch (Anti-AI)</span>
+                        <button onclick="copyTextToClipboard(\`${(p.notes || '').replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-indigo-100 text-indigo-700 font-bold rounded border border-indigo-200 shadow-sm transition">Copy Draft</button>
+                      </div>
+                      <div class="text-[11px] text-slate-700 font-mono bg-white/90 p-2 rounded-lg border border-indigo-100 whitespace-pre-wrap max-h-32 overflow-y-auto leading-tight">${p.notes}</div>
                     </div>
-                    <p class="text-[11px] text-slate-700 italic leading-snug font-sans">"${draftMessage}"</p>
-                  </div>
+                  ` : `
+                    ${p.notes ? `<div class="text-[11px] text-slate-600 bg-slate-50/80 p-2 rounded-lg border border-slate-200 leading-snug">${p.notes}</div>` : ''}
+                    
+                    <!-- Potential Message Callout -->
+                    <div class="p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200/80 space-y-1 shadow-sm">
+                      <div class="flex justify-between items-center text-[10px] font-bold text-emerald-800 uppercase font-mono">
+                        <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3 text-emerald-600"></i> Suggested Outreach</span>
+                        <button onclick="copyTextToClipboard(\`${draftMessage.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, this)" class="px-2 py-0.5 text-[9px] bg-white hover:bg-emerald-100 text-emerald-700 font-bold rounded-md border border-emerald-200 shadow-sm transition">Copy</button>
+                      </div>
+                      <p class="text-[11px] text-slate-700 italic leading-snug font-sans">"${draftMessage}"</p>
+                    </div>
+                  `}
                 `}
 
                 <!-- Action Links & Stage Mover -->
                 <div class="flex items-center justify-between pt-1 gap-1.5 flex-wrap border-t border-slate-100">
                   <div class="flex items-center gap-1.5 flex-wrap">
                     ${p.url ? `<a href="${tweetUrl}" target="_blank" class="text-[10px] font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1 transition">
-                      <i data-lucide="twitter" class="w-2.5 h-2.5 text-purple-600"></i> Tweet
+                      <i data-lucide="twitter" class="w-2.5 h-2.5 text-purple-600"></i> X Profile
                     </a>` : ''}
                     ${p.product_url ? `<a href="${p.product_url}" target="_blank" class="text-[10px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-md border border-blue-200 flex items-center gap-1 transition">
-                      <i data-lucide="globe" class="w-2.5 h-2.5 text-blue-600"></i> Site
+                      <i data-lucide="globe" class="w-2.5 h-2.5 text-blue-600"></i> Website
                     </a>` : ''}
                   </div>
 
                   <select onchange="updateProspectStage('${p.id || cleanHandle}', this.value)" class="text-[10px] font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 rounded px-1.5 py-0.5 outline-none cursor-pointer">
                     <option value="new" ${p.stage === 'new' || !p.stage ? 'selected' : ''}>New</option>
+                    <option value="researched" ${p.stage === 'researched' ? 'selected' : ''}>Researched</option>
                     <option value="warming" ${p.stage === 'warming' ? 'selected' : ''}>Warming</option>
+                    <option value="contacted" ${p.stage === 'contacted' ? 'selected' : ''}>Contacted</option>
+                    <option value="in_convo" ${p.stage === 'in_convo' ? 'selected' : ''}>In Convo</option>
+                    <option value="customer" ${p.stage === 'customer' ? 'selected' : ''}>Customer</option>
+                    <option value="do-not-contact" ${p.stage === 'do-not-contact' ? 'selected' : ''}>DNC</option>
+                  </select>
+                </div>
+
+                <div class="flex justify-between items-center text-[10px] text-slate-500 pt-0.5 font-mono">
+                  <span>Score: <strong class="text-slate-800">${p.score || 0}</strong></span>
+                  <span>Touches: <strong class="text-slate-800">${p.touches || 0}</strong></span>
+                </div>
+              </div>
+            `;
+            }).join('');
+          }
+          el.scrollTop = prevScroll;
+        }
+      });
+      if (window.lucide) lucide.createIcons();
+    }
                     <option value="contacted" ${p.stage === 'contacted' ? 'selected' : ''}>Contacted</option>
                     <option value="in_convo" ${p.stage === 'in_convo' ? 'selected' : ''}>In Convo</option>
                     <option value="customer" ${p.stage === 'customer' ? 'selected' : ''}>Customer</option>
@@ -1871,6 +1963,8 @@
         iContainer.innerHTML = rawResearchData.influencers.map((inf, idx) => {
           const cleanH = inf.handle.replace('@','');
           const cardId = `inf_${cleanH}_${idx}`;
+          const liveRadarTweet = (rawResearchData.influencerRadar || []).find(r => r.author && r.author.toLowerCase().includes(cleanH.toLowerCase()));
+          const targetTweetUrl = liveRadarTweet ? liveRadarTweet.tweetUrl : `https://x.com/${cleanH}`;
           return `
             <div id="inf-card-${cardId}" class="p-4 bg-white rounded-xl border border-indigo-200/90 space-y-3 shadow-sm hover:border-indigo-400 transition-all duration-200">
               <div class="flex justify-between items-start">
@@ -1886,7 +1980,7 @@
                     <span class="text-[9px] text-slate-400 font-mono">${inf.followers} • ${inf.niche}</span>
                   </div>
                 </div>
-                <span class="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 uppercase">Target VIP</span>
+                <span class="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 uppercase">${liveRadarTweet ? 'Live Post Synced' : 'Target VIP'}</span>
               </div>
 
               <!-- Context / Bait Angle -->
@@ -1900,7 +1994,7 @@
                   <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3 text-purple-600"></i> Proposed Witty / Sarcastic Reply</span>
                   <span class="text-purple-600 bg-white px-1.5 py-0.5 rounded border border-purple-200 text-[8px]">Ready to Approve</span>
                 </div>
-                <div class="text-xs text-purple-950 font-medium italic bg-white/90 p-2 rounded-lg border border-purple-100 leading-snug">
+                <div id="inf-hook-${cardId}" class="text-xs text-purple-950 font-medium italic bg-white/90 p-2 rounded-lg border border-purple-100 leading-snug">
                   "${inf.warmupHook}"
                 </div>
               </div>
@@ -1908,15 +2002,15 @@
               <!-- 1-Click Approve & Reply Actions -->
               <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
                 <div class="flex flex-wrap items-center gap-1.5">
-                  <button onclick="directApproveReply('${cardId}', 'https://x.com/${cleanH}', \`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@adnanspitch', 'reply', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
+                  <button onclick="directApproveReply('${cardId}', '${targetTweetUrl}', document.getElementById('inf-hook-${cardId}').innerText, '@adnanspitch', 'reply', this)" class="px-3 py-1.5 text-[10px] font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg shadow-sm transition flex items-center gap-1 cursor-pointer">
                     ⚡ Approve & Reply (@adnanspitch)
                   </button>
-                  <button onclick="directApproveReply('${cardId}', 'https://x.com/${cleanH}', \`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, '@trypitchdotco', 'reply', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
+                  <button onclick="directApproveReply('${cardId}', '${targetTweetUrl}', document.getElementById('inf-hook-${cardId}').innerText, '@trypitchdotco', 'reply', this)" class="px-2.5 py-1.5 text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 shadow-sm transition flex items-center gap-1 cursor-pointer">
                     🚀 Reply as Pitch
                   </button>
                 </div>
                 <div class="flex items-center gap-1">
-                  <button onclick="loadIntoComposer(\`${inf.warmupHook.replace(/`/g, "\\`").replace(/'/g, "\\'")}\`, null, '@adnanspitch', 'https://x.com/${cleanH}', 'reply')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-md transition cursor-pointer">
+                  <button onclick="loadIntoComposer(document.getElementById('inf-hook-${cardId}').innerText, null, '@adnanspitch', '${targetTweetUrl}', 'reply')" title="Edit in Composer" class="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-md transition cursor-pointer">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                   </button>
                   <button onclick="dismissRadarItem('${cardId}')" title="Dismiss" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer">

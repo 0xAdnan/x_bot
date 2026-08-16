@@ -6,5 +6,5 @@ export default async function handler(req, res) {
   if (resRust.ok) {
     return res.status(200).json(resRust.data);
   }
-  return res.status(200).json({ prospects: [], total: 0, stages: { new: [], warming: [], contacted: [], in_convo: [], trial: [], customer: [], "do-not-contact": [], lost: [] } });
+  return res.status(200).json({ prospects: [], total: 0, stages: { new: [], researched: [], warming: [], contacted: [], in_convo: [], trial: [], customer: [], "do-not-contact": [], lost: [] } });
 }

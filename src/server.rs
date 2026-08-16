@@ -235,11 +235,14 @@ async fn handle_stats() -> impl IntoResponse {
         let no_url_found = mention_jobs.iter().filter(|j| j.status == "no_url_found").count();
 
         let new_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("new") || p.stage.as_deref() == Some("") || p.stage.is_none()).count();
+        let researched_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("researched")).count();
         let warming_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("warming")).count();
         let contacted_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("contacted")).count();
         let in_convo_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("in_convo")).count();
         let customer_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("customer") || p.stage.as_deref() == Some("trial")).count();
         let dnc_count = prospects.iter().filter(|p| p.stage.as_deref() == Some("do-not-contact") || p.stage.as_deref() == Some("lost")).count();
+        let yc_count = prospects.iter().filter(|p| p.segment.as_deref() == Some("yc")).count();
+        let antler_count = prospects.iter().filter(|p| p.segment.as_deref() == Some("antler")).count();
 
         (
             StatusCode::OK,
@@ -252,16 +255,21 @@ async fn handle_stats() -> impl IntoResponse {
                 "no_url_found": no_url_found,
                 "prospects_total": prospects.len(),
                 "prospects_new": new_count,
+                "prospects_researched": researched_count,
                 "prospects_warming": warming_count,
                 "prospects_contacted": contacted_count,
                 "prospects_in_convo": in_convo_count,
                 "prospects_customer": customer_count,
                 "prospects_dnc": dnc_count,
+                "prospects_yc": yc_count,
+                "prospects_antler": antler_count,
                 "activities_total": activities.len(),
                 "agents": [
                     { "name": "Mention Bot Pass", "handle": "@trypitchdotco", "status": "active", "type": "Autonomous Agent", "description": "10s Real-Time Mention Scan, Instant Receipts & S3 Video Reply" },
                     { "name": "SaaS Lead Discovery", "handle": "@adnanspitch", "status": "active", "type": "Browser Agent", "description": "60s Playwright Search, ICP Scoring & Pitch Hook Generation" },
+                    { "name": "YC & Antler Startup Scout", "handle": "pass-yc-antler", "status": "active", "type": "Cohort Scout & Outreach", "description": "Continuous YC & Antler Batch Discovery, Email/X Enrichment & Anti-AI Video Pitch Engine" },
                     { "name": "Content & Strategy Pass", "handle": "@trypitchdotco", "status": "active", "type": "Strategy Agent", "description": "6h Algorithm Optimizer, Founder Posts & Trend Commentary" },
+                    { "name": "24/7 AI Lead Prioritizer", "handle": "pitch-researcher", "status": "active", "type": "Research Daemon", "description": "Continuous Batch Scoring, Video Fit Analysis & Pain Extraction" },
                     { "name": "Tunnel Sync Daemon", "handle": "pass-tunnelsync", "status": "active", "type": "Background Daemon", "description": "15s Live Tunnel URL Resolver & Vercel Edge Bridge" },
                     { "name": "Rust Axum Webhook Server", "handle": "pitch-server", "status": "active", "type": "Core Engine", "description": "Port 8790 Local SQLite Memory & Webhook Router" }
                 ]
@@ -279,6 +287,7 @@ async fn handle_crm() -> impl IntoResponse {
     if let Ok(db) = Database::open() {
         let prospects = db.get_all_prospects(None).unwrap_or_default();
         let new_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("new") || p.stage.as_deref() == Some("") || p.stage.is_none()).cloned().collect();
+        let researched_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("researched")).cloned().collect();
         let warming_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("warming")).cloned().collect();
         let contacted_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("contacted")).cloned().collect();
         let in_convo_list: Vec<_> = prospects.iter().filter(|p| p.stage.as_deref() == Some("in_convo")).cloned().collect();
@@ -294,6 +303,7 @@ async fn handle_crm() -> impl IntoResponse {
                 "total": prospects.len(),
                 "stages": {
                     "new": new_list,
+                    "researched": researched_list,
                     "warming": warming_list,
                     "contacted": contacted_list,
                     "in_convo": in_convo_list,
@@ -772,13 +782,27 @@ async fn handle_publish(Json(payload): Json<PublishPayload>) -> impl IntoRespons
 
     let mut api_success = false;
     let mut tweet_url = format!("https://x.com/{}", clean_acc.replace('@', ""));
+    let re_tid = regex::Regex::new(r"/status/(\d+)").unwrap();
 
-    if clean_acc == "@trypitchdotco" && payload.image_url.is_none() && payload.media_path.is_none() && payload.reply_to_url.is_none() && payload.quote_url.is_none() {
+    if clean_acc == "@trypitchdotco" && payload.image_url.is_none() && payload.media_path.is_none() && payload.quote_url.is_none() {
         let mut x_client = XApiClient::new();
-        if let Ok(id) = x_client.post_tweet(&text, None).await {
+        let target_reply_id = payload.reply_to_url.as_deref().and_then(|u| {
+            re_tid.captures(u).and_then(|caps| caps.get(1)).map(|m| m.as_str())
+        });
+        if let Ok(id) = x_client.post_tweet(&text, target_reply_id).await {
             api_success = true;
             tweet_url = format!("https://x.com/trypitchdotco/status/{}", id);
             println!("[API Publish Success via X API] Tweet ID: {}", id);
+        }
+    }
+
+    if !api_success && clean_acc == "@trypitchdotco" && payload.quote_url.is_some() && payload.image_url.is_none() && payload.media_path.is_none() {
+        let mut x_client = XApiClient::new();
+        let quote_text = format!("{}\n\n{}", text, payload.quote_url.as_ref().unwrap());
+        if let Ok(id) = x_client.post_tweet(&quote_text, None).await {
+            api_success = true;
+            tweet_url = format!("https://x.com/trypitchdotco/status/{}", id);
+            println!("[API Publish Quote Success via X API] Tweet ID: {}", id);
         }
     }
 

@@ -6,16 +6,19 @@ use crate::{
 use regex::Regex;
 
 fn extract_url(text: &str) -> String {
-    let re_http = Regex::new(r"https?://\s*([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:/[^\s]*)?)").unwrap();
-    let re_domain = Regex::new(r"([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:/[^\s]*)?)").unwrap();
+    let re_http = Regex::new(r"https?://\s*([a-zA-Z0-9_.-]+\.[a-zA-Z]{2,}(?:/[^\s]*)?)").unwrap();
+    let re_domain = Regex::new(r"([a-zA-Z0-9_.-]+\.[a-zA-Z]{2,}(?:/[^\s]*)?)").unwrap();
 
     if let Some(caps) = re_http.captures(text) {
         if let Some(m) = caps.get(1) {
-            return format!("https://{}", m.as_str());
+            let mut url_str = m.as_str().to_string();
+            url_str = url_str.trim_end_matches(&['.', ',', ')', ']', ';', '!'][..]).to_string();
+            return format!("https://{}", url_str);
         }
     }
     if let Some(m) = re_domain.find(text) {
-        let domain = m.as_str();
+        let mut domain = m.as_str().to_string();
+        domain = domain.trim_end_matches(&['.', ',', ')', ']', ';', '!'][..]).to_string();
         return format!("https://{}", domain);
     }
     "N/A".to_string()

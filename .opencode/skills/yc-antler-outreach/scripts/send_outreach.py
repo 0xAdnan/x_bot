@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""
+Outreach Dispatch & Review Utility
+Views pending drafted outreach, exports ready-to-send campaigns,
+and optionally sends emails via SMTP (when configured in .env).
+"""
+
+import sys
+import os
+import smtplib
+import sqlite3
+import argparse
+import json
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parents[3]
+DB_PATH = Path(os.environ.get("SQLITE_DB_PATH", REPO_ROOT / "data" / "pitch_bot.db"))
+
+def get_db_connection() -> sqlite3.Connection:
+    conn = sqlite3.connect(str(DB_PATH))
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def list_researched_startups(limit: int = 20) -> List[sqlite3.Row]:
+    conn = get_db_connection()
+    cur = conn.execute(
+        "SELECT id, handle, name, segment, score, stage, product_url, email, batch, notes, why FROM prospects WHERE stage IN ('researched', 'new') AND segment IN ('yc', 'antler') ORDER BY id DESC LIMIT ?",
+        (limit,)
+    )
+    return cur.fetchall()
+
+def send_email_smtp(to_email: str, subject: str, body: str) -> bool:
+    smtp_host = os.environ.get("SMTP_HOST")
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    smtp_user = os.environ.get("SMTP_USER")
+    smtp_pass = os.environ.get("SMTP_PASS")
+    from_email = os.environ.get("SMTP_FROM", smtp_user or "adnan@trypitch.co")
+
+    if not smtp_host or not smtp_user or not smtp_pass:
+        print("[-] SMTP credentials not configured in .env (SMTP_HOST, SMTP_USER, SMTP_PASS required).")
+        return False
+
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = from_email
+        msg["To"] = to_email
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain"))
+
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+
+        print(f"[+] Email successfully sent to {to_email}")
+        return True
+    except Exception as e:
+        print(f"[-] Failed to send email to {to_email}: {e}")
+        return False
+
+def mark_prospect_contacted(handle: str, channel: str = "email"):
+    conn = get_db_connection()
+    conn.execute(
+        "UPDATE prospects SET stage = 'contacted', last_touch = DATE('now'), touches = touches + 1, updated_at = CURRENT_TIMESTAMP WHERE handle = ?",
+        (handle,)
+    )
+    conn.execute(
+        "INSERT INTO activities (ts, action, handle, segment, variant, detail, result) VALUES (DATETIME('now'), ?, ?, 'startup_outreach', 'v1', ?, 'ok')",
+        (f"outreach_{channel}", handle, f"Outreach sent via {channel}")
+    )
+    conn.commit()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Startup Outreach Review & Dispatch")
+    parser.add_argument("--list", action="store_true", help="List researched startups ready for outreach")
+    parser.add_argument("--limit", type=int, default=10, help="Number of records to show")
+    parser.add_argument("--send-email", help="Handle of prospect to send email to")
+    parser.add_argument("--mark-contacted", help="Handle of prospect to mark contacted")
+    parser.add_argument("--export-csv", help="Export researched prospects to CSV")
+
+    args = parser.parse_args()
+
+    if args.list or len(sys.argv) == 1:
+        prospects = list_researched_startups(limit=args.limit)
+        print(f"=== [STARTUPS READY FOR OUTREACH] ({len(prospects)} items) ===")
+        for p in prospects:
+            print(f"\n[{p['id']}] {p['name']} ({p['handle']}) | Segment: {p['segment']} | Batch: {p['batch']}")
+            print(f"    Website: {p['product_url']} | Email: {p['email'] or 'N/A'}")
+            print(f"    Notes/Draft:\n{p['notes']}")
+            print("-" * 60)
+
+    if args.mark_contacted:
+        mark_prospect_contacted(args.mark_contacted)
+        print(f"[+] Marked {args.mark_contacted} as contacted.")
+
+    if args.export_csv:
+        import csv
+        prospects = list_researched_startups(limit=100)
+        with open(args.export_csv, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["ID", "Name", "Handle", "Email", "Batch", "Segment", "Website", "Notes", "Stage"])
+            for p in prospects:
+                writer.writerow([p["id"], p["name"], p["handle"], p["email"], p["batch"], p["segment"], p["product_url"], p["notes"], p["stage"]])
+        print(f"[+] Exported {len(prospects)} prospects to {args.export_csv}")

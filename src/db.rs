@@ -35,6 +35,8 @@ pub struct Prospect {
     pub outcome: Option<String>,
     pub notes: Option<String>,
     pub why: Option<String>,
+    pub email: Option<String>,
+    pub batch: Option<String>,
     pub updated_at: Option<String>,
 }
 
@@ -97,6 +99,8 @@ impl Database {
                 outcome TEXT DEFAULT '',
                 notes TEXT DEFAULT '',
                 why TEXT DEFAULT '',
+                email TEXT DEFAULT '',
+                batch TEXT DEFAULT '',
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
 
@@ -121,6 +125,8 @@ impl Database {
         )?;
 
         let _ = conn.execute_batch("ALTER TABLE mention_jobs ADD COLUMN tweet_text TEXT DEFAULT '';");
+        let _ = conn.execute_batch("ALTER TABLE prospects ADD COLUMN email TEXT DEFAULT '';");
+        let _ = conn.execute_batch("ALTER TABLE prospects ADD COLUMN batch TEXT DEFAULT '';");
 
         Ok(Database {
             conn,
@@ -247,8 +253,8 @@ impl Database {
     pub fn upsert_prospect(&self, p: &Prospect) -> SqlResult<()> {
         self.conn.execute(
             "
-            INSERT INTO prospects (handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, updated_at)
-            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, CURRENT_TIMESTAMP)
+            INSERT INTO prospects (handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, email, batch, updated_at)
+            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, CURRENT_TIMESTAMP)
             ON CONFLICT(handle) DO UPDATE SET
               name = COALESCE(NULLIF(excluded.name, ''), prospects.name),
               url = COALESCE(NULLIF(excluded.url, ''), prospects.url),
@@ -263,6 +269,8 @@ impl Database {
               outcome = COALESCE(NULLIF(excluded.outcome, ''), prospects.outcome),
               notes = COALESCE(NULLIF(excluded.notes, ''), prospects.notes),
               why = COALESCE(NULLIF(excluded.why, ''), prospects.why),
+              email = COALESCE(NULLIF(excluded.email, ''), prospects.email),
+              batch = COALESCE(NULLIF(excluded.batch, ''), prospects.batch),
               updated_at = CURRENT_TIMESTAMP
             ",
             params![
@@ -280,6 +288,8 @@ impl Database {
                 p.outcome.as_deref().unwrap_or(""),
                 p.notes.as_deref().unwrap_or(""),
                 p.why.as_deref().unwrap_or(""),
+                p.email.as_deref().unwrap_or(""),
+                p.batch.as_deref().unwrap_or(""),
             ],
         )?;
 
@@ -288,7 +298,7 @@ impl Database {
     }
 
     pub fn get_prospect_by_handle(&self, handle: &str) -> SqlResult<Option<Prospect>> {
-        let mut stmt = self.conn.prepare("SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, updated_at FROM prospects WHERE handle = ?1")?;
+        let mut stmt = self.conn.prepare("SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, email, batch, updated_at FROM prospects WHERE handle = ?1")?;
         let mut rows = stmt.query([handle])?;
 
         if let Some(row) = rows.next()? {
@@ -308,7 +318,9 @@ impl Database {
                 outcome: row.get(12)?,
                 notes: row.get(13)?,
                 why: row.get(14)?,
-                updated_at: row.get(15)?,
+                email: row.get(15)?,
+                batch: row.get(16)?,
+                updated_at: row.get(17)?,
             }))
         } else {
             Ok(None)
@@ -333,9 +345,9 @@ impl Database {
 
     pub fn get_all_prospects(&self, stage: Option<&str>) -> SqlResult<Vec<Prospect>> {
         let query = if stage.is_some() {
-            "SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, updated_at FROM prospects WHERE stage = ?1 ORDER BY updated_at DESC"
+            "SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, email, batch, updated_at FROM prospects WHERE stage = ?1 ORDER BY updated_at DESC"
         } else {
-            "SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, updated_at FROM prospects ORDER BY updated_at DESC"
+            "SELECT id, handle, name, url, segment, score, stage, last_touch, next_action_date, touches, product_url, last_variant, outcome, notes, why, email, batch, updated_at FROM prospects ORDER BY updated_at DESC"
         };
 
         let mut stmt = self.conn.prepare(query)?;
@@ -357,7 +369,9 @@ impl Database {
                     outcome: row.get(12)?,
                     notes: row.get(13)?,
                     why: row.get(14)?,
-                    updated_at: row.get(15)?,
+                    email: row.get(15)?,
+                    batch: row.get(16)?,
+                    updated_at: row.get(17)?,
                 })
             })?
             .collect::<SqlResult<Vec<_>>>()?
@@ -379,7 +393,9 @@ impl Database {
                     outcome: row.get(12)?,
                     notes: row.get(13)?,
                     why: row.get(14)?,
-                    updated_at: row.get(15)?,
+                    email: row.get(15)?,
+                    batch: row.get(16)?,
+                    updated_at: row.get(17)?,
                 })
             })?
             .collect::<SqlResult<Vec<_>>>()?

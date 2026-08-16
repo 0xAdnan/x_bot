@@ -16,7 +16,8 @@ const DEFAULT_QUERIES: &[&str] = &[
     "need a product demo video OR \"need a demo video\"",
     "how to make a product demo video OR \"recording a demo\"",
     "(\"launching today\" OR \"just launched\") (SaaS OR AI OR devtool)",
-    "(\"YC S26\" OR \"YC W26\" OR \"YC S25\") (demo OR launch OR link)",
+    "(\"YC S26\" OR \"YC W26\" OR \"YC S25\" OR \"YC W25\" OR \"Y Combinator\") (demo OR launch OR link OR building)",
+    "(\"Antler cohort\" OR \"Antler Global\" OR \"backed by Antler\") (launch OR building OR demo OR founder)",
     "(\"building in public\" OR \"indie hacker\") (demo OR launch OR video)",
 ];
 
@@ -188,6 +189,8 @@ pub async fn discover_prospects(
                             query,
                             text.chars().take(80).collect::<String>()
                         )),
+                        email: None,
+                        batch: None,
                         updated_at: None,
                     };
 

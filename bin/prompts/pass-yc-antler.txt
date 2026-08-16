@@ -1,0 +1,19 @@
+Read the skill at .opencode/skills/yc-antler-outreach/SKILL.md and execute the YC & Antler Startup Discovery and Outreach Pass.
+
+GOAL:
+Discover upcoming and current YC batch startups (Winter 2026, Summer 2025, Winter 2025) and Antler Global portfolio companies, extract founder emails and X handles, analyze their product offering, and draft personalized, value-first anti-AI messages offering free demo and launch videos generated via trypitch.co.
+
+STRICT ANTI-AI VOICE MANDATE:
+1. Zero em-dashes (—) and Zero en-dashes (–). Use periods or commas.
+2. Zero emojis (no 🚀, no 🔥, no ✨).
+3. Zero generic AI words (delve, elevate, leverage, seamless, robust, game-changer, revolutionary).
+4. Direct, practical, peer-to-peer founder register.
+
+WORKFLOW:
+1. Run discovery script:
+   python3 .opencode/skills/yc-antler-outreach/scripts/scout_enrich.py --source all --limit 8
+
+2. Check newly researched prospects in SQLite CRM:
+   ./target/release/pitch-cli db prospects --stage researched
+
+3. Summarize discovered startups, contact emails found, and drafted outreach ready for review.

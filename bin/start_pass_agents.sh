@@ -6,6 +6,7 @@ set -e
 # Default cadence (seconds) can be overridden via env vars:
 #   MENTION_INTERVAL  (default 10)     Mention Bot Pass
 #   DISCOVER_INTERVAL (default 60)     SaaS Lead Discovery Pass (full-time)
+#   YC_ANTLER_INTERVAL(default 900)    YC & Antler Startup Scout Pass (every 15m)
 #   CONTENT_INTERVAL  (default 21600)  Content & Strategy Pass (4x/day)
 
 REPO_DIR="/home/adnan/x_bot"
@@ -15,6 +16,7 @@ OPENCODE_BIN="${OPENCODE_BIN:-$(command -v opencode || echo "$HOME/.opencode/bin
 
 MENTION_INTERVAL="${MENTION_INTERVAL:-10}"
 DISCOVER_INTERVAL="${DISCOVER_INTERVAL:-60}"
+YC_ANTLER_INTERVAL="${YC_ANTLER_INTERVAL:-900}"
 CONTENT_INTERVAL="${CONTENT_INTERVAL:-21600}"
 
 start_pass() {
@@ -31,13 +33,15 @@ start_pass() {
 echo "=== STARTING CONTINUOUS OPENCODE AGENT PASSES ==="
 echo "opencode: $OPENCODE_BIN"
 
-start_pass pass-mention  "$MENTION_INTERVAL"  pass-mention.txt
-start_pass pass-discover "$DISCOVER_INTERVAL" pass-discover.txt
-start_pass pass-content  "$CONTENT_INTERVAL"  pass-content.txt
+start_pass pass-mention   "$MENTION_INTERVAL"   pass-mention.txt
+start_pass pass-discover  "$DISCOVER_INTERVAL"  pass-discover.txt
+start_pass pass-yc-antler "$YC_ANTLER_INTERVAL" pass-yc-antler.txt
+start_pass pass-content   "$CONTENT_INTERVAL"   pass-content.txt
 
 echo ""
 echo "=== ALL PASSES RUNNING IN DETACHED TMUX SESSIONS ==="
 echo "  tmux attach -t pass-mention    (Mention Bot)"
 echo "  tmux attach -t pass-discover   (SaaS Lead Discovery)"
+echo "  tmux attach -t pass-yc-antler  (YC & Antler Startup Scout)"
 echo "  tmux attach -t pass-content    (Content & Strategy)"
 echo "Detach with Ctrl+B then D. Logs: data/logs/pass-*.log"
