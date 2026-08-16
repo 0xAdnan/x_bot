@@ -59,12 +59,24 @@ def send_email_smtp(to_email: str, subject: str, body: str) -> bool:
         print("[-] SMTP credentials not configured in .env (SMTP_HOST, SMTP_USER, SMTP_PASS required).")
         return False
 
+    # Clean body: strip DM or Tweet sections if present
+    clean_body = body
+    if "Email Body:\n" in clean_body:
+        clean_body = clean_body.split("Email Body:\n")[-1]
+    if "\n\nX DM" in clean_body:
+        clean_body = clean_body.split("\n\nX DM")[0]
+    clean_body = clean_body.strip()
+
+    # Ensure signature block is always attached
+    if "adnan@trypitch.co" not in clean_body:
+        clean_body = f"{clean_body}\n\nBest,\nAdnan\nCo-Founder, Pitch\nadnan@trypitch.co"
+
     try:
         msg = MIMEMultipart()
         msg["From"] = from_email
         msg["To"] = to_email
         msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
+        msg.attach(MIMEText(clean_body, "plain"))
 
         with smtplib.SMTP(smtp_host, smtp_port) as server:
             server.starttls()
@@ -76,6 +88,19 @@ def send_email_smtp(to_email: str, subject: str, body: str) -> bool:
     except Exception as e:
         print(f"[-] Failed to send email to {to_email}: {e}")
         return False
+
+def check_already_contacted(to_email: str, handle: str) -> bool:
+    """Safety guardrail: prevent duplicate cold emails to the same recipient."""
+    conn = get_db_connection()
+    clean_h = handle.strip() if handle else ""
+    cur = conn.execute(
+        "SELECT id, stage, touches, last_touch FROM prospects WHERE (handle = ? AND handle != '') OR (email = ? AND email != '')",
+        (clean_h, to_email.strip())
+    )
+    row = cur.fetchone()
+    if row and (row["stage"] == "contacted" or row["stage"] == "in_convo" or (row["touches"] and row["touches"] > 0)):
+        return True
+    return False
 
 def mark_prospect_contacted(handle: str, channel: str = "email"):
     conn = get_db_connection()
@@ -100,11 +125,20 @@ if __name__ == "__main__":
     parser.add_argument("--body", help="Email body text")
     parser.add_argument("--handle", help="Prospect handle to mark contacted")
     parser.add_argument("--mark-contacted", help="Handle of prospect to mark contacted")
+    parser.add_argument("--force", action="store_true", help="Force send even if already contacted")
     parser.add_argument("--export-csv", help="Export researched prospects to CSV")
 
     args = parser.parse_args()
 
     if args.send_now and args.to:
+        if not args.force and args.to != "adnan.pitch@gmail.com" and check_already_contacted(args.to, args.handle):
+            print(json.dumps({
+                "status": "skipped",
+                "message": f"Prospect {args.to} ({args.handle}) was already contacted. Single-send safety enforced.",
+                "to_email": args.to
+            }))
+            sys.exit(0)
+
         subject = args.subject or "quick demo video for your startup"
         body = args.body or ""
         ok = send_email_smtp(args.to, subject, body)

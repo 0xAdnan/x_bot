@@ -2227,10 +2227,20 @@ adnan@trypitch.co`;
         const lines = coldEmailText.split('\n');
         const subjLine = lines.find(l => l.startsWith('Email Subj:'));
         if (subjLine) subject = subjLine.replace('Email Subj:', '').trim();
-        const bodyIdx = coldEmailText.indexOf('Email Body:\n');
-        if (bodyIdx !== -1) {
-          body = coldEmailText.substring(bodyIdx + 12).trim();
+        
+        let bodyText = coldEmailText;
+        if (bodyText.includes('Email Body:\n')) {
+          bodyText = bodyText.split('Email Body:\n')[1];
         }
+        if (bodyText.includes('\n\nX DM')) {
+          bodyText = bodyText.split('\n\nX DM')[0];
+        }
+        body = bodyText.trim();
+      }
+
+      // Ensure signature block is always present
+      if (!body.includes('adnan@trypitch.co')) {
+        body = `${body.trim()}\n\nBest,\nAdnan \nCo-Founder, Pitch\nadnan@trypitch.co`;
       }
 
       if (btn) {
