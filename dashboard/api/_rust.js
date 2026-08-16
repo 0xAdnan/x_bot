@@ -13,7 +13,8 @@ export async function fetchRust(path, options = {}) {
   for (const baseUrl of candidates) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const timeoutMs = options.timeout || 8000;
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       const resp = await fetch(`${baseUrl}${cleanPath}`, {
         ...options,
         signal: controller.signal,

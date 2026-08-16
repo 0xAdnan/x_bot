@@ -20,6 +20,21 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parents[3]
 DB_PATH = Path(os.environ.get("SQLITE_DB_PATH", REPO_ROOT / "data" / "pitch_bot.db"))
 
+def load_env_file():
+    env_file = REPO_ROOT / ".env"
+    if env_file.exists():
+        with open(env_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip('"').strip("'")
+                    if k not in os.environ:
+                        os.environ[k] = v
+
+load_env_file()
+
 def get_db_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
@@ -79,10 +94,28 @@ if __name__ == "__main__":
     parser.add_argument("--list", action="store_true", help="List researched startups ready for outreach")
     parser.add_argument("--limit", type=int, default=10, help="Number of records to show")
     parser.add_argument("--send-email", help="Handle of prospect to send email to")
+    parser.add_argument("--send-now", action="store_true", help="Send email directly via CLI")
+    parser.add_argument("--to", help="Recipient email address")
+    parser.add_argument("--subject", help="Email subject line")
+    parser.add_argument("--body", help="Email body text")
+    parser.add_argument("--handle", help="Prospect handle to mark contacted")
     parser.add_argument("--mark-contacted", help="Handle of prospect to mark contacted")
     parser.add_argument("--export-csv", help="Export researched prospects to CSV")
 
     args = parser.parse_args()
+
+    if args.send_now and args.to:
+        subject = args.subject or "quick demo video for your startup"
+        body = args.body or ""
+        ok = send_email_smtp(args.to, subject, body)
+        if ok:
+            if args.handle:
+                mark_prospect_contacted(args.handle, channel="email")
+            print(json.dumps({"status": "ok", "message": f"Email successfully sent to {args.to}", "to_email": args.to}))
+            sys.exit(0)
+        else:
+            print(json.dumps({"status": "error", "message": f"Failed to send email to {args.to}"}))
+            sys.exit(1)
 
     if args.list or len(sys.argv) == 1:
         prospects = list_researched_startups(limit=args.limit)
