@@ -70,10 +70,18 @@ def generate_outreach_drafts(startup: Dict[str, Any]) -> Dict[str, Any]:
     desc = startup.get("one_liner") or startup.get("description") or "your product"
     desc_clean = desc.strip().rstrip(".")
     
-    # 1. Cold Email Draft
-    email_subject = f"quick demo video for {name.lower()}"
+    # 1. Cold Email Draft — Data-Backed 2-4 Word Subject Lines (Lemlist & ZoomInfo 80%+ Open Rate Study)
+    # Rules from 5.5M email analysis: 2-4 words, under 35 characters, trigger-based or conversational
+    subject_options = [
+        "quick question",
+        f"{greeting_name.lower()}, thoughts?",
+        f"saw {name.lower()} in {batch.lower()}" if len(f"saw {name.lower()} in {batch.lower()}") <= 35 else f"saw {name.lower()}",
+        f"idea for {name.lower()} demo",
+        f"{name.lower()} demo"
+    ]
+    email_subject = subject_options[0] # Default to top-performing "quick question"
     
-    if "Winter 2026" in batch or "W26" in batch or "S25" in batch or "Winter 2025" in batch:
+    if any(k in batch for k in ["Winter", "Summer", "Fall", "Spring", "W26", "S25", "W25", "S24", "W24"]):
         opener = f"Hey {greeting_name},\n\nI saw {name} in the {batch} batch. {desc_clean.lower()} is a super sharp concept."
     elif "Antler" in batch:
         opener = f"Hey {greeting_name},\n\nI saw {name} in {batch}. {desc_clean.lower()} is a super sharp concept."
@@ -125,6 +133,7 @@ adnan@trypitch.co"""
     
     return {
         "email_subject": email_subject,
+        "subject_options": subject_options,
         "email_body": email_body,
         "x_dm": x_dm,
         "public_tweet": public_tweet,
