@@ -445,18 +445,6 @@
           <div id="foot-new" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-slate-200 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
         </div>
 
-        <!-- Column 2: Researched (YC & Antler Outbound) -->
-        <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-indigo-50/20 border border-indigo-200/80 rounded-2xl shadow-sm overflow-hidden">
-          <div class="flex justify-between items-center p-3 border-b border-indigo-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-indigo-600">
-            <span class="text-[11px] font-extrabold text-indigo-800 uppercase tracking-widest font-mono flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span> YC & Antler Leads
-            </span>
-            <span id="cnt-researched" class="text-xs font-mono font-bold bg-indigo-50 text-indigo-800 px-2.5 py-0.5 rounded-full border border-indigo-300">0</span>
-          </div>
-          <div id="col-researched" class="p-2.5 space-y-2.5 overflow-y-auto flex-1 pr-1.5"></div>
-          <div id="foot-researched" class="flex items-center justify-between px-3 py-2 bg-white/90 border-t border-indigo-200/80 text-[10px] font-mono text-slate-500 flex-shrink-0"></div>
-        </div>
-
         <!-- Column 2: Warming -->
         <div class="w-[310px] min-w-[290px] flex-shrink-0 flex flex-col h-full bg-amber-50/20 border border-amber-200/80 rounded-2xl shadow-sm overflow-hidden">
           <div class="flex justify-between items-center p-3 border-b border-amber-200/80 bg-white/80 backdrop-blur-sm flex-shrink-0 border-t-2 border-t-amber-500">
@@ -1649,14 +1637,15 @@
       setElText('tab-badge-mentions', rawMentionJobs.length);
       setElText('tab-badge-activity', rawActivities.length);
 
+      const crmProspects = filteredProspects.filter(p => p.segment !== 'yc' && p.segment !== 'antler' && p.stage !== 'researched');
+
       const stages = {
-        new: filteredProspects.filter(p => (p.stage === 'new' || !p.stage || p.stage === '') && p.stage !== 'researched'),
-        researched: filteredProspects.filter(p => p.stage === 'researched'),
-        warming: filteredProspects.filter(p => p.stage === 'warming'),
-        contacted: filteredProspects.filter(p => p.stage === 'contacted'),
-        in_convo: filteredProspects.filter(p => p.stage === 'in_convo'),
-        customer: filteredProspects.filter(p => p.stage === 'customer' || p.stage === 'trial'),
-        'do-not-contact': filteredProspects.filter(p => p.stage === 'do-not-contact' || p.stage === 'lost')
+        new: crmProspects.filter(p => p.stage === 'new' || !p.stage || p.stage === ''),
+        warming: crmProspects.filter(p => p.stage === 'warming'),
+        contacted: crmProspects.filter(p => p.stage === 'contacted'),
+        in_convo: crmProspects.filter(p => p.stage === 'in_convo'),
+        customer: crmProspects.filter(p => p.stage === 'customer' || p.stage === 'trial'),
+        'do-not-contact': crmProspects.filter(p => p.stage === 'do-not-contact' || p.stage === 'lost')
       };
 
       renderKanban(stages);
@@ -1666,7 +1655,6 @@
 
     let columnPages = {
       'new': 1,
-      'researched': 1,
       'warming': 1,
       'contacted': 1,
       'in_convo': 1,
@@ -1697,7 +1685,6 @@
 
       const stageMap = {
         'new': 'col-new',
-        'researched': 'col-researched',
         'warming': 'col-warming',
         'contacted': 'col-contacted',
         'in_convo': 'col-in_convo',
@@ -1707,7 +1694,6 @@
 
       const footMap = {
         'new': 'foot-new',
-        'researched': 'foot-researched',
         'warming': 'foot-warming',
         'contacted': 'foot-contacted',
         'in_convo': 'foot-in_convo',
